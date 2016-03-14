@@ -1,3 +1,10 @@
+# Vim
+*.swp
+
+# C++
+obj
+bin
+
 # Logs
 logs
 *.log
