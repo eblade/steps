@@ -5,6 +5,7 @@
 #define TYPE_NOTE 1
 #define TYPE_DIVISION 2
 #define TYPE_ACTIVATE 3
+#define TYPE_RETURN 4
 
 #include "ofMain.h"
 

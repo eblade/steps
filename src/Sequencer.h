@@ -4,18 +4,21 @@
 #include "ofMain.h"
 #include "Point.h"
 
-#define MAX_LENGTH 256
+#define MAX_LENGTH 20
 
 
 class Sequencer {
     public:
-        Sequencer(string name);
+        Sequencer();
 
         void draw(int row, bool inThisRow, ofTrueTypeFont font);
 
         void cursorLeft();
         void cursorRight();
         void cursorClick();
+        void cursorDelete();
+        bool cursorInsert(Point* point);
+        void cursorReturn();
         void cursorNote(int value);
         void setCursor(int wanted);
         int getLength();

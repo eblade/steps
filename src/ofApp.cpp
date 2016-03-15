@@ -18,7 +18,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw() {
     ofBackground(ofColor::black);
-    for (int i = 0; i < MAX_LENGTH; i++) {
+    for (int i = 0; i < MAX_LINES; i++) {
         if (sequencer[i] == NULL) {
             break;
         }
@@ -42,6 +42,12 @@ void ofApp::keyPressed(int key){
         cursorDown();
     } else if (key == ' ') {
         sequencer[cursor]->cursorClick();
+    } else if (key == 'x' || key == OF_KEY_DEL) {
+        if (sequencer[cursor]->cursor == 0) {
+            deleteLine(cursor);
+        } else {
+            sequencer[cursor]->cursorDelete();
+        }
     } else if (key == 'q') {
         sequencer[cursor]->cursorNote(0);
     } else if (key == '2') {
@@ -78,6 +84,10 @@ void ofApp::keyPressed(int key){
         sequencer[cursor]->cursorNote(16);
     } else if (key == OF_KEY_RETURN) {
         addNewLine(cursor);
+    } else if (key == 'g') {
+        sequencer[cursor]->cursorReturn();
+    //} else if (key == 'd') {
+    //    sequencer[cursor]->cursorDivision();
     }
 }
 
@@ -137,13 +147,38 @@ void ofApp::cursorDown() {
     }
 }
 
+void ofApp::deleteLine(int line) {
+    if (sequencer[line] != NULL) {
+        if (line == 0 && sequencer[1] == NULL) {
+            return; // can't delete the last line
+        }
+        Sequencer* retired = sequencer[cursor];
+        for (int i = line; i < (MAX_LINES - 1); i++) {
+            sequencer[i] = sequencer[i + 1];
+        }
+        if (line == cursor) {
+            sequencer[line]->setCursor(retired->cursor);
+        }
+        sequencer[MAX_LINES - 1] = NULL;
+        delete retired;
+    }
+}
+
 void ofApp::addNewLine(int afterLine) {
     if (afterLine >= MAX_LINES) {
         return;
     }
     if (sequencer[afterLine + 1] == NULL) {
-        sequencer[afterLine + 1] = new Sequencer("seq" + (afterLine + 1));
+        sequencer[afterLine + 1] = new Sequencer();
         if (cursor == afterLine) {
+            cursor++;
+        }
+    } else if (sequencer[MAX_LINES-1] == NULL) {
+        for (int i = MAX_LINES - 1; i > afterLine; i--) {
+            sequencer[i] = sequencer[i - 1];
+        }
+        sequencer[afterLine + 1] = new Sequencer();
+        if (cursor >= afterLine) {
             cursor++;
         }
     }

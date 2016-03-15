@@ -5,7 +5,7 @@
 #include "Sequencer.h"
 
 
-#define MAX_LINES 64
+#define MAX_LINES 8
 
 
 class ofApp : public ofBaseApp{
@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         void addNewLine(int afterLine);
+        void deleteLine(int line);
         void cursorUp();
         void cursorDown();
 

@@ -1,9 +1,8 @@
 #include "Sequencer.h"
 
 
-Sequencer::Sequencer(string name) {
-    this->name = name;
-
+Sequencer::Sequencer() {
+    name = "";
     division = 8;
     active = true;
     octave = 3;
@@ -39,7 +38,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 
         if (onThisRow && col == cursor) {
             ofSetColor(ofColor::white);
-            ofDrawRectangle(x, y + 48, 50, 3);
+            ofDrawRectangle(x, y + 48, 50, 5);
         }
 
         if (data[col] == NULL) {
@@ -68,6 +67,36 @@ void Sequencer::cursorClick() {
     }
 }
 
+void Sequencer::cursorDelete() {
+    if (data[cursor] != NULL) {
+        Point* retired = data[cursor];
+        for (int i = cursor; i < (MAX_LENGTH - 1); i++) {
+            data[i] = data[i + 1];
+        }
+        data[MAX_LENGTH - 1] = NULL;
+        delete retired;
+    }
+}
+
+bool Sequencer::cursorInsert(Point* point) {
+    if (data[cursor] != NULL) {
+        if (data[MAX_LENGTH - 1] == NULL) {
+            for (int i = MAX_LENGTH - 1; i >= cursor; i--) {
+                data[i] = data[i - 1];
+            }
+            data[cursor] = point;
+            cursor++;
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        data[cursor] = point;
+        cursorRight();
+        return true;
+    }
+}
+
 void Sequencer::cursorNote(int value) {
     if (data[cursor] != NULL) {
         if (data[cursor]->type == TYPE_NOTE) {
@@ -78,6 +107,14 @@ void Sequencer::cursorNote(int value) {
         data[cursor]->type = TYPE_NOTE;
         data[cursor]->value = octave * 12 + value;
         cursorRight();
+    }
+}
+
+void Sequencer::cursorReturn() {
+    Point* point = new Point();
+    point->type = TYPE_RETURN;
+    if (!cursorInsert(point)) {
+        delete point;
     }
 }
 
