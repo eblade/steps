@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
 #include "Sequencer.h"
+#include "Ticking.h"
 
 
 #define MAX_LINES 8
 
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 	public:
 		void setup();
 		void update();
@@ -34,4 +34,5 @@ class ofApp : public ofBaseApp{
         
         ofTrueTypeFont font;
         Sequencer* sequencer[MAX_LINES];
+        TickBuffer* buffer;
 };

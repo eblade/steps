@@ -19,14 +19,15 @@ Sequencer::Sequencer() {
 
 void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
     int x, y;
+
+    x = 0;
+    y = 50 * row;
+    if (onThisRow) {
+        ofSetColor(ofColor::gray);
+        ofDrawRectangle(x, y, 50 * MAX_LENGTH, 50);
+    }
     for (int col=0; col < MAX_LENGTH; col++) {
         x = 50 * col;
-        y = 50 * row;
-
-        if (onThisRow) {
-            ofSetColor(ofColor::darkGray);
-            ofDrawRectangle(x, y, 50 * MAX_LENGTH, 50);
-        }
 
         if (data[col] != NULL) {
             ofSetColor(ofColor::blue);

@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
+    buffer = new TickBuffer(60);
     addNewLine(-1);
 
     cursor = 0;
@@ -10,12 +10,10 @@ void ofApp::setup(){
     ofEnableAlphaBlending();
 }
 
-//--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 }
 
-//--------------------------------------------------------------
 void ofApp::draw() {
     ofBackground(ofColor::black);
     for (int i = 0; i < MAX_LINES; i++) {
@@ -30,8 +28,7 @@ void ofApp::draw() {
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() -150, 40);
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
     if (key == 'h' || key == OF_KEY_LEFT) {
         sequencer[cursor]->cursorLeft();
     } else if (key == 'l' || key == OF_KEY_RIGHT) {
@@ -104,7 +101,19 @@ void ofApp::mouseDragged(int x, int y, int button){
 }
 
 void ofApp::mousePressed(int x, int y, int button){
+    int col = x / 50;
+    int row = y / 50;
 
+    if (row >= MAX_LINES) {
+        return;
+    }
+    if (sequencer[row] == NULL) {
+        return;
+    }
+    sequencer[row]->setCursor(col);
+    if (sequencer[row]->cursor == col) {
+        sequencer[row]->cursorClick();
+    }
 }
 
 void ofApp::mouseReleased(int x, int y, int button){

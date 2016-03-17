@@ -11,7 +11,7 @@ Point::Point() {
 void Point::draw(int x, int y, bool selected, ofTrueTypeFont font) {
     if (type == TYPE_NOTE) {
         if (active) {
-            ofSetColor(ofColor::lightGray);
+            ofSetColor(ofColor::darkGray);
             ofDrawRectangle(x + 2, y + 2 , 46, 46);
             ofSetColor(ofColor::blue);
         } else {
