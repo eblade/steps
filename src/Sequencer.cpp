@@ -6,9 +6,12 @@ Sequencer::Sequencer() {
     division = 8;
     active = true;
     octave = 3;
+    position = 0;
+    last_executed = 0;
+    release = 0;
+    ackumulated = 0;
 
-    data[0] = new Point();
-    data[0]->type = TYPE_ACTIVATE;
+    data[0] = new ActivatePoint();
     
     for (int i = 1; i < MAX_LENGTH; i++) {
         data[i] = NULL;
@@ -21,28 +24,51 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
     int x, y;
 
     x = 0;
-    y = 50 * row;
-    if (onThisRow) {
-        ofSetColor(ofColor::gray);
-        ofDrawRectangle(x, y, 50 * MAX_LENGTH, 50);
-    }
-    for (int col=0; col < MAX_LENGTH; col++) {
-        x = 50 * col;
+    y = POINT_OUTER * row;
+    for (int col = 0; col < MAX_LENGTH; col++) {
+        x = POINT_OUTER * col;
 
         if (data[col] != NULL) {
-            ofSetColor(ofColor::blue);
-            data[col]->draw(x, y, col==cursor, font);
+            data[col]->draw(x, y, col==last_executed, font);
         } else {
-            ofSetColor(ofColor::black);
-            ofDrawRectangle(x + 1, y + 1 , 48, 48);
+            ofSetColor(ofColor::red);
+            ofDrawRectangle(x, y, 5, POINT_OUTER);
         }
 
         if (onThisRow && col == cursor) {
             ofSetColor(ofColor::white);
-            ofDrawRectangle(x, y + 48, 50, 5);
+            ofDrawRectangle(x, y, POINT_OUTER, POINT_SPACING);
+            ofDrawRectangle(x, y + POINT_SPACING, POINT_SPACING, POINT_INNER);
+            ofDrawRectangle(x + POINT_OUTER - POINT_SPACING, y + POINT_SPACING, POINT_SPACING, POINT_INNER);
+            ofDrawRectangle(x, y + POINT_OUTER - POINT_SPACING, POINT_OUTER, POINT_SPACING);
         }
 
         if (data[col] == NULL) {
+            break;
+        }
+    }
+}
+
+void Sequencer::step(TickBuffer* buffer) {
+    while (true) {
+        if (data[position] == NULL) {
+            position = 0;
+            break;
+        }
+        if (!buffer->timeFor(release)) {
+            break;
+        }
+        Point* point = data[position];
+        last_executed = position;
+        ExecutionResult result = point->execute(release, buffer);
+        release += point->getLength();
+        if (result.goto_position == -1) {
+            position += result.position_delta;
+            if (result.position_delta <= 0) {
+                break;
+            }
+        } else {
+            position = result.goto_position;
             break;
         }
     }
@@ -100,20 +126,19 @@ bool Sequencer::cursorInsert(Point* point) {
 
 void Sequencer::cursorNote(int value) {
     if (data[cursor] != NULL) {
-        if (data[cursor]->type == TYPE_NOTE) {
-            data[cursor]->value = octave * 12 + value;
+        if (data[cursor]->type == POINT_TYPE_NOTE) {
+            ((NotePoint*) data[cursor])->value = octave * 12 + value;
         }
     } else {
-        data[cursor] = new Point();
-        data[cursor]->type = TYPE_NOTE;
-        data[cursor]->value = octave * 12 + value;
+        data[cursor] = new NotePoint();
+        ((NotePoint*) data[cursor])->value = octave * 12 + value;
         cursorRight();
     }
 }
 
-void Sequencer::cursorReturn() {
+void Sequencer::cursorHold() {
     Point* point = new Point();
-    point->type = TYPE_RETURN;
+    // FIXME
     if (!cursorInsert(point)) {
         delete point;
     }

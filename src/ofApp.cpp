@@ -5,6 +5,7 @@ void ofApp::setup() {
     addNewLine(-1);
 
     cursor = 0;
+    playing = true;
 
     font.load(OF_TTF_SANS, 9, true, true);
     ofEnableAlphaBlending();
@@ -15,6 +16,10 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
+    if (playing) {
+        step();
+        buffer->tick();
+    }
     ofBackground(ofColor::black);
     for (int i = 0; i < MAX_LINES; i++) {
         if (sequencer[i] == NULL) {
@@ -23,9 +28,20 @@ void ofApp::draw() {
         sequencer[i]->draw(i, i==cursor, font);
     }
     ofSetColor(255);
-    font.drawString("x: " + ofToString((int)sequencer[cursor]->cursor), ofGetWidth() -150, 20);
-    font.drawString("y: " + ofToString((int)cursor), ofGetWidth() -150, 30);
-    font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() -150, 40);
+    font.drawString("x: " + ofToString((int)sequencer[cursor]->cursor), ofGetWidth() - 90, 20);
+    font.drawString("y: " + ofToString((int)cursor), ofGetWidth() - 90, 30);
+    font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
+
+    buffer->draw(ofGetWidth() - 90, 50);
+}
+
+void ofApp::step() {
+    for (int i = 0; i < MAX_LINES; i++) {
+        if (sequencer[i] == NULL) {
+            break;
+        }
+        sequencer[i]->step(buffer);
+    }
 }
 
 void ofApp::keyPressed(int key) {
@@ -82,7 +98,7 @@ void ofApp::keyPressed(int key) {
     } else if (key == OF_KEY_RETURN) {
         addNewLine(cursor);
     } else if (key == 'g') {
-        sequencer[cursor]->cursorReturn();
+        sequencer[cursor]->cursorHold();
     //} else if (key == 'd') {
     //    sequencer[cursor]->cursorDivision();
     }
@@ -182,7 +198,7 @@ void ofApp::addNewLine(int afterLine) {
         if (cursor == afterLine) {
             cursor++;
         }
-    } else if (sequencer[MAX_LINES-1] == NULL) {
+    } else if (sequencer[MAX_LINES-1] == NULL && afterLine > 0) {
         for (int i = MAX_LINES - 1; i > afterLine; i--) {
             sequencer[i] = sequencer[i - 1];
         }

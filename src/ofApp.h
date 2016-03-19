@@ -30,9 +30,12 @@ class ofApp : public ofBaseApp {
         void cursorUp();
         void cursorDown();
 
+        void step();
+
         int cursor;
         
         ofTrueTypeFont font;
         Sequencer* sequencer[MAX_LINES];
         TickBuffer* buffer;
+        bool playing;
 };

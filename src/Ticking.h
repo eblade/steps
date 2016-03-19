@@ -1,15 +1,16 @@
-#ifndef QUEUE_H_
-#define QUEUE_H_
+#ifndef TICKING_H_
+#define TICKING_H_
 
+#include "ofMain.h"
 #include <chrono>
 
 #define TICK_BUFFER_SIZE 256
 
 class TickEvent {
     public:
-        TickEvent();
-        virtual ~TickEvent();
-        virtual void fire();
+        TickEvent() { time = 0; }
+        virtual ~TickEvent() {}
+        virtual void fire() = 0;
         long long time;
 };
 
@@ -18,12 +19,16 @@ class TickBuffer {
         TickBuffer(int resolution);
         void reset();
         void tick();
-        void schedule(TickEvent* event, int time);
+        void push(TickEvent* event);
+        void draw(int x, int y);
+        bool timeFor(long long time);
+
+        long long start_time;
+        int xruns;
 
     private:
-        long long now();
         TickEvent* buffer[TICK_BUFFER_SIZE];
-        long long start_time;
+        long long now();
         long long position;
         long ticks;
         long average;
@@ -31,4 +36,4 @@ class TickBuffer {
 };
 
 
-#endif /* QUEUE_H_ */
+#endif /* TICKING_H_ */

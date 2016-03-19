@@ -3,6 +3,9 @@
 
 #include "ofMain.h"
 #include "Point.h"
+#include "NotePoint.h"
+#include "ActivatePoint.h"
+#include "Ticking.h"
 
 #define MAX_LENGTH 20
 
@@ -18,18 +21,22 @@ class Sequencer {
         void cursorClick();
         void cursorDelete();
         bool cursorInsert(Point* point);
-        void cursorReturn();
+        void cursorHold();
         void cursorNote(int value);
         void setCursor(int wanted);
         int getLength();
+        void step(TickBuffer* buffer);
 
         string name;
         int cursor;
         int division;
         bool active;
         int octave;
+        int position;
+        int last_executed;
+        long long release;
+        long long ackumulated;
         Point* data[MAX_LENGTH];
 };
-
 
 #endif /* SEQUENCER_H_ */
