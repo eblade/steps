@@ -53,7 +53,6 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 }
 
 void Sequencer::step(TickBuffer* buffer) {
-    //cout << "step ======================== " << ackumulated << " release=" << release << " period=" << buffer->period << endl;
     if (!active) {
         return;
     }
@@ -78,6 +77,9 @@ void Sequencer::step(TickBuffer* buffer) {
 void Sequencer::change(ChangeSet changes) {
     if (changes.goto_position == -1) {
         position += changes.position_delta;
+        if (position >= MAX_LENGTH) {
+            position = 0;
+        }
     } else {
         position = changes.goto_position;
     }
