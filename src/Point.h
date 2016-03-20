@@ -14,8 +14,8 @@
 #include "ofMain.h"
 #include "Ticking.h"
 
-struct ExecutionResult {
-    ExecutionResult() : position_delta(0), goto_position(-1), set_active(false), set_inactive(false) {}
+struct ChangeSet {
+    ChangeSet() : position_delta(0), goto_position(-1), set_active(false), set_inactive(false) {}
     int position_delta;
     int goto_position;
     bool set_active;
@@ -27,8 +27,8 @@ class Point {
         Point();
         virtual ~Point() {};
         virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        virtual void click();
-        virtual ExecutionResult execute(long long time, TickBuffer* buffer);
+        virtual ChangeSet click();
+        virtual ChangeSet execute(long long time, TickBuffer* buffer);
         virtual int getLength();
 
         int type;
@@ -37,8 +37,9 @@ class Point {
 
 class DummyEvent : public TickEvent {
     public:
-        DummyEvent();
+        DummyEvent(string name, long long time);
         void fire();
+        string name;
 };
 
 #endif /* POINT_H_ */

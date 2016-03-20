@@ -9,6 +9,7 @@ TickBuffer::TickBuffer(int resolution) {
 }
 
 void TickBuffer::reset() {
+    period = 0;
     position = 0;
     xruns = 0;
     ticks = -1; // first tick is never of full length
@@ -28,6 +29,7 @@ void TickBuffer::tick() {
         ticks = 0;
     } else {
         long long this_time = now();
+        period = this_time - last_time;
         while (true) {
             TickEvent* next_event = buffer[position];
             if (next_event != NULL) {
@@ -46,6 +48,7 @@ void TickBuffer::tick() {
             }
         }
         ticks++;
+        last_time = this_time;
     }
 }
 
@@ -81,7 +84,7 @@ long long TickBuffer::now() {
 }
 
 bool TickBuffer::timeFor(long long time) {
-    return start_time + time < (now() - average / 2);
+    return (start_time + time) < (now() - period / 2);
 }
 
 void TickBuffer::draw(int x, int y) {

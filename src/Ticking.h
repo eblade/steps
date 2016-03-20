@@ -24,6 +24,7 @@ class TickBuffer {
         bool timeFor(long long time);
 
         long long start_time;
+        int period;
         int xruns;
 
     private:

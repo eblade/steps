@@ -7,8 +7,8 @@ class ActivatePoint : public Point {
     public:
         ActivatePoint();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        void click();
-        ExecutionResult execute(long long time, TickBuffer* buffer);
+        ChangeSet click();
+        ChangeSet execute(long long time, TickBuffer* buffer);
 
     private:
         static const ofColor

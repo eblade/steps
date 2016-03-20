@@ -9,25 +9,29 @@ int Point::getLength() {
     return 0;
 }
 
-ExecutionResult Point::execute(long long time, TickBuffer* buffer) {
-    ExecutionResult result;
+ChangeSet Point::execute(long long time, TickBuffer* buffer) {
+    ChangeSet result;
     return result;
 }
 
 void Point::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 }
 
-void Point::click() {
+ChangeSet Point::click() {
+    ChangeSet changes;
     active = !active;
+    return changes;
 }
 
 // ===========================================================================
 // DUMMY EVENT
 
-DummyEvent::DummyEvent() {
-    time = 0;
+DummyEvent::DummyEvent(string name, long long time) {
+    this->name = name;
+    this->time = time;
+    cout << "Sched " << name << " @" << time << " addr " << this << endl;
 }
 
 void DummyEvent::fire() {
-    cout << "Fire! " << time << endl;
+    cout << "Fire! " << name << " @" << time << " addr " << this << endl;
 }

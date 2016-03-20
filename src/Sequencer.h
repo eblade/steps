@@ -26,6 +26,7 @@ class Sequencer {
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer);
+        void change(ChangeSet changes);
 
         string name;
         int cursor;

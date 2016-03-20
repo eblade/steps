@@ -15,18 +15,16 @@ int NotePoint::getLength() {
     return length;
 }
 
-ExecutionResult NotePoint::execute(long long time, TickBuffer* buffer) {
-    ExecutionResult result;
+ChangeSet NotePoint::execute(long long time, TickBuffer* buffer) {
+    ChangeSet changes;
     if (active) {
-        DummyEvent* start_event = new DummyEvent();
-        DummyEvent* stop_event = new DummyEvent();
-        start_event->time = time;
-        stop_event->time = time + length;
+        DummyEvent* start_event = new DummyEvent("ON", time);
+        DummyEvent* stop_event = new DummyEvent("OFF", time + length);
         buffer->push(start_event);
         buffer->push(stop_event);
     }
-    result.position_delta = 1;
-    return result;
+    changes.position_delta = 1;
+    return changes;
 }
 
 void NotePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
@@ -51,8 +49,4 @@ void NotePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
         ofSetColor(ofColor::lightGray);
     }
     font.drawString(ofToString(value), x + 3, y + 13);
-}
-
-void NotePoint::click() {
-    active = !active;
 }

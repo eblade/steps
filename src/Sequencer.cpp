@@ -50,6 +50,11 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 }
 
 void Sequencer::step(TickBuffer* buffer) {
+    ackumulated += buffer->period;
+    //cout << "step ======================== " << ackumulated << " release=" << release << " period=" << buffer->period << endl;
+    if (!active) {
+        return;
+    }
     while (true) {
         if (data[position] == NULL) {
             position = 0;
@@ -60,17 +65,24 @@ void Sequencer::step(TickBuffer* buffer) {
         }
         Point* point = data[position];
         last_executed = position;
-        ExecutionResult result = point->execute(release, buffer);
-        release += point->getLength();
-        if (result.goto_position == -1) {
-            position += result.position_delta;
-            if (result.position_delta <= 0) {
-                break;
-            }
-        } else {
-            position = result.goto_position;
+        change(point->execute(ackumulated, buffer));
+        release = ackumulated + point->getLength();
+        if (last_executed >= position) {
             break;
         }
+    }
+}
+
+void Sequencer::change(ChangeSet changes) {
+    if (changes.goto_position == -1) {
+        position += changes.position_delta;
+    } else {
+        position = changes.goto_position;
+    }
+    if (changes.set_active) {
+        active = true;
+    } else if (changes.set_inactive) {
+        active = false;
     }
 }
 
@@ -90,7 +102,7 @@ void Sequencer::cursorRight() {
 
 void Sequencer::cursorClick() {
     if (data[cursor] != NULL) {
-        data[cursor]->click();
+        change(data[cursor]->click());
     }
 }
 

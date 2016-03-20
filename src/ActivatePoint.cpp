@@ -9,15 +9,10 @@ ActivatePoint::ActivatePoint() : Point() {
     type = POINT_TYPE_ACTIVATE;
 }
 
-ExecutionResult ActivatePoint::execute(long long time, TickBuffer* buffer) {
-    ExecutionResult result;
-    if (active) {
-        result.set_active = true;
-    } else {
-        result.set_inactive = true;
-    }
-    result.position_delta = 1;
-    return result;
+ChangeSet ActivatePoint::execute(long long time, TickBuffer* buffer) {
+    ChangeSet changes;
+    changes.position_delta = 1;
+    return changes;
 }
 
 void ActivatePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
@@ -29,6 +24,14 @@ void ActivatePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     ofDrawRectangle(x + POINT_SPACING, y + POINT_SPACING , POINT_INNER, POINT_INNER);
 }
 
-void ActivatePoint::click() {
+ChangeSet ActivatePoint::click() {
+    ChangeSet changes;
     active = !active;
+    if (active) {
+        changes.set_active = true;
+    } else {
+        changes.set_inactive = true;
+        changes.goto_position = 0;
+    }
+    return changes;
 }
