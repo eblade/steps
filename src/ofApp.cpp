@@ -2,6 +2,7 @@
 
 void ofApp::setup() {
     buffer = new TickBuffer(60);
+    output = new Output();
     addNewLine(-1);
 
     cursor = 0;
@@ -33,6 +34,11 @@ void ofApp::draw() {
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
 
     buffer->draw(ofGetWidth() - 90, 50);
+
+    for (int i = 0; i < OUTPUT_MAX; i++) {
+        font.drawString(output->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
+    }
+
 }
 
 void ofApp::step() {
@@ -99,8 +105,8 @@ void ofApp::keyPressed(int key) {
         addNewLine(cursor);
     } else if (key == 'g') {
         sequencer[cursor]->cursorHold();
-    //} else if (key == 'd') {
-    //    sequencer[cursor]->cursorDivision();
+    } else if (key == 'O') {
+        sequencer[cursor]->cursorOutput();
     }
 }
 

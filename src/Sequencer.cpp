@@ -9,6 +9,7 @@ Sequencer::Sequencer() {
     position = 0;
     last_executed = 0;
     release = 0;
+    output = 0;
 
     data[0] = new ActivatePoint();
     
@@ -88,6 +89,9 @@ void Sequencer::change(ChangeSet changes) {
     } else if (changes.set_inactive) {
         active = false;
     }
+    if (changes.output != -1) {
+        output = changes.output;
+    }
 }
 
 void Sequencer::cursorLeft() {
@@ -155,6 +159,13 @@ void Sequencer::cursorNote(int value) {
 void Sequencer::cursorHold() {
     Point* point = new Point();
     // FIXME
+    if (!cursorInsert(point)) {
+        delete point;
+    }
+}
+
+void Sequencer::cursorOutput() {
+    Point* point = new OutputPoint();
     if (!cursorInsert(point)) {
         delete point;
     }

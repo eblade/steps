@@ -15,11 +15,17 @@
 #include "Ticking.h"
 
 struct ChangeSet {
-    ChangeSet() : position_delta(0), goto_position(-1), set_active(false), set_inactive(false) {}
+    ChangeSet() : position_delta(0),
+                  goto_position(-1),
+                  set_active(false),
+                  set_inactive(false),
+                  output(-1)
+                  {}
     int position_delta;
     int goto_position;
     bool set_active;
     bool set_inactive;
+    int output;
 };
 
 class Point {
