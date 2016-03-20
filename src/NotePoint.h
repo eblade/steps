@@ -8,7 +8,7 @@ class NotePoint : public Point {
     public:
         NotePoint();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(long long time, TickBuffer* buffer);
+        ChangeSet execute(TickBuffer* buffer);
         int getLength();
 
         int value;

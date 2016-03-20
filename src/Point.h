@@ -28,7 +28,7 @@ class Point {
         virtual ~Point() {};
         virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
         virtual ChangeSet click();
-        virtual ChangeSet execute(long long time, TickBuffer* buffer);
+        virtual ChangeSet execute(TickBuffer* buffer);
         virtual int getLength();
 
         int type;

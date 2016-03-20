@@ -26,13 +26,13 @@ class TickBuffer {
         long long start_time;
         int period;
         int xruns;
+        long long relative_time;
 
     private:
         TickEvent* buffer[TICK_BUFFER_SIZE];
         long long now();
         long long position;
         long ticks;
-        long average;
         long long last_time;
 };
 

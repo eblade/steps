@@ -15,12 +15,12 @@ int NotePoint::getLength() {
     return length;
 }
 
-ChangeSet NotePoint::execute(long long time, TickBuffer* buffer) {
+ChangeSet NotePoint::execute(TickBuffer* buffer) {
     ChangeSet changes;
     if (active) {
-        DummyEvent* start_event = new DummyEvent("ON", time);
-        DummyEvent* stop_event = new DummyEvent("OFF", time + length);
+        DummyEvent* start_event = new DummyEvent("ON", buffer->relative_time);
         buffer->push(start_event);
+        DummyEvent* stop_event = new DummyEvent("OFF", buffer->relative_time + length);
         buffer->push(stop_event);
     }
     changes.position_delta = 1;

@@ -36,7 +36,6 @@ class Sequencer {
         int position;
         int last_executed;
         long long release;
-        long long ackumulated;
         Point* data[MAX_LENGTH];
 };
 

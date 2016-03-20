@@ -9,7 +9,6 @@ Sequencer::Sequencer() {
     position = 0;
     last_executed = 0;
     release = 0;
-    ackumulated = 0;
 
     data[0] = new ActivatePoint();
     
@@ -31,7 +30,11 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
         if (data[col] != NULL) {
             data[col]->draw(x, y, col==last_executed, font);
         } else {
-            ofSetColor(ofColor::red);
+            if (active) {
+                ofSetColor(ActivatePoint::c_on);
+            } else {
+                ofSetColor(ActivatePoint::c_off);
+            }
             ofDrawRectangle(x, y, 5, POINT_OUTER);
         }
 
@@ -50,7 +53,6 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 }
 
 void Sequencer::step(TickBuffer* buffer) {
-    ackumulated += buffer->period;
     //cout << "step ======================== " << ackumulated << " release=" << release << " period=" << buffer->period << endl;
     if (!active) {
         return;
@@ -65,8 +67,8 @@ void Sequencer::step(TickBuffer* buffer) {
         }
         Point* point = data[position];
         last_executed = position;
-        change(point->execute(ackumulated, buffer));
-        release = ackumulated + point->getLength();
+        change(point->execute(buffer));
+        release = buffer->relative_time + point->getLength();
         if (last_executed >= position) {
             break;
         }

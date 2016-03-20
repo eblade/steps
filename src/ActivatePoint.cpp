@@ -9,7 +9,7 @@ ActivatePoint::ActivatePoint() : Point() {
     type = POINT_TYPE_ACTIVATE;
 }
 
-ChangeSet ActivatePoint::execute(long long time, TickBuffer* buffer) {
+ChangeSet ActivatePoint::execute(TickBuffer* buffer) {
     ChangeSet changes;
     changes.position_delta = 1;
     return changes;

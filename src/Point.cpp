@@ -9,7 +9,7 @@ int Point::getLength() {
     return 0;
 }
 
-ChangeSet Point::execute(long long time, TickBuffer* buffer) {
+ChangeSet Point::execute(TickBuffer* buffer) {
     ChangeSet result;
     return result;
 }

@@ -1,7 +1,7 @@
 #include "Ticking.h"
 
 TickBuffer::TickBuffer(int resolution) {
-    average = 1000 / resolution;
+    period = 1000 / resolution;
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         buffer[i] = NULL;
     }
@@ -9,12 +9,12 @@ TickBuffer::TickBuffer(int resolution) {
 }
 
 void TickBuffer::reset() {
-    period = 0;
     position = 0;
     xruns = 0;
     ticks = -1; // first tick is never of full length
     start_time = now();
     last_time = 0;
+    relative_time = 0;
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         if (buffer[i] != NULL) {
             delete buffer[i];
@@ -25,31 +25,33 @@ void TickBuffer::reset() {
 
 void TickBuffer::tick() {
     if (ticks == -1) {
+        start_time = now();
         last_time = now();
         ticks = 0;
-    } else {
-        long long this_time = now();
-        period = this_time - last_time;
-        while (true) {
-            TickEvent* next_event = buffer[position];
-            if (next_event != NULL) {
-                long long next_time = next_event->time;
-                if ((next_time <= this_time) || ((next_time - this_time) < (average / 2))) {
-                    next_event->fire();
-                    delete next_event;
-                    buffer[position] = NULL;
-                    position++;
-                    position = position % TICK_BUFFER_SIZE;
-                } else {
-                    break;
-                }
+    }
+
+    long long this_time = now();
+    period = this_time - last_time;
+    relative_time += period;
+    while (true) {
+        TickEvent* next_event = buffer[position];
+        if (next_event != NULL) {
+            long long next_time = next_event->time;
+            if ((next_time <= this_time) || ((next_time - this_time) < (period / 2))) {
+                next_event->fire();
+                delete next_event;
+                buffer[position] = NULL;
+                position++;
+                position = position % TICK_BUFFER_SIZE;
             } else {
                 break;
             }
+        } else {
+            break;
         }
-        ticks++;
-        last_time = this_time;
     }
+    ticks++;
+    last_time = this_time;
 }
 
 void TickBuffer::push(TickEvent* event) {
@@ -59,21 +61,19 @@ void TickBuffer::push(TickEvent* event) {
         if (buffer[suggested] == NULL) {
             buffer[suggested] = event;
             return;
-        } else if (buffer[suggested]->time > event->time) {
-            int j;
-            for (j = 0; j > (TICK_BUFFER_SIZE - i - 1); j++) {
-                int to_move = (i + j + position) % TICK_BUFFER_SIZE;
-                if (buffer[to_move] == NULL) {
-                    buffer[suggested] = event;
-                    return;
+        } else if (event->time < buffer[suggested]->time) {
+            for (int j = TICK_BUFFER_SIZE - i - 1; j >= 0; j--) {
+                int move_from = (i + j + position) % TICK_BUFFER_SIZE;
+                int move_to = (i + j + position + 1) % TICK_BUFFER_SIZE;
+                if (buffer[move_from] != NULL) {
+                    buffer[move_to] = buffer[move_from];
                 }
-                buffer[(to_move + 1) % TICK_BUFFER_SIZE] = buffer[to_move];
             }
             buffer[suggested] = event;
-            xruns++;
             return;
         }
     }
+    cout << "WARNING: FULL RING XRUN!" << endl;
     xruns++;
 }
 
@@ -94,6 +94,8 @@ void TickBuffer::draw(int x, int y) {
         py = y + (i / 16) * 5;
         if (buffer[i] == NULL) {
             ofSetColor(ofColor::gray);
+        } else if (i == position) {
+            ofSetColor(ofColor::yellow);
         } else {
             ofSetColor(ofColor::green);
         }

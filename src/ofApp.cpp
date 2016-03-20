@@ -28,8 +28,8 @@ void ofApp::draw() {
         sequencer[i]->draw(i, i==cursor, font);
     }
     ofSetColor(255);
-    font.drawString("x: " + ofToString((int)sequencer[cursor]->cursor), ofGetWidth() - 90, 20);
-    font.drawString("y: " + ofToString((int)cursor), ofGetWidth() - 90, 30);
+    font.drawString(ofToString((int)sequencer[cursor]->cursor) + ", " + ofToString((int)cursor), ofGetWidth() - 90, 10);
+    font.drawString("xruns: " + ofToString(buffer->xruns), ofGetWidth() - 90, 25);
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
 
     buffer->draw(ofGetWidth() - 90, 50);
