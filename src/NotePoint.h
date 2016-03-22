@@ -3,6 +3,7 @@
 
 #include "Point.h"
 #include "Midi.h"
+#include "Output.h"
 
 
 class NotePoint : public Point {
@@ -14,6 +15,7 @@ class NotePoint : public Point {
 
         int note;
         int velocity;
+        OutputRouter* output_router;
 
     private:
         int length;
