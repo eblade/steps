@@ -2,7 +2,15 @@
 
 void ofApp::setup() {
     buffer = new TickBuffer(60);
+
     output_router = new OutputRouter();
+    OutputSettings output_settings;
+    output_settings.device = 1;
+    output_settings.type = OUTPUT_TYPE_MIDI;
+    output_settings.channel = 1;
+    output_router->install(1, output_settings);
+    
+
     addNewLine(-1);
 
     cursor = 0;
@@ -10,6 +18,11 @@ void ofApp::setup() {
 
     font.load(OF_TTF_SANS, 9, true, true);
     ofEnableAlphaBlending();
+}
+
+void ofApp::exit() {
+    delete buffer;
+    delete output_router;
 }
 
 void ofApp::update() {

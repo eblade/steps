@@ -17,6 +17,7 @@ class TickEvent {
 class TickBuffer {
     public:
         TickBuffer(int resolution);
+        ~TickBuffer();
         void reset();
         void tick();
         void push(TickEvent* event);

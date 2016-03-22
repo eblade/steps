@@ -2,8 +2,10 @@
 #define OUTPUT_H_
 
 #include "ofMain.h"
+#include "ofxMidi.h"
 
 #define OUTPUT_MAX 16
+#define OUTPUT_MAX_DEVICES 16
 
 #define OUTPUT_TYPE_DUMMY 0
 #define OUTPUT_TYPE_MIDI 1
@@ -25,6 +27,7 @@ struct OutputEvent {
 class OutputRouter {
     public:
         OutputRouter();
+        ~OutputRouter();
         bool install(int address, OutputSettings settings);
         void uninstall(int address);
         void send(int address, OutputEvent event);
@@ -34,6 +37,7 @@ class OutputRouter {
         void sendDummy(OutputSettings settings, OutputEvent event);
         void sendMidi(OutputSettings settings, OutputEvent event);
         OutputSettings output[OUTPUT_MAX];
+        ofxMidiOut* midi_output[OUTPUT_MAX_DEVICES];
 };
 
 #endif /* OUTPUT_H_ */

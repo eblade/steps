@@ -8,6 +8,12 @@ MidiEvent::MidiEvent(long long time, OutputRouter* output_router, int output, in
     this->velocity = velocity;
 }
 
+MidiEvent::~MidiEvent() {
+    if (velocity == 0) {
+        fire(); // This is a NoteOff
+    }
+}
+
 void MidiEvent::fire() {
     cout << "MIDI! " << note << " @" << output << " note " << note << "/" << velocity << endl;
     OutputEvent output_event;

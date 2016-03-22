@@ -8,6 +8,15 @@ TickBuffer::TickBuffer(int resolution) {
     this->reset();
 }
 
+TickBuffer::~TickBuffer() {
+    for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
+        if (buffer[i] != NULL) {
+            delete buffer[i];
+        }
+        buffer[i] = NULL;
+    }
+}
+
 void TickBuffer::reset() {
     position = 0;
     xruns = 0;
