@@ -64,7 +64,7 @@ string OutputRouter::getOutputString(int address) {
             return ofToString(address) + ":DUMMY " 
                                        + ofToString(output[address].device) + "/" 
                                        + ofToString(output[address].channel);
-        } else if (output[address].type == OUTPUT_TYPE_DUMMY) {
+        } else if (output[address].type == OUTPUT_TYPE_MIDI) {
             return ofToString(address) + ":MIDI "
                                        + ofToString(output[address].device) + "/" 
                                        + ofToString(output[address].channel);

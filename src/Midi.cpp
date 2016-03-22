@@ -10,7 +10,7 @@ MidiEvent::MidiEvent(long long time, OutputRouter* output_router, int output, in
 
 MidiEvent::~MidiEvent() {
     if (velocity == 0) {
-        fire(); // This is a NoteOff
+        fire(); // This is a NoteOff, send it before dying
     }
 }
 

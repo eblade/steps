@@ -2,15 +2,16 @@
 
 void ofApp::setup() {
     buffer = new TickBuffer(60);
-
     output_router = new OutputRouter();
+
+    // Set up the first non-through device as 0
     OutputSettings output_settings;
     output_settings.device = 1;
     output_settings.type = OUTPUT_TYPE_MIDI;
     output_settings.channel = 1;
-    output_router->install(1, output_settings);
-    
+    output_router->install(0, output_settings);
 
+    // Add a first line
     addNewLine(-1);
 
     cursor = 0;
@@ -33,6 +34,8 @@ void ofApp::draw() {
     if (playing) {
         step();
         buffer->tick();
+    } else {
+        buffer->clear();
     }
     ofBackground(ofColor::black);
     for (int i = 0; i < MAX_LINES; i++) {
@@ -51,7 +54,6 @@ void ofApp::draw() {
     for (int i = 0; i < OUTPUT_MAX; i++) {
         font.drawString(output_router->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
     }
-
 }
 
 void ofApp::step() {
@@ -74,6 +76,8 @@ void ofApp::keyPressed(int key) {
         cursorDown();
     } else if (key == ' ') {
         sequencer[cursor]->cursorClick();
+    } else if (key == 'P') {
+        playing = !playing;
     } else if (key == 'x' || key == OF_KEY_DEL) {
         if (sequencer[cursor]->cursor == 0) {
             deleteLine(cursor);

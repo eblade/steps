@@ -19,6 +19,7 @@ class TickBuffer {
         TickBuffer(int resolution);
         ~TickBuffer();
         void reset();
+        void clear();
         void tick();
         void push(TickEvent* event);
         void draw(int x, int y);
