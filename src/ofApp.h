@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "Sequencer.h"
 #include "Ticking.h"
+#include "Output.h"
 
 
 #define MAX_LINES 8
@@ -11,6 +12,7 @@
 class ofApp : public ofBaseApp {
 	public:
 		void setup();
+        void exit();
 		void update();
 		void draw();
 		
@@ -37,5 +39,6 @@ class ofApp : public ofBaseApp {
         ofTrueTypeFont font;
         Sequencer* sequencer[MAX_LINES];
         TickBuffer* buffer;
+        OutputRouter* output_router;
         bool playing;
 };

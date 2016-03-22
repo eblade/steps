@@ -9,6 +9,7 @@ Sequencer::Sequencer() {
     position = 0;
     last_executed = 0;
     release = 0;
+    output = 0;
 
     data[0] = new ActivatePoint();
     
@@ -52,7 +53,9 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
     }
 }
 
-void Sequencer::step(TickBuffer* buffer) {
+void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
+    SequencerState state;
+    state.output_router = output_router;
     if (!active) {
         return;
     }
@@ -66,7 +69,8 @@ void Sequencer::step(TickBuffer* buffer) {
         }
         Point* point = data[position];
         last_executed = position;
-        change(point->execute(buffer));
+        state.output = output;
+        change(point->execute(buffer, state));
         release = buffer->relative_time + point->getLength();
         if (last_executed >= position) {
             break;
@@ -87,6 +91,9 @@ void Sequencer::change(ChangeSet changes) {
         active = true;
     } else if (changes.set_inactive) {
         active = false;
+    }
+    if (changes.output != -1) {
+        output = changes.output;
     }
 }
 
@@ -140,14 +147,14 @@ bool Sequencer::cursorInsert(Point* point) {
     }
 }
 
-void Sequencer::cursorNote(int value) {
+void Sequencer::cursorNote(int note) {
     if (data[cursor] != NULL) {
         if (data[cursor]->type == POINT_TYPE_NOTE) {
-            ((NotePoint*) data[cursor])->value = octave * 12 + value;
+            ((NotePoint*) data[cursor])->note = octave * 12 + note;
         }
     } else {
         data[cursor] = new NotePoint();
-        ((NotePoint*) data[cursor])->value = octave * 12 + value;
+        ((NotePoint*) data[cursor])->note = octave * 12 + note;
         cursorRight();
     }
 }
@@ -155,6 +162,13 @@ void Sequencer::cursorNote(int value) {
 void Sequencer::cursorHold() {
     Point* point = new Point();
     // FIXME
+    if (!cursorInsert(point)) {
+        delete point;
+    }
+}
+
+void Sequencer::cursorOutput() {
+    Point* point = new OutputPoint();
     if (!cursorInsert(point)) {
         delete point;
     }

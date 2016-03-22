@@ -8,13 +8,21 @@ TickBuffer::TickBuffer(int resolution) {
     this->reset();
 }
 
+TickBuffer::~TickBuffer() {
+    clear();
+}
+
 void TickBuffer::reset() {
-    position = 0;
     xruns = 0;
     ticks = -1; // first tick is never of full length
     start_time = now();
     last_time = 0;
     relative_time = 0;
+    clear();
+}
+
+void TickBuffer::clear() {
+    position = 0;
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         if (buffer[i] != NULL) {
             delete buffer[i];

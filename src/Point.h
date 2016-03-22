@@ -13,13 +13,29 @@
 
 #include "ofMain.h"
 #include "Ticking.h"
+#include "Output.h"
 
 struct ChangeSet {
-    ChangeSet() : position_delta(0), goto_position(-1), set_active(false), set_inactive(false) {}
+    ChangeSet() :
+        position_delta(0),
+        goto_position(-1),
+        set_active(false),
+        set_inactive(false),
+        output(-1)
+        {}
     int position_delta;
     int goto_position;
     bool set_active;
     bool set_inactive;
+    int output;
+};
+
+struct SequencerState {
+    SequencerState () :
+        output(0)
+        {}
+    int output;
+    OutputRouter* output_router;
 };
 
 class Point {
@@ -28,7 +44,7 @@ class Point {
         virtual ~Point() {};
         virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
         virtual ChangeSet click();
-        virtual ChangeSet execute(TickBuffer* buffer);
+        virtual ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         virtual int getLength();
 
         int type;

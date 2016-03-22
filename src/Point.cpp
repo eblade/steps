@@ -9,7 +9,7 @@ int Point::getLength() {
     return 0;
 }
 
-ChangeSet Point::execute(TickBuffer* buffer) {
+ChangeSet Point::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet result;
     return result;
 }
