@@ -1,12 +1,12 @@
 #include "Output.h"
 
-Output::Output() {
+OutputRouter::OutputRouter() {
     for (int i = 0; i < OUTPUT_MAX; i++) {
         output[i] = OutputSettings();
     }
 };
 
-bool Output::install(int address, OutputSettings settings) {
+bool OutputRouter::install(int address, OutputSettings settings) {
     if (address >= 0 && address < OUTPUT_MAX && !output[address].used) {
         output[address].type = settings.type;
         output[address].device = settings.device;
@@ -19,7 +19,7 @@ bool Output::install(int address, OutputSettings settings) {
     }
 }
 
-void Output::uninstall(int address) {
+void OutputRouter::uninstall(int address) {
     if (address >= 0 && address < OUTPUT_MAX) {
         output[address].used = false;
     } else {
@@ -27,7 +27,7 @@ void Output::uninstall(int address) {
     }
 }
 
-string Output::getOutputString(int address) {
+string OutputRouter::getOutputString(int address) {
     if (!(address >= 0 && address < OUTPUT_MAX)) {
         return ofToString(address) + ":OUT OF BOUNDS";
     } else if (output[address].used == false) {
@@ -46,7 +46,7 @@ string Output::getOutputString(int address) {
     return "?";
 }
 
-void Output::send(int address, OutputEvent event) {
+void OutputRouter::send(int address, OutputEvent event) {
     if (!(address >= 0 && address < OUTPUT_MAX) || output[address].used == false) {
         cerr << "ERROR: Output " << address << " is not installed" << endl;
         return;
@@ -61,7 +61,7 @@ void Output::send(int address, OutputEvent event) {
     }
 }
 
-void Output::sendDummy(OutputSettings settings, OutputEvent event) {
+void OutputRouter::sendDummy(OutputSettings settings, OutputEvent event) {
     cout << "SEND DUMMY device=" << settings.device 
          << " channel=" << settings.channel
          << " note=" << event.note
@@ -69,7 +69,7 @@ void Output::sendDummy(OutputSettings settings, OutputEvent event) {
          << endl;
 }
 
-void Output::sendMidi(OutputSettings settings, OutputEvent event) {
+void OutputRouter::sendMidi(OutputSettings settings, OutputEvent event) {
     cout << "SEND DUMMY device=" << settings.device 
          << " channel=" << settings.channel
          << " note=" << event.note

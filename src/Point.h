@@ -13,6 +13,7 @@
 
 #include "ofMain.h"
 #include "Ticking.h"
+#include "Output.h"
 
 struct ChangeSet {
     ChangeSet() :
@@ -34,6 +35,7 @@ struct SequencerState {
         output(0)
         {}
     int output;
+    OutputRouter* output_router;
 };
 
 class Point {

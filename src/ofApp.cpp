@@ -2,7 +2,7 @@
 
 void ofApp::setup() {
     buffer = new TickBuffer(60);
-    output = new Output();
+    output_router = new OutputRouter();
     addNewLine(-1);
 
     cursor = 0;
@@ -36,7 +36,7 @@ void ofApp::draw() {
     buffer->draw(ofGetWidth() - 90, 50);
 
     for (int i = 0; i < OUTPUT_MAX; i++) {
-        font.drawString(output->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
+        font.drawString(output_router->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
     }
 
 }
@@ -46,7 +46,7 @@ void ofApp::step() {
         if (sequencer[i] == NULL) {
             break;
         }
-        sequencer[i]->step(buffer);
+        sequencer[i]->step(buffer, output_router);
     }
 }
 

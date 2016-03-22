@@ -22,9 +22,9 @@ struct OutputEvent {
     int velocity;
 };
 
-class Output {
+class OutputRouter {
     public:
-        Output();
+        OutputRouter();
         bool install(int address, OutputSettings settings);
         void uninstall(int address);
         void send(int address, OutputEvent event);

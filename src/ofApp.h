@@ -38,6 +38,6 @@ class ofApp : public ofBaseApp {
         ofTrueTypeFont font;
         Sequencer* sequencer[MAX_LINES];
         TickBuffer* buffer;
-        Output* output;
+        OutputRouter* output_router;
         bool playing;
 };
