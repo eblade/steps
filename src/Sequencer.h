@@ -24,7 +24,7 @@ class Sequencer {
         bool cursorInsert(Point* point);
         void cursorHold();
         void cursorOutput();
-        void cursorNote(int value);
+        void cursorNote(int note);
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer);

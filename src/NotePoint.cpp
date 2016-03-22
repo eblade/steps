@@ -7,7 +7,8 @@ const ofColor NotePoint::c_sel_inactive(40, 40, 40);
 
 NotePoint::NotePoint() : Point() {
     type = POINT_TYPE_NOTE;
-    value = 0;
+    note = 0;
+    velocity = 100;
     length = 1000;
 }
 
@@ -15,12 +16,14 @@ int NotePoint::getLength() {
     return length;
 }
 
-ChangeSet NotePoint::execute(TickBuffer* buffer) {
+ChangeSet NotePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     if (active) {
-        DummyEvent* start_event = new DummyEvent("ON", buffer->relative_time);
+        MidiEvent* start_event = new MidiEvent(
+            buffer->relative_time, sequencer.output, note, velocity);
         buffer->push(start_event);
-        DummyEvent* stop_event = new DummyEvent("OFF", buffer->relative_time + length);
+        MidiEvent* stop_event = new MidiEvent(
+            buffer->relative_time + length, sequencer.output, note, 0);
         buffer->push(stop_event);
     }
     changes.position_delta = 1;
@@ -48,5 +51,6 @@ void NotePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     } else {
         ofSetColor(ofColor::lightGray);
     }
-    font.drawString(ofToString(value), x + 3, y + 13);
+    font.drawString(ofToString(note), x + 3, y + 13);
+    font.drawString(ofToString(velocity), x + 3, y + 28);
 }

@@ -9,7 +9,7 @@ ActivatePoint::ActivatePoint() : Point() {
     type = POINT_TYPE_ACTIVATE;
 }
 
-ChangeSet ActivatePoint::execute(TickBuffer* buffer) {
+ChangeSet ActivatePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     changes.position_delta = 1;
     return changes;

@@ -54,6 +54,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 }
 
 void Sequencer::step(TickBuffer* buffer) {
+    SequencerState state;
     if (!active) {
         return;
     }
@@ -67,7 +68,8 @@ void Sequencer::step(TickBuffer* buffer) {
         }
         Point* point = data[position];
         last_executed = position;
-        change(point->execute(buffer));
+        state.output = output;
+        change(point->execute(buffer, state));
         release = buffer->relative_time + point->getLength();
         if (last_executed >= position) {
             break;
@@ -144,14 +146,14 @@ bool Sequencer::cursorInsert(Point* point) {
     }
 }
 
-void Sequencer::cursorNote(int value) {
+void Sequencer::cursorNote(int note) {
     if (data[cursor] != NULL) {
         if (data[cursor]->type == POINT_TYPE_NOTE) {
-            ((NotePoint*) data[cursor])->value = octave * 12 + value;
+            ((NotePoint*) data[cursor])->note = octave * 12 + note;
         }
     } else {
         data[cursor] = new NotePoint();
-        ((NotePoint*) data[cursor])->value = octave * 12 + value;
+        ((NotePoint*) data[cursor])->note = octave * 12 + note;
         cursorRight();
     }
 }

@@ -9,7 +9,7 @@ class OutputPoint : public Point {
     public:
         OutputPoint();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(TickBuffer* buffer);
+        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         ChangeSet click();
 
     private:

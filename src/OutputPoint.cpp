@@ -7,7 +7,7 @@ OutputPoint::OutputPoint() {
     output = 0;
 }
 
-ChangeSet OutputPoint::execute(TickBuffer* buffer) {
+ChangeSet OutputPoint::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     changes.output = output;
     changes.position_delta = 1;
@@ -35,6 +35,6 @@ void OutputPoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     } else {
         ofSetColor(ofColor::lightGray);
     }
-    font.drawString("OUT>", x + 3, y + 13);
+    font.drawString("OUT", x + 3, y + 13);
     font.drawString(ofToString(output), x + 3, y + 33);
 }

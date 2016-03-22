@@ -2,17 +2,18 @@
 #define NOTEPOINT_H_
 
 #include "Point.h"
+#include "Midi.h"
 
 
 class NotePoint : public Point {
     public:
         NotePoint();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(TickBuffer* buffer);
+        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         int getLength();
 
-        int value;
-
+        int note;
+        int velocity;
 
     private:
         int length;
