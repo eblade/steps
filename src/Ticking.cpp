@@ -2,6 +2,7 @@
 
 TickBuffer::TickBuffer(int resolution) {
     period = 1000 / resolution;
+    bpm = 120.;
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         buffer[i] = NULL;
     }

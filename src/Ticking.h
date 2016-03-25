@@ -29,6 +29,7 @@ class TickBuffer {
         int period;
         int xruns;
         long long relative_time;
+        float bpm;
 
     private:
         TickEvent* buffer[TICK_BUFFER_SIZE];

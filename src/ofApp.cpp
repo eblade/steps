@@ -46,7 +46,7 @@ void ofApp::draw() {
     }
     ofSetColor(255);
     font.drawString(ofToString((int)sequencer[cursor]->cursor) + ", " + ofToString((int)cursor), ofGetWidth() - 90, 10);
-    font.drawString("xruns: " + ofToString(buffer->xruns), ofGetWidth() - 90, 25);
+    font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 25);
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
 
     buffer->draw(ofGetWidth() - 90, 50);

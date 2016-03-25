@@ -21,13 +21,15 @@ struct ChangeSet {
         goto_position(-1),
         set_active(false),
         set_inactive(false),
-        output(-1)
+        output(-1),
+        period(-1)
         {}
     int position_delta;
     int goto_position;
     bool set_active;
     bool set_inactive;
     int output;
+    int period;
 };
 
 struct SequencerState {
