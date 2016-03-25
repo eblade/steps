@@ -9,15 +9,15 @@ Sequencer::Sequencer() {
     last_executed = 0;
     release = 0;
     output = 0;
-    period = 0;
+    period = 1000;
 
-    data[0] = new ActivatePoint();
-    
-    for (int i = 1; i < MAX_LENGTH; i++) {
+    for (int i = 1; i < MAX_POINTS; i++) {
         data[i] = NULL;
     }
 
+    data[0] = new ActivatePoint();
     cursor = 1;
+    ofLogNotice(APPLICATION) << "Seqeuncer setup ok.";
 }
 
 void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
@@ -25,7 +25,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 
     x = 0;
     y = POINT_OUTER * row;
-    for (int col = 0; col < MAX_LENGTH; col++) {
+    for (int col = 0; col < MAX_POINTS; col++) {
         x = POINT_OUTER * col;
 
         if (data[col] != NULL) {
@@ -81,7 +81,7 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
 void Sequencer::change(ChangeSet changes, TickBuffer* buffer) {
     if (changes.goto_position == -1) {
         position += changes.position_delta;
-        if (position >= MAX_LENGTH) {
+        if (position >= MAX_POINTS) {
             position = 0;
         }
     } else {
@@ -110,7 +110,7 @@ void Sequencer::cursorLeft() {
 }
 
 void Sequencer::cursorRight() {
-    if (cursor < (MAX_LENGTH - 1)) {
+    if (cursor < (MAX_POINTS - 1)) {
         if (data[cursor] != NULL) {
             cursor++;
         }
@@ -126,18 +126,18 @@ void Sequencer::cursorClick() {
 void Sequencer::cursorDelete() {
     if (data[cursor] != NULL) {
         Point* retired = data[cursor];
-        for (int i = cursor; i < (MAX_LENGTH - 1); i++) {
+        for (int i = cursor; i < (MAX_POINTS - 1); i++) {
             data[i] = data[i + 1];
         }
-        data[MAX_LENGTH - 1] = NULL;
+        data[MAX_POINTS - 1] = NULL;
         delete retired;
     }
 }
 
 bool Sequencer::cursorInsert(Point* point) {
     if (data[cursor] != NULL) {
-        if (data[MAX_LENGTH - 1] == NULL) {
-            for (int i = MAX_LENGTH - 1; i >= cursor; i--) {
+        if (data[MAX_POINTS - 1] == NULL) {
+            for (int i = MAX_POINTS - 1; i >= cursor; i--) {
                 data[i] = data[i - 1];
             }
             data[cursor] = point;
@@ -188,12 +188,12 @@ void Sequencer::cursorDivision(int denominator) {
 }
 
 int Sequencer::getLength() {
-    for (int i = 0; i < MAX_LENGTH; i++) {
+    for (int i = 0; i < MAX_POINTS; i++) {
         if (data[i] == NULL) {
             return i;
         }
     }
-    return MAX_LENGTH;
+    return MAX_POINTS;
 }
 
 void Sequencer::setCursor(int wanted) {

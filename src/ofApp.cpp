@@ -1,7 +1,13 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
+    // Logging
+    ofSetLogLevel(OF_LOG_VERBOSE);
+
+    // Setup up the timed buffer
     buffer = new TickBuffer(60);
+
+    // Setup up the Output Router
     output_router = new OutputRouter();
 
     // Set up the first non-through device as 0
@@ -11,19 +17,30 @@ void ofApp::setup() {
     output_settings.channel = 1;
     output_router->install(0, output_settings);
 
-    // Add a first line
-    addNewLine(-1);
-
-    cursor = 0;
+    // Create a new Page
+    for (int i = 0; i < MAX_PAGES; i++) {
+        page[i] = NULL;
+    }
+    active_page = addPage();
     playing = true;
 
+    // Graphics
     font.load(OF_TTF_SANS, 9, true, true);
     ofEnableAlphaBlending();
+    ofSetVerticalSync(true);
+
+    ofLogNotice(APPLICATION) << "Done with setup.";
 }
 
 void ofApp::exit() {
     delete buffer;
     delete output_router;
+    for (int i = 0; i < MAX_PAGES; i++) {
+        if (page[i] != NULL) {
+            delete page[i];
+            page[i] = NULL;
+        }
+    }
 }
 
 void ofApp::update() {
@@ -37,15 +54,18 @@ void ofApp::draw() {
     } else {
         buffer->clear();
     }
+
+    // Clear the background
     ofBackground(ofColor::black);
-    for (int i = 0; i < MAX_LINES; i++) {
-        if (sequencer[i] == NULL) {
-            break;
-        }
-        sequencer[i]->draw(i, i==cursor, font);
+
+    // Draw the active page
+    if (page[active_page] != NULL) {
+        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font);
     }
+
+    // Draw some debug info to the right
     ofSetColor(255);
-    font.drawString(ofToString((int)sequencer[cursor]->cursor) + ", " + ofToString((int)cursor), ofGetWidth() - 90, 10);
+    font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 10);
     font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 25);
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
 
@@ -57,75 +77,24 @@ void ofApp::draw() {
 }
 
 void ofApp::step() {
-    for (int i = 0; i < MAX_LINES; i++) {
-        if (sequencer[i] == NULL) {
-            break;
-        }
-        sequencer[i]->step(buffer, output_router);
+    if (page[active_page] != NULL) {
+        page[active_page]->step(buffer, output_router);
     }
 }
 
-void ofApp::keyPressed(int key) {
-    if (key == 'h' || key == OF_KEY_LEFT) {
-        sequencer[cursor]->cursorLeft();
-    } else if (key == 'l' || key == OF_KEY_RIGHT) {
-        sequencer[cursor]->cursorRight();
-    } else if (key == 'k' || key == OF_KEY_UP) {
-        cursorUp();
-    } else if (key == 'j' || key == OF_KEY_DOWN) {
-        cursorDown();
-    } else if (key == ' ') {
-        sequencer[cursor]->cursorClick();
-    } else if (key == 'P') {
-        playing = !playing;
-    } else if (key == 'x' || key == OF_KEY_DEL) {
-        if (sequencer[cursor]->cursor == 0) {
-            deleteLine(cursor);
-        } else {
-            sequencer[cursor]->cursorDelete();
+int ofApp::addPage() {
+    for (int i = 0; i < MAX_PAGES; i++) {
+        if (page[i] == NULL) {
+            page[i] = new Page();
+            return i;
         }
-    } else if (key == 'q') {
-        sequencer[cursor]->cursorNote(0);
-    } else if (key == '2') {
-        sequencer[cursor]->cursorNote(1);
-    } else if (key == 'w') {
-        sequencer[cursor]->cursorNote(2);
-    } else if (key == '3') {
-        sequencer[cursor]->cursorNote(3);
-    } else if (key == 'e') {
-        sequencer[cursor]->cursorNote(4);
-    } else if (key == 'r') {
-        sequencer[cursor]->cursorNote(5);
-    } else if (key == '5') {
-        sequencer[cursor]->cursorNote(6);
-    } else if (key == 't') {
-        sequencer[cursor]->cursorNote(7);
-    } else if (key == '6') {
-        sequencer[cursor]->cursorNote(8);
-    } else if (key == 'y') {
-        sequencer[cursor]->cursorNote(9);
-    } else if (key == '7') {
-        sequencer[cursor]->cursorNote(10);
-    } else if (key == 'u') {
-        sequencer[cursor]->cursorNote(11);
-    } else if (key == '8') {
-        sequencer[cursor]->cursorNote(12);
-    } else if (key == 'i') {
-        sequencer[cursor]->cursorNote(13);
-    } else if (key == '9') {
-        sequencer[cursor]->cursorNote(14);
-    } else if (key == 'o') {
-        sequencer[cursor]->cursorNote(15);
-    } else if (key == 'p') {
-        sequencer[cursor]->cursorNote(16);
-    } else if (key == OF_KEY_RETURN) {
-        addNewLine(cursor);
-    } else if (key == 'g') {
-        sequencer[cursor]->cursorHold();
-    } else if (key == 'O') {
-        sequencer[cursor]->cursorOutput();
-    } else if (key == 'n') {
-        sequencer[cursor]->cursorDivision(8);
+    }
+    return -1;
+}
+
+void ofApp::keyPressed(int key) {
+    if (page[active_page] != NULL) {
+        page[active_page]->keyPressed(key);
     }
 }
 
@@ -142,18 +111,8 @@ void ofApp::mouseDragged(int x, int y, int button){
 }
 
 void ofApp::mousePressed(int x, int y, int button){
-    int col = x / 50;
-    int row = y / 50;
-
-    if (row >= MAX_LINES) {
-        return;
-    }
-    if (sequencer[row] == NULL) {
-        return;
-    }
-    sequencer[row]->setCursor(col);
-    if (sequencer[row]->cursor == col) {
-        sequencer[row]->cursorClick();
+    if (page[active_page] != NULL) {
+        page[active_page]->mousePressed(x, y, button);
     }
 }
 
@@ -181,55 +140,3 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
-void ofApp::cursorUp() {
-    if (cursor > 0) {
-        cursor--;
-        sequencer[cursor]->setCursor(sequencer[cursor + 1]->cursor);
-    }
-}
-
-void ofApp::cursorDown() {
-    if (cursor < (MAX_LINES - 1)) {
-        if (sequencer[cursor + 1] != NULL) {
-            cursor++;
-            sequencer[cursor]->setCursor(sequencer[cursor - 1]->cursor);
-        }
-    }
-}
-
-void ofApp::deleteLine(int line) {
-    if (sequencer[line] != NULL) {
-        if (line == 0 && sequencer[1] == NULL) {
-            return; // can't delete the last line
-        }
-        Sequencer* retired = sequencer[cursor];
-        for (int i = line; i < (MAX_LINES - 1); i++) {
-            sequencer[i] = sequencer[i + 1];
-        }
-        if (line == cursor) {
-            sequencer[line]->setCursor(retired->cursor);
-        }
-        sequencer[MAX_LINES - 1] = NULL;
-        delete retired;
-    }
-}
-
-void ofApp::addNewLine(int afterLine) {
-    if (afterLine >= MAX_LINES) {
-        return;
-    }
-    if (sequencer[afterLine + 1] == NULL) {
-        sequencer[afterLine + 1] = new Sequencer();
-        if (cursor == afterLine) {
-            cursor++;
-        }
-    } else if (sequencer[MAX_LINES-1] == NULL && afterLine > 0) {
-        for (int i = MAX_LINES - 1; i > afterLine; i--) {
-            sequencer[i] = sequencer[i - 1];
-        }
-        sequencer[afterLine + 1] = new Sequencer();
-        if (cursor >= afterLine) {
-            cursor++;
-        }
-    }
-}

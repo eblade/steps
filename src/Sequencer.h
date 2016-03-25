@@ -9,8 +9,7 @@
 #include "DivisionPoint.h"
 #include "Ticking.h"
 #include "Output.h"
-
-#define MAX_LENGTH 20
+#include "Const.h"
 
 
 class Sequencer {
@@ -42,7 +41,7 @@ class Sequencer {
         long long release;
         int output;
         int period;
-        Point* data[MAX_LENGTH];
+        Point* data[MAX_POINTS];
 };
 
 #endif /* SEQUENCER_H_ */

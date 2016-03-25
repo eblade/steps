@@ -1,19 +1,10 @@
 #ifndef POINT_H_
 #define POINT_H_
 
-#define POINT_TYPE_NONE 0
-#define POINT_TYPE_NOTE 1
-#define POINT_TYPE_DIVISION 2
-#define POINT_TYPE_ACTIVATE 3
-#define POINT_TYPE_HOLD 4
-
-#define POINT_INNER 46
-#define POINT_OUTER 46
-#define POINT_SPACING 2
-
 #include "ofMain.h"
 #include "Ticking.h"
 #include "Output.h"
+#include "Const.h"
 
 struct ChangeSet {
     ChangeSet() :

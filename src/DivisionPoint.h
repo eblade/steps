@@ -1,6 +1,7 @@
 #ifndef DIVSIONPOINT_H_
 #define DIVSIONPOINT_H_
 
+
 #include "Point.h"
 
 

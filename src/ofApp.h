@@ -1,12 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Sequencer.h"
+#include "Const.h"
 #include "Ticking.h"
 #include "Output.h"
-
-
-#define MAX_LINES 8
+#include "Page.h"
 
 
 class ofApp : public ofBaseApp {
@@ -27,18 +25,14 @@ class ofApp : public ofBaseApp {
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-        void addNewLine(int afterLine);
-        void deleteLine(int line);
-        void cursorUp();
-        void cursorDown();
 
         void step();
-
-        int cursor;
+        int addPage();
         
         ofTrueTypeFont font;
-        Sequencer* sequencer[MAX_LINES];
         TickBuffer* buffer;
         OutputRouter* output_router;
         bool playing;
+        Page* page[MAX_PAGES];
+        int active_page;
 };
