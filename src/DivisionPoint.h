@@ -1,5 +1,5 @@
-#ifndef NOTEPOINT_H_
-#define NOTEPOINT_H_
+#ifndef DIVSIONPOINT_H_
+#define DIVSIONPOINT_H_
 
 #include "Point.h"
 
@@ -19,11 +19,11 @@ class Division {
 
 class DivisionPoint : public Point {
     public:
-        DivisionPoint();
+        DivisionPoint(int numerator, int denominator, int tuplet);
         ~DivisionPoint();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
-        ChangeSet click();
+        //ChangeSet click();
 
         Division* division;
 
@@ -31,4 +31,4 @@ class DivisionPoint : public Point {
         static const ofColor c_text;
 };
 
-#endif /* NOTEPOINT_H_ */
+#endif /* DIVISIONPOINT_H_ */

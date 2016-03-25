@@ -30,13 +30,16 @@ struct ChangeSet {
     bool set_inactive;
     int output;
     int period;
+    int release;
 };
 
 struct SequencerState {
     SequencerState () :
-        output(0)
+        output(0),
+        period(0)
         {}
     int output;
+    int period;
     OutputRouter* output_router;
 };
 

@@ -6,6 +6,7 @@
 #include "NotePoint.h"
 #include "ActivatePoint.h"
 #include "OutputPoint.h"
+#include "DivisionPoint.h"
 #include "Ticking.h"
 #include "Output.h"
 
@@ -26,20 +27,21 @@ class Sequencer {
         void cursorHold();
         void cursorOutput();
         void cursorNote(int note);
+        void cursorDivision(int denominator);
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer, OutputRouter* output_router);
-        void change(ChangeSet changes);
+        void change(ChangeSet changes, TickBuffer* buffer);
 
         string name;
         int cursor;
-        int division;
         bool active;
         int octave;
         int position;
         int last_executed;
         long long release;
         int output;
+        int period;
         Point* data[MAX_LENGTH];
 };
 

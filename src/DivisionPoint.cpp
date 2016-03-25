@@ -1,10 +1,10 @@
 #include "DivisionPoint.h"
 
-const ofColor DivisionPoint::c_text(0, 100, 50);
+const ofColor DivisionPoint::c_text(0, 200, 100);
 
-DivisionPoint::DivisionPoint() : Point() {
+DivisionPoint::DivisionPoint(int numerator, int denominator, int tuplet) : Point() {
     type = POINT_TYPE_DIVISION;
-    division = new Division(1, 8, 1);
+    division = new Division(numerator, denominator, tuplet);
 }
 
 DivisionPoint::~DivisionPoint() {
@@ -20,9 +20,9 @@ ChangeSet DivisionPoint::execute(TickBuffer* buffer, SequencerState sequencer) {
 
 void DivisionPoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     ofSetColor(c_text);
-    ofDrawRectangle(x + POINT_SPACING, y + POINT_SPACING + POINT_INNER / 2, POINT_INNER, 1);
-    font.drawString(division->getNumeratorString(), x + 3, y + 13);
-    font.drawString(division->getDenominatorString(), x + 3, y + 28);
+    ofDrawRectangle(x + POINT_SPACING, y + 18, POINT_INNER, 1);
+    font.drawString(division->getNumeratorString(), x + 6, y + 13);
+    font.drawString(division->getDenominatorString(), x + 6, y + 33);
 }
 
 Division::Division(int numerator, int denominator, int tuplet) {

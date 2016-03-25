@@ -23,10 +23,11 @@ ChangeSet NotePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
             buffer->relative_time, sequencer.output_router, sequencer.output, note, velocity);
         buffer->push(start_event);
         MidiEvent* stop_event = new MidiEvent(
-            buffer->relative_time + length, sequencer.output_router, sequencer.output, note, 0);
+            buffer->relative_time + sequencer.period, sequencer.output_router, sequencer.output, note, 0);
         buffer->push(stop_event);
     }
     changes.position_delta = 1;
+    changes.release = sequencer.period;
     return changes;
 }
 

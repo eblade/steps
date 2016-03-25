@@ -124,6 +124,8 @@ void ofApp::keyPressed(int key) {
         sequencer[cursor]->cursorHold();
     } else if (key == 'O') {
         sequencer[cursor]->cursorOutput();
+    } else if (key == 'n') {
+        sequencer[cursor]->cursorDivision(8);
     }
 }
 

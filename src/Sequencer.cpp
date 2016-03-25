@@ -3,13 +3,13 @@
 
 Sequencer::Sequencer() {
     name = "";
-    division = 8;
     active = true;
     octave = 3;
     position = 0;
     last_executed = 0;
     release = 0;
     output = 0;
+    period = 0;
 
     data[0] = new ActivatePoint();
     
@@ -70,15 +70,15 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         Point* point = data[position];
         last_executed = position;
         state.output = output;
-        change(point->execute(buffer, state));
-        release = buffer->relative_time + point->getLength();
+        state.period = period;
+        change(point->execute(buffer, state), buffer);
         if (last_executed >= position) {
             break;
         }
     }
 }
 
-void Sequencer::change(ChangeSet changes) {
+void Sequencer::change(ChangeSet changes, TickBuffer* buffer) {
     if (changes.goto_position == -1) {
         position += changes.position_delta;
         if (position >= MAX_LENGTH) {
@@ -94,6 +94,12 @@ void Sequencer::change(ChangeSet changes) {
     }
     if (changes.output != -1) {
         output = changes.output;
+    }
+    if (changes.period != -1) {
+        period = changes.period;
+    }
+    if (buffer != NULL) {
+        release = buffer->relative_time + changes.release;
     }
 }
 
@@ -113,7 +119,7 @@ void Sequencer::cursorRight() {
 
 void Sequencer::cursorClick() {
     if (data[cursor] != NULL) {
-        change(data[cursor]->click());
+        change(data[cursor]->click(), NULL);
     }
 }
 
@@ -169,6 +175,13 @@ void Sequencer::cursorHold() {
 
 void Sequencer::cursorOutput() {
     Point* point = new OutputPoint();
+    if (!cursorInsert(point)) {
+        delete point;
+    }
+}
+
+void Sequencer::cursorDivision(int denominator) {
+    Point* point = new DivisionPoint(1, denominator, 1);
     if (!cursorInsert(point)) {
         delete point;
     }
