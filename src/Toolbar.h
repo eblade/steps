@@ -13,7 +13,7 @@
 class Tool {
     public:
         Tool();
-        draw(int x, int y, ofTrueTypeFont font);
+        void draw(int x, int y, ofTrueTypeFont font);
 
         ChangeSet changes;
         int key[MAX_KEYS];
