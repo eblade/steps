@@ -5,6 +5,7 @@
 #include "Ticking.h"
 #include "Output.h"
 #include "Page.h"
+#include "Toolbar.h"
 
 
 class ofApp : public ofBaseApp {
@@ -35,4 +36,5 @@ class ofApp : public ofBaseApp {
         bool playing;
         Page* page[MAX_PAGES];
         int active_page;
+        Toolbar* toolbar;
 };

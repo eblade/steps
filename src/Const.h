@@ -10,6 +10,11 @@
 
 #define MAX_OUTPUTS 16
 
+#define MAX_KEYS 8
+
+#define MODE_INSERT 0
+#define MODE_COMMAND 1
+
 #define POINT_TYPE_NONE 0
 #define POINT_TYPE_NOTE 1
 #define POINT_TYPE_DIVISION 2

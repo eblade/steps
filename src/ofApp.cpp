@@ -10,6 +10,9 @@ void ofApp::setup() {
     // Setup up the Output Router
     output_router = new OutputRouter();
 
+    // Setup up the Toolbar
+    toolbar = new Toolbar();
+
     // Set up the first non-through device as 0
     OutputSettings output_settings;
     output_settings.device = 1;
@@ -35,6 +38,7 @@ void ofApp::setup() {
 void ofApp::exit() {
     delete buffer;
     delete output_router;
+    delete toolbar;
     for (int i = 0; i < MAX_PAGES; i++) {
         if (page[i] != NULL) {
             delete page[i];
@@ -63,23 +67,33 @@ void ofApp::draw() {
         page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font);
     }
 
+    // Draw the toolbar
+    toolbar->draw(font);
+
     // Draw some debug info to the right
-    ofSetColor(255);
+    ofSetColor(200);
     font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 10);
     font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 25);
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
 
     buffer->draw(ofGetWidth() - 90, 50);
 
+    ofSetColor(200);
     for (int i = 0; i < OUTPUT_MAX; i++) {
         font.drawString(output_router->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
     }
 }
 
 void ofApp::step() {
+    static int toolbox_counter = 0;
     if (page[active_page] != NULL) {
         page[active_page]->step(buffer, output_router);
+        if (toolbox_counter == 0) {
+            toolbox->update(page[active_page]);
+        }
     }
+    toolbox_counter++;
+    toolbox_counter %= 20;
 }
 
 int ofApp::addPage() {
@@ -93,9 +107,7 @@ int ofApp::addPage() {
 }
 
 void ofApp::keyPressed(int key) {
-    if (page[active_page] != NULL) {
-        page[active_page]->keyPressed(key);
-    }
+    toolbox->keyPressed(int key);
 }
 
 void ofApp::keyReleased(int key){
@@ -111,7 +123,10 @@ void ofApp::mouseDragged(int x, int y, int button){
 }
 
 void ofApp::mousePressed(int x, int y, int button){
-    if (page[active_page] != NULL) {
+    int toolbar_start_y = ofGetHeight() - toolbar->getHeight();
+    if (y >= toolbar_start_y) {
+        toolbar->mousePressed(x, y - toolbar_start_y, button);
+    } else if (page[active_page] != NULL) {
         page[active_page]->mousePressed(x, y, button);
     }
 }
