@@ -1,20 +1,20 @@
-#include "OutputPoint.h"
+#include "OutputStep.h"
 
-const ofColor OutputPoint::c_has_output(100, 100, 100);
-const ofColor OutputPoint::c_has_no_output(20, 20, 20);
+const ofColor OutputStep::c_has_output(100, 100, 100);
+const ofColor OutputStep::c_has_no_output(20, 20, 20);
 
-OutputPoint::OutputPoint() {
+OutputStep::OutputStep() {
     output = 0;
 }
 
-ChangeSet OutputPoint::execute(TickBuffer* buffer, SequencerState sequencer) {
+ChangeSet OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     changes.output = output;
     changes.position_delta = 1;
     return changes;
 }
 
-ChangeSet OutputPoint::click() {
+ChangeSet OutputStep::click() {
     ChangeSet changes;
     output++;
     output %= OUTPUT_MAX;
@@ -22,13 +22,13 @@ ChangeSet OutputPoint::click() {
     return changes;
 }
 
-void OutputPoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void OutputStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     if (output > 0) {
         ofSetColor(c_has_output);
     } else {
         ofSetColor(c_has_no_output);
     }
-    ofDrawRectangle(x + POINT_SPACING, y + POINT_SPACING , POINT_INNER, POINT_INNER);
+    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 
     if (active) {
         ofSetColor(ofColor::white);

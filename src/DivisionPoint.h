@@ -1,8 +1,8 @@
-#ifndef DIVSIONPOINT_H_
-#define DIVSIONPOINT_H_
+#ifndef DIVSIONSTEP_H_
+#define DIVSIONSTEP_H_
 
 
-#include "Point.h"
+#include "Step.h"
 
 
 class Division {
@@ -18,10 +18,10 @@ class Division {
 };
 
 
-class DivisionPoint : public Point {
+class DivisionStep : public Step {
     public:
-        DivisionPoint(int numerator, int denominator, int tuplet);
-        ~DivisionPoint();
+        DivisionStep(int numerator, int denominator, int tuplet);
+        ~DivisionStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         //ChangeSet click();
@@ -32,4 +32,4 @@ class DivisionPoint : public Point {
         static const ofColor c_text;
 };
 
-#endif /* DIVISIONPOINT_H_ */
+#endif /* DIVISIONSTEP_H_ */

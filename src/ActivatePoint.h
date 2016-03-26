@@ -1,11 +1,11 @@
-#ifndef ACTIVATEPOINT_H_
-#define ACTIVATEPOINT_H_
+#ifndef ACTIVATESTEP_H_
+#define ACTIVATESTEP_H_
 
-#include "Point.h"
+#include "Step.h"
 
-class ActivatePoint : public Point {
+class ActivateStep : public Step {
     public:
-        ActivatePoint();
+        ActivateStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet click();
         ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
@@ -16,4 +16,4 @@ class ActivatePoint : public Point {
 };
 
 
-#endif /* ACTIVATEPOINT_H_ */
+#endif /* ACTIVATESTEP_H_ */

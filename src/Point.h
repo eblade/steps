@@ -1,5 +1,5 @@
-#ifndef POINT_H_
-#define POINT_H_
+#ifndef STEP_H_
+#define STEP_H_
 
 #include "ofMain.h"
 #include "Ticking.h"
@@ -34,10 +34,10 @@ struct SequencerState {
     OutputRouter* output_router;
 };
 
-class Point {
+class Step {
     public:
-        Point();
-        virtual ~Point() {};
+        Step();
+        virtual ~Step() {};
         virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
         virtual ChangeSet click();
         virtual ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
@@ -54,4 +54,4 @@ class DummyEvent : public TickEvent {
         string name;
 };
 
-#endif /* POINT_H_ */
+#endif /* STEP_H_ */

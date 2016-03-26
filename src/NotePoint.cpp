@@ -1,22 +1,22 @@
-#include "NotePoint.h"
+#include "NoteStep.h"
 
-const ofColor NotePoint::c_active(0, 0, 50);
-const ofColor NotePoint::c_inactive(20, 20, 20);
-const ofColor NotePoint::c_sel_active(0, 0, 100);
-const ofColor NotePoint::c_sel_inactive(40, 40, 40);
+const ofColor NoteStep::c_active(0, 0, 50);
+const ofColor NoteStep::c_inactive(20, 20, 20);
+const ofColor NoteStep::c_sel_active(0, 0, 100);
+const ofColor NoteStep::c_sel_inactive(40, 40, 40);
 
-NotePoint::NotePoint() : Point() {
-    type = POINT_TYPE_NOTE;
+NoteStep::NoteStep() : Step() {
+    type = STEP_TYPE_NOTE;
     note = 0;
     velocity = 100;
     length = 1000;
 }
 
-int NotePoint::getLength() {
+int NoteStep::getLength() {
     return length;
 }
 
-ChangeSet NotePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
+ChangeSet NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     if (active) {
         MidiEvent* start_event = new MidiEvent(
@@ -31,7 +31,7 @@ ChangeSet NotePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
     return changes;
 }
 
-void NotePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     if (executing) {
         if (active) {
             ofSetColor(c_sel_active);
@@ -45,7 +45,7 @@ void NotePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
             ofSetColor(c_inactive);
         }
     }
-    ofDrawRectangle(x + POINT_SPACING, y + POINT_SPACING , POINT_INNER, POINT_INNER);
+    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 
     if (active) {
         ofSetColor(ofColor::white);

@@ -7,7 +7,7 @@ Toolbar::Toolbar() {
 
 void Toolbar::draw(ofTrueTypeFont font) {
     ofSetColor(50);
-    ofDrawRectangle(0, ofGetHeight() - POINT_OUTER, ofGetWidth(), POINT_OUTER);
+    ofDrawRectangle(0, ofGetHeight() - STEP_OUTER, ofGetWidth(), STEP_OUTER);
 }
 
 void Toolbar::keyPressed(int key) {

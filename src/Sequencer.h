@@ -2,11 +2,11 @@
 #define SEQUENCER_H_
 
 #include "ofMain.h"
-#include "Point.h"
-#include "NotePoint.h"
-#include "ActivatePoint.h"
-#include "OutputPoint.h"
-#include "DivisionPoint.h"
+#include "Step.h"
+#include "NoteStep.h"
+#include "ActivateStep.h"
+#include "OutputStep.h"
+#include "DivisionStep.h"
 #include "Ticking.h"
 #include "Output.h"
 #include "Const.h"
@@ -22,7 +22,7 @@ class Sequencer {
         void cursorRight();
         void cursorClick();
         void cursorDelete();
-        bool cursorInsert(Point* point);
+        bool cursorInsert(Step* step);
         void cursorHold();
         void cursorOutput();
         void cursorNote(int note);
@@ -41,7 +41,7 @@ class Sequencer {
         long long release;
         int output;
         int period;
-        Point* data[MAX_POINTS];
+        Step* data[MAX_STEPS];
 };
 
 #endif /* SEQUENCER_H_ */

@@ -11,11 +11,11 @@ Sequencer::Sequencer() {
     output = 0;
     period = 1000;
 
-    for (int i = 1; i < MAX_POINTS; i++) {
+    for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
     }
 
-    data[0] = new ActivatePoint();
+    data[0] = new ActivateStep();
     cursor = 1;
     ofLogNotice(APPLICATION) << "Seqeuncer setup ok.";
 }
@@ -24,27 +24,27 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
     int x, y;
 
     x = 0;
-    y = POINT_OUTER * row;
-    for (int col = 0; col < MAX_POINTS; col++) {
-        x = POINT_OUTER * col;
+    y = STEP_OUTER * row;
+    for (int col = 0; col < MAX_STEPS; col++) {
+        x = STEP_OUTER * col;
 
         if (data[col] != NULL) {
             data[col]->draw(x, y, col==last_executed, font);
         } else {
             if (active) {
-                ofSetColor(ActivatePoint::c_on);
+                ofSetColor(ActivateStep::c_on);
             } else {
-                ofSetColor(ActivatePoint::c_off);
+                ofSetColor(ActivateStep::c_off);
             }
-            ofDrawRectangle(x, y, 5, POINT_OUTER);
+            ofDrawRectangle(x, y, 5, STEP_OUTER);
         }
 
         if (onThisRow && col == cursor) {
             ofSetColor(ofColor::white);
-            ofDrawRectangle(x, y, POINT_OUTER, POINT_SPACING);
-            ofDrawRectangle(x, y + POINT_SPACING, POINT_SPACING, POINT_INNER);
-            ofDrawRectangle(x + POINT_OUTER - POINT_SPACING, y + POINT_SPACING, POINT_SPACING, POINT_INNER);
-            ofDrawRectangle(x, y + POINT_OUTER - POINT_SPACING, POINT_OUTER, POINT_SPACING);
+            ofDrawRectangle(x, y, STEP_OUTER, STEP_SPACING);
+            ofDrawRectangle(x, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
+            ofDrawRectangle(x + STEP_OUTER - STEP_SPACING, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
+            ofDrawRectangle(x, y + STEP_OUTER - STEP_SPACING, STEP_OUTER, STEP_SPACING);
         }
 
         if (data[col] == NULL) {
@@ -67,11 +67,11 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         if (!buffer->timeFor(release)) {
             break;
         }
-        Point* point = data[position];
+        Step* step = data[position];
         last_executed = position;
         state.output = output;
         state.period = period;
-        change(point->execute(buffer, state), buffer);
+        change(step->execute(buffer, state), buffer);
         if (last_executed >= position) {
             break;
         }
@@ -81,7 +81,7 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
 void Sequencer::change(ChangeSet changes, TickBuffer* buffer) {
     if (changes.goto_position == -1) {
         position += changes.position_delta;
-        if (position >= MAX_POINTS) {
+        if (position >= MAX_STEPS) {
             position = 0;
         }
     } else {
@@ -110,7 +110,7 @@ void Sequencer::cursorLeft() {
 }
 
 void Sequencer::cursorRight() {
-    if (cursor < (MAX_POINTS - 1)) {
+    if (cursor < (MAX_STEPS - 1)) {
         if (data[cursor] != NULL) {
             cursor++;
         }
@@ -125,29 +125,29 @@ void Sequencer::cursorClick() {
 
 void Sequencer::cursorDelete() {
     if (data[cursor] != NULL) {
-        Point* retired = data[cursor];
-        for (int i = cursor; i < (MAX_POINTS - 1); i++) {
+        Step* retired = data[cursor];
+        for (int i = cursor; i < (MAX_STEPS - 1); i++) {
             data[i] = data[i + 1];
         }
-        data[MAX_POINTS - 1] = NULL;
+        data[MAX_STEPS - 1] = NULL;
         delete retired;
     }
 }
 
-bool Sequencer::cursorInsert(Point* point) {
+bool Sequencer::cursorInsert(Step* step) {
     if (data[cursor] != NULL) {
-        if (data[MAX_POINTS - 1] == NULL) {
-            for (int i = MAX_POINTS - 1; i >= cursor; i--) {
+        if (data[MAX_STEPS - 1] == NULL) {
+            for (int i = MAX_STEPS - 1; i >= cursor; i--) {
                 data[i] = data[i - 1];
             }
-            data[cursor] = point;
+            data[cursor] = step;
             cursor++;
             return true;
         } else {
             return false;
         }
     } else {
-        data[cursor] = point;
+        data[cursor] = step;
         cursorRight();
         return true;
     }
@@ -155,45 +155,45 @@ bool Sequencer::cursorInsert(Point* point) {
 
 void Sequencer::cursorNote(int note) {
     if (data[cursor] != NULL) {
-        if (data[cursor]->type == POINT_TYPE_NOTE) {
-            ((NotePoint*) data[cursor])->note = octave * 12 + note;
+        if (data[cursor]->type == STEP_TYPE_NOTE) {
+            ((NoteStep*) data[cursor])->note = octave * 12 + note;
         }
     } else {
-        data[cursor] = new NotePoint();
-        ((NotePoint*) data[cursor])->note = octave * 12 + note;
+        data[cursor] = new NoteStep();
+        ((NoteStep*) data[cursor])->note = octave * 12 + note;
         cursorRight();
     }
 }
 
 void Sequencer::cursorHold() {
-    Point* point = new Point();
+    Step* step = new Step();
     // FIXME
-    if (!cursorInsert(point)) {
-        delete point;
+    if (!cursorInsert(step)) {
+        delete step;
     }
 }
 
 void Sequencer::cursorOutput() {
-    Point* point = new OutputPoint();
-    if (!cursorInsert(point)) {
-        delete point;
+    Step* step = new OutputStep();
+    if (!cursorInsert(step)) {
+        delete step;
     }
 }
 
 void Sequencer::cursorDivision(int denominator) {
-    Point* point = new DivisionPoint(1, denominator, 1);
-    if (!cursorInsert(point)) {
-        delete point;
+    Step* step = new DivisionStep(1, denominator, 1);
+    if (!cursorInsert(step)) {
+        delete step;
     }
 }
 
 int Sequencer::getLength() {
-    for (int i = 0; i < MAX_POINTS; i++) {
+    for (int i = 0; i < MAX_STEPS; i++) {
         if (data[i] == NULL) {
             return i;
         }
     }
-    return MAX_POINTS;
+    return MAX_STEPS;
 }
 
 void Sequencer::setCursor(int wanted) {

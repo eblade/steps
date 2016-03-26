@@ -1,30 +1,30 @@
-#include "ActivatePoint.h"
+#include "ActivateStep.h"
 
 
-const ofColor ActivatePoint::c_on(0, 100, 0);
-const ofColor ActivatePoint::c_off(100, 0, 0);
+const ofColor ActivateStep::c_on(0, 100, 0);
+const ofColor ActivateStep::c_off(100, 0, 0);
 
 
-ActivatePoint::ActivatePoint() : Point() {
-    type = POINT_TYPE_ACTIVATE;
+ActivateStep::ActivateStep() : Step() {
+    type = STEP_TYPE_ACTIVATE;
 }
 
-ChangeSet ActivatePoint::execute(TickBuffer* buffer, SequencerState sequencer) {
+ChangeSet ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     changes.position_delta = 1;
     return changes;
 }
 
-void ActivatePoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     if (active) {
         ofSetColor(c_on);
     } else {
         ofSetColor(c_off);
     }
-    ofDrawRectangle(x + POINT_SPACING, y + POINT_SPACING , POINT_INNER, POINT_INNER);
+    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 }
 
-ChangeSet ActivatePoint::click() {
+ChangeSet ActivateStep::click() {
     ChangeSet changes;
     active = !active;
     if (active) {

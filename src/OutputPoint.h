@@ -1,13 +1,13 @@
-#ifndef OUTPUTPOINT_H_
-#define OUTPUTPOINT_H_
+#ifndef OUTPUTSTEP_H_
+#define OUTPUTSTEP_H_
 
 #include "ofMain.h"
-#include "Point.h"
+#include "Step.h"
 #include "Output.h"
 
-class OutputPoint : public Point {
+class OutputStep : public Step {
     public:
-        OutputPoint();
+        OutputStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         ChangeSet click();

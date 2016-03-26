@@ -1,23 +1,23 @@
-#include "Point.h"
+#include "Step.h"
 
-Point::Point() {
-    type = POINT_TYPE_NONE;
+Step::Step() {
+    type = STEP_TYPE_NONE;
     active = true;
 }
 
-int Point::getLength() {
+int Step::getLength() {
     return 0;
 }
 
-ChangeSet Point::execute(TickBuffer* buffer, SequencerState sequencer) {
+ChangeSet Step::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet result;
     return result;
 }
 
-void Point::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void Step::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 }
 
-ChangeSet Point::click() {
+ChangeSet Step::click() {
     ChangeSet changes;
     active = !active;
     return changes;

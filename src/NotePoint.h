@@ -1,14 +1,14 @@
-#ifndef NOTEPOINT_H_
-#define NOTEPOINT_H_
+#ifndef NOTESTEP_H_
+#define NOTESTEP_H_
 
-#include "Point.h"
+#include "Step.h"
 #include "Midi.h"
 #include "Output.h"
 
 
-class NotePoint : public Point {
+class NoteStep : public Step {
     public:
-        NotePoint();
+        NoteStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
         int getLength();
@@ -26,4 +26,4 @@ class NotePoint : public Point {
             c_sel_inactive;
 };
 
-#endif /* NOTEPOINT_H_ */
+#endif /* NOTESTEP_H_ */

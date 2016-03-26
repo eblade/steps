@@ -1,26 +1,26 @@
-#include "DivisionPoint.h"
+#include "DivisionStep.h"
 
-const ofColor DivisionPoint::c_text(0, 200, 100);
+const ofColor DivisionStep::c_text(0, 200, 100);
 
-DivisionPoint::DivisionPoint(int numerator, int denominator, int tuplet) : Point() {
-    type = POINT_TYPE_DIVISION;
+DivisionStep::DivisionStep(int numerator, int denominator, int tuplet) : Step() {
+    type = STEP_TYPE_DIVISION;
     division = new Division(numerator, denominator, tuplet);
 }
 
-DivisionPoint::~DivisionPoint() {
+DivisionStep::~DivisionStep() {
     delete division;
 }
 
-ChangeSet DivisionPoint::execute(TickBuffer* buffer, SequencerState sequencer) {
+ChangeSet DivisionStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet changes;
     changes.period = division->getPeriod(buffer->bpm);
     changes.position_delta = 1;
     return changes;
 }
 
-void DivisionPoint::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void DivisionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     ofSetColor(c_text);
-    ofDrawRectangle(x + POINT_SPACING, y + 18, POINT_INNER, 1);
+    ofDrawRectangle(x + STEP_SPACING, y + 18, STEP_INNER, 1);
     font.drawString(division->getNumeratorString(), x + 6, y + 13);
     font.drawString(division->getDenominatorString(), x + 6, y + 33);
 }
