@@ -4,14 +4,18 @@ void ofApp::setup() {
     // Logging
     ofSetLogLevel(OF_LOG_VERBOSE);
 
+    // Graphics
+    font.load(OF_TTF_SANS, 9, true, true);
+    ofEnableAlphaBlending();
+    ofSetVerticalSync(true);
+    ofLogNotice(APPLICATION) << "OpenFrameworks setup ok.";
+
     // Setup up the timed buffer
     buffer = new TickBuffer(60);
+    ofLogNotice(APPLICATION) << "TickBuffer setup ok.";
 
     // Setup up the Output Router
     output_router = new OutputRouter();
-
-    // Setup up the Toolbar
-    toolbar = new Toolbar();
 
     // Set up the first non-through device as 0
     OutputSettings output_settings;
@@ -19,18 +23,21 @@ void ofApp::setup() {
     output_settings.type = OUTPUT_TYPE_MIDI;
     output_settings.channel = 1;
     output_router->install(0, output_settings);
+    ofLogNotice(APPLICATION) << "OutputRouter setup ok.";
+
+    // Setup up the Toolbar
+    toolbar = new Toolbar();
+    tool_play = new PersistantTool("PLAY", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
+    tool_stop = new PersistantTool("STOP", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
+    ofLogNotice(APPLICATION) << "Toolbar setup ok.";
 
     // Create a new Page
     for (int i = 0; i < MAX_PAGES; i++) {
         page[i] = NULL;
     }
     active_page = addPage();
-    playing = true;
-
-    // Graphics
-    font.load(OF_TTF_SANS, 9, true, true);
-    ofEnableAlphaBlending();
-    ofSetVerticalSync(true);
+    playing = false;
+    ofLogNotice(APPLICATION) << "Page setup ok.";
 
     ofLogNotice(APPLICATION) << "Done with setup.";
 }
@@ -39,6 +46,8 @@ void ofApp::exit() {
     delete buffer;
     delete output_router;
     delete toolbar;
+    delete tool_play;
+    delete tool_stop;
     for (int i = 0; i < MAX_PAGES; i++) {
         if (page[i] != NULL) {
             delete page[i];
@@ -52,8 +61,8 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
+    step();
     if (playing) {
-        step();
         buffer->tick();
     } else {
         buffer->clear();
@@ -79,21 +88,29 @@ void ofApp::draw() {
     buffer->draw(ofGetWidth() - 90, 50);
 
     ofSetColor(200);
-    for (int i = 0; i < OUTPUT_MAX; i++) {
+    for (int i = 0; i < MAX_OUTPUTS; i++) {
         font.drawString(output_router->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
     }
 }
 
 void ofApp::step() {
-    static int toolbox_counter = 0;
+    static int toolbar_counter = 0;
     if (page[active_page] != NULL) {
-        page[active_page]->step(buffer, output_router);
-        if (toolbox_counter == 0) {
-            toolbox->update(page[active_page]);
+        if (playing) {
+            page[active_page]->step(buffer, output_router);
+        }
+        if (toolbar_counter == 0) {
+            ofLogNotice(APPLICATION) << "Updating toolbar...";
+            Toolbar* new_toolbar = new Toolbar();
+            new_toolbar->push(playing ? tool_stop : tool_play);
+            new_toolbar->update(page[active_page]);
+            delete this->toolbar;
+            this->toolbar = new_toolbar;
+            ofLogNotice(APPLICATION) << "Updated toolbar ok.";
         }
     }
-    toolbox_counter++;
-    toolbox_counter %= 20;
+    toolbar_counter++;
+    toolbar_counter %= 20;
 }
 
 int ofApp::addPage() {
@@ -107,7 +124,7 @@ int ofApp::addPage() {
 }
 
 void ofApp::keyPressed(int key) {
-    toolbox->keyPressed(int key);
+    toolbar->keyPressed(key);
 }
 
 void ofApp::keyReleased(int key){

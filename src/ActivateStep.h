@@ -2,13 +2,13 @@
 #define ACTIVATESTEP_H_
 
 #include "Step.h"
+#include "Change.h"
 
 class ActivateStep : public Step {
     public:
         ActivateStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet click();
-        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
+        ChangeSet* click();
 
         static const ofColor
             c_on,

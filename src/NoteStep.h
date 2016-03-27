@@ -2,6 +2,7 @@
 #define NOTESTEP_H_
 
 #include "Step.h"
+#include "Change.h"
 #include "Midi.h"
 #include "Output.h"
 
@@ -10,7 +11,7 @@ class NoteStep : public Step {
     public:
         NoteStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
+        ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         int getLength();
 
         int note;

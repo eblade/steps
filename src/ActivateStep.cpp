@@ -9,12 +9,6 @@ ActivateStep::ActivateStep() : Step() {
     type = STEP_TYPE_ACTIVATE;
 }
 
-ChangeSet ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet changes;
-    changes.position_delta = 1;
-    return changes;
-}
-
 void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     if (active) {
         ofSetColor(c_on);
@@ -24,14 +18,14 @@ void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 }
 
-ChangeSet ActivateStep::click() {
-    ChangeSet changes;
+ChangeSet* ActivateStep::click() {
+    ChangeSet* changes = new ChangeSet();
     active = !active;
     if (active) {
-        changes.set_active = true;
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 1));
     } else {
-        changes.set_inactive = true;
-        changes.goto_position = 0;
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 0));
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET, 0));
     }
     return changes;
 }

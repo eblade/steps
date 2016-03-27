@@ -9,16 +9,17 @@ int Step::getLength() {
     return 0;
 }
 
-ChangeSet Step::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet result;
-    return result;
+ChangeSet* Step::execute(TickBuffer* buffer, SequencerState sequencer) {
+    ChangeSet* changes = new ChangeSet();
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+    return changes;
 }
 
 void Step::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 }
 
-ChangeSet Step::click() {
-    ChangeSet changes;
+ChangeSet* Step::click() {
+    ChangeSet* changes = new ChangeSet();
     active = !active;
     return changes;
 }

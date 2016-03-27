@@ -1,20 +1,20 @@
 #include "Output.h"
 
 OutputRouter::OutputRouter() {
-    for (int i = 0; i < OUTPUT_MAX; i++) {
+    for (int i = 0; i < MAX_OUTPUTS; i++) {
         output[i] = OutputSettings();
     }
-    for (int i = 0; i < OUTPUT_MAX_DEVICES; i++) {
+    for (int i = 0; i < MAX_OUTPUT_DEVICES; i++) {
         midi_output[i] = NULL;
     }
     ofxMidiOut::listPorts();
 };
 
 OutputRouter::~OutputRouter() {
-    for (int i = 0; i < OUTPUT_MAX_DEVICES; i++) {
+    for (int i = 0; i < MAX_OUTPUT_DEVICES; i++) {
         if (midi_output[i] != NULL) {
-            cout << "Closing midi port " << i 
-                 << " \"" << midi_output[i]->getName() << "\"" << endl;
+            ofLogNotice(APPLICATION) << "Closing midi port " << i 
+                 << " \"" << midi_output[i]->getName() << "\"";
             midi_output[i]->closePort();
             delete midi_output[i];
             midi_output[i] = NULL;
@@ -23,12 +23,12 @@ OutputRouter::~OutputRouter() {
 };
 
 bool OutputRouter::install(int address, OutputSettings settings) {
-    if (address < 0 || address >= OUTPUT_MAX) {
-        cerr << "ERROR: Bad output address " << address << endl;
+    if (address < 0 || address >= MAX_OUTPUTS) {
+        ofLogError(APPLICATION) << "ERROR: Bad output address " << address;
         return true;
     }
     if (output[address].used) {
-        cerr << "ERROR: Output address " << address << " in use"<< endl;
+        ofLogError(APPLICATION) << "ERROR: Output address " << address << " in use";
         return true;
     }
     output[address].type = settings.type;
@@ -39,23 +39,23 @@ bool OutputRouter::install(int address, OutputSettings settings) {
         if (midi_output[settings.device] == NULL) {
             midi_output[settings.device] = new ofxMidiOut();
             midi_output[settings.device]->openPort(settings.device);
-            cout << "Opened midi port " << settings.device 
-                 << " \"" << midi_output[settings.device]->getName() << "\"" << endl;
+            ofLogNotice(APPLICATION) << "Opened midi port " << settings.device 
+                 << " \"" << midi_output[settings.device]->getName() << "\"";
         }
     }
     return false;
 }
 
 void OutputRouter::uninstall(int address) {
-    if (address >= 0 && address < OUTPUT_MAX) {
+    if (address >= 0 && address < MAX_OUTPUTS) {
         output[address].used = false;
     } else {
-        cerr << "WARNING: Bad attempt to unassign output " << address << endl;
+        ofLogError(APPLICATION) << "WARNING: Bad attempt to unassign output " << address;
     }
 }
 
 string OutputRouter::getOutputString(int address) {
-    if (!(address >= 0 && address < OUTPUT_MAX)) {
+    if (!(address >= 0 && address < MAX_OUTPUTS)) {
         return ofToString(address) + ":OUT OF BOUNDS";
     } else if (output[address].used == false) {
         return ofToString(address) + ":-";
@@ -74,8 +74,8 @@ string OutputRouter::getOutputString(int address) {
 }
 
 void OutputRouter::send(int address, OutputEvent event) {
-    if (!(address >= 0 && address < OUTPUT_MAX) || output[address].used == false) {
-        cerr << "ERROR: Output " << address << " is not installed" << endl;
+    if (!(address >= 0 && address < MAX_OUTPUTS) || output[address].used == false) {
+        cerr << "ERROR: Output " << address << " is not installed";
         return;
     }
     switch (output[address].type) {
@@ -89,19 +89,19 @@ void OutputRouter::send(int address, OutputEvent event) {
 }
 
 void OutputRouter::sendDummy(OutputSettings settings, OutputEvent event) {
-    cout << "SEND DUMMY device=" << settings.device 
-         << " channel=" << settings.channel
-         << " note=" << event.note
-         << " velocity=" << event.velocity
-         << endl;
+    ofLogNotice(APPLICATION)
+        << "SEND DUMMY device=" << settings.device 
+        << " channel=" << settings.channel
+        << " note=" << event.note
+        << " velocity=" << event.velocity;
 }
 
 void OutputRouter::sendMidi(OutputSettings settings, OutputEvent event) {
-    cout << "SEND MIDI device=" << settings.device 
-         << " channel=" << settings.channel
-         << " note=" << event.note
-         << " velocity=" << event.velocity
-         << endl;
+    ofLogNotice(APPLICATION)
+        << "SEND MIDI device=" << settings.device 
+        << " channel=" << settings.channel
+        << " note=" << event.note
+        << " velocity=" << event.velocity;
     if (midi_output[settings.device] == NULL) {
         cerr << "ERROR: Device " << settings.device << " is not installed";
         return;

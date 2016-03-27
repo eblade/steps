@@ -30,7 +30,7 @@ class Sequencer {
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer, OutputRouter* output_router);
-        void change(ChangeSet changes, TickBuffer* buffer);
+        void change(ChangeSet* changes, TickBuffer* buffer);
 
         string name;
         int cursor;

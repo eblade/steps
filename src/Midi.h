@@ -1,6 +1,7 @@
 #ifndef MIDI_H_
 #define MIDI_H_
 
+#include "ofMain.h"
 #include "Ticking.h"
 #include "Output.h"
 

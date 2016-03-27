@@ -78,28 +78,40 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
     }
 }
 
-void Sequencer::change(ChangeSet changes, TickBuffer* buffer) {
-    if (changes.goto_position == -1) {
-        position += changes.position_delta;
-        if (position >= MAX_STEPS) {
-            position = 0;
+void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
+    changes->rewind();
+    Change* change;
+    while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
+        switch (change->operation) {
+            case OP_STEP_SET:
+                position = change->value;
+                break;
+            case OP_STEP_DELTA:
+                position += change->value;
+                position = position < MAX_STEPS ? position : 0;
+                break;
+            case OP_ACTIVE_SET:
+                active = change->value ? true : false;
+                break;
+            case OP_OUTPUT_SET:
+                output = change->value;
+                break;
+            case OP_OUTPUT_DELTA:
+                output += change->value;
+                output = output < MAX_OUTPUTS ? output : 0;
+                break;
+            case OP_PERIOD_SET:
+                period = change->value;
+            case OP_PERIOD_DELTA:
+                period += change->value;
+                period = period > 0 ? period : 0;
+                break;
+            case OP_RELEASE_DELTA:
+                if (buffer != NULL) {
+                    release = buffer->relative_time + change->value;
+                }
+                break;
         }
-    } else {
-        position = changes.goto_position;
-    }
-    if (changes.set_active) {
-        active = true;
-    } else if (changes.set_inactive) {
-        active = false;
-    }
-    if (changes.output != -1) {
-        output = changes.output;
-    }
-    if (changes.period != -1) {
-        period = changes.period;
-    }
-    if (buffer != NULL) {
-        release = buffer->relative_time + changes.release;
     }
 }
 

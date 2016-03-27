@@ -16,8 +16,8 @@ int NoteStep::getLength() {
     return length;
 }
 
-ChangeSet NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet changes;
+ChangeSet* NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
+    ChangeSet* changes = new ChangeSet();
     if (active) {
         MidiEvent* start_event = new MidiEvent(
             buffer->relative_time, sequencer.output_router, sequencer.output, note, velocity);
@@ -26,8 +26,8 @@ ChangeSet NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
             buffer->relative_time + sequencer.period, sequencer.output_router, sequencer.output, note, 0);
         buffer->push(stop_event);
     }
-    changes.position_delta = 1;
-    changes.release = sequencer.period;
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_DELTA, sequencer.period));
     return changes;
 }
 

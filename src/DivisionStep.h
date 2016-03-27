@@ -3,6 +3,7 @@
 
 
 #include "Step.h"
+#include "Change.h"
 
 
 class Division {
@@ -23,8 +24,8 @@ class DivisionStep : public Step {
         DivisionStep(int numerator, int denominator, int tuplet);
         ~DivisionStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
-        //ChangeSet click();
+        ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
+        //ChangeSet* click();
 
         Division* division;
 

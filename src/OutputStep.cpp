@@ -7,18 +7,18 @@ OutputStep::OutputStep() {
     output = 0;
 }
 
-ChangeSet OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet changes;
-    changes.output = output;
-    changes.position_delta = 1;
+ChangeSet* OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
+    ChangeSet* changes = new ChangeSet();
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
     return changes;
 }
 
-ChangeSet OutputStep::click() {
-    ChangeSet changes;
+ChangeSet* OutputStep::click() {
+    ChangeSet* changes = new ChangeSet();
     output++;
-    output %= OUTPUT_MAX;
-    changes.output = output;
+    output %= MAX_OUTPUTS;
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
     return changes;
 }
 

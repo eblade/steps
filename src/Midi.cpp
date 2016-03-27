@@ -15,7 +15,7 @@ MidiEvent::~MidiEvent() {
 }
 
 void MidiEvent::fire() {
-    cout << "MIDI! " << note << " @" << output << " note " << note << "/" << velocity << endl;
+    ofLogNotice(APPLICATION) << "MIDI! " << note << " @" << output << " note " << note << "/" << velocity << endl;
     OutputEvent output_event;
     output_event.note = note;
     output_event.velocity = velocity;

@@ -37,4 +37,7 @@ class ofApp : public ofBaseApp {
         Page* page[MAX_PAGES];
         int active_page;
         Toolbar* toolbar;
+    
+        Tool* tool_play;
+        Tool* tool_stop;
 };

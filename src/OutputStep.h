@@ -3,14 +3,15 @@
 
 #include "ofMain.h"
 #include "Step.h"
+#include "Change.h"
 #include "Output.h"
 
 class OutputStep : public Step {
     public:
         OutputStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet execute(TickBuffer* buffer, SequencerState sequencer);
-        ChangeSet click();
+        ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
+        ChangeSet* click();
 
     private:
         int output;
