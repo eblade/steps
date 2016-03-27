@@ -34,6 +34,12 @@ class NoteStep : public Step {
         Tool* tool_note_9;
         Tool* tool_note_10;
         Tool* tool_note_11;
+        Tool* tool_note_up;
+        Tool* tool_note_down;
+        Tool* tool_octave_up;
+        Tool* tool_octave_down;
+        Tool* tool_accent;
+        Tool* tool_normal;
 
     private:
         int length;

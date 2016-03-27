@@ -40,6 +40,18 @@ NoteStep::NoteStep() : Step() {
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 10));
     tool_note_11 = new PersistantTool("B", 'u',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 11));
+    tool_note_up = new PersistantTool("+\n1/2", '+',
+        new Change(TARGET_LEVEL_STEP, OP_NOTE_DELTA, 1));
+    tool_note_down = new PersistantTool("-\n1/2", '-',
+        new Change(TARGET_LEVEL_STEP, OP_NOTE_DELTA, -1));
+    tool_octave_up = new PersistantTool("+\n8va", 'a',
+        new Change(TARGET_LEVEL_STEP, OP_OCTAVE_DELTA, 1));
+    tool_octave_down = new PersistantTool("-\n8va", 'z',
+        new Change(TARGET_LEVEL_STEP, OP_OCTAVE_DELTA, -1));
+    tool_accent = new PersistantTool("VEL\nACC", '.',
+        new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 127));
+    tool_normal = new PersistantTool("VEL\nNOR", '.',
+        new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 100));
 }
 
 int NoteStep::getLength() {
@@ -96,6 +108,15 @@ void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 }
 
 void NoteStep::populate(Toolbar* toolbar) {
+    toolbar->push(tool_octave_down);
+    toolbar->push(tool_octave_up);
+    toolbar->push(tool_note_down);
+    toolbar->push(tool_note_up);
+    if (velocity == 100) {
+        toolbar->push(tool_accent);
+    } else {
+        toolbar->push(tool_normal);
+    }
     toolbar->push(tool_note_0); 
     toolbar->push(tool_note_1); 
     toolbar->push(tool_note_2); 
@@ -130,6 +151,14 @@ void NoteStep::change(ChangeSet* changes) {
                 octave += change->value;
                 octave = octave > 10 ? 10 : octave;
                 octave = octave < 0 ? 0 : octave;
+                break;
+            case OP_VELOCITY_SET:
+                velocity = change->value;
+                break;
+            case OP_VELOCITY_DELTA:
+                velocity += change->value;
+                velocity = velocity > 127 ? 127 : velocity;
+                velocity = velocity < 0 ? 0 : velocity;
                 break;
         }
     }
