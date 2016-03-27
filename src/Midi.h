@@ -15,6 +15,7 @@ class MidiEvent : public TickEvent {
         int output;
         int note;
         int velocity;
+        bool fired;
 };
 
 

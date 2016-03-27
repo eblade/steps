@@ -8,6 +8,7 @@ void ofApp::setup() {
     font.load(OF_TTF_SANS, 9, true, true);
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
+    ofSetWindowTitle(APPLICATION);
     ofLogNotice("Main") << "OpenFrameworks setup ok.";
 
     // Setup up the timed buffer
@@ -27,8 +28,8 @@ void ofApp::setup() {
 
     // Setup up the Toolbar
     toolbar = new Toolbar();
-    tool_play = new PersistantTool("PLAY", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
-    tool_stop = new PersistantTool("STOP", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
+    tool_play = new PersistantTool("PLAY", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
+    tool_stop = new PersistantTool("STOP", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
     tool_bpm_80 = new PersistantTool("80\nBPM", 'A', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
     tool_bpm_120 = new PersistantTool("120\nBPM", 'S', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
     tool_bpm_160 = new PersistantTool("160\nBPM", 'D', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
@@ -80,9 +81,7 @@ void ofApp::draw() {
     }
 
     // Draw the toolbar
-    //ofLogNotice("Main") << "Drawing toolbar...";
     toolbar->draw(font);
-    //ofLogNotice("Main") << "Drew toolbar ok.";
 
     // Draw some debug info to the right
     ofSetColor(200);
@@ -105,17 +104,15 @@ void ofApp::step() {
             page[active_page]->step(buffer, output_router);
         }
         if (toolbar_counter == 0) {
-            //ofLogNotice("Main") << "Updating toolbar...";
             Toolbar* new_toolbar = new Toolbar();
             new_toolbar->push(playing ? tool_stop : tool_play);
             new_toolbar->push(tool_bpm_80);
             new_toolbar->push(tool_bpm_120);
             new_toolbar->push(tool_bpm_160);
-            new_toolbar->update(page[active_page]);
+            page[active_page]->populate(new_toolbar);
             Toolbar* old_toolbar = this->toolbar;
             this->toolbar = new_toolbar;
             delete old_toolbar;
-            //ofLogNotice("Main") << "Updated toolbar ok.";
         }
     }
     toolbar_counter++;
@@ -123,7 +120,6 @@ void ofApp::step() {
 }
 
 void ofApp::change(ChangeSet* changes) {
-    ofLogNotice("Main") << "Running application change handler";
     if (changes == NULL) {
         return;
     }
@@ -132,8 +128,10 @@ void ofApp::change(ChangeSet* changes) {
     while ((change = changes->next(TARGET_LEVEL_APPLICATION)) != NULL) {
         switch (change->operation) {
             case OP_PLAY_SET:
-                ofLogNotice("Main") << "Set play " << change->value;
                 playing = change->value ? true : false;
+                if (playing) {
+                    buffer->reset();
+                }
                 break;
             case OP_PAGE_SET:
                 active_page = change->value;
@@ -163,9 +161,10 @@ void ofApp::change(ChangeSet* changes) {
                 break;
         }
     }
-    ofLogNotice("Main") << "Deleting changeset.";
+    if (page[active_page] != NULL) {
+        page[active_page]->change(changes, buffer);
+    }
     delete changes;
-    ofLogNotice("Main") << "Application change handle ok.";
 }
 
 int ofApp::addPage() {
@@ -179,9 +178,7 @@ int ofApp::addPage() {
 }
 
 void ofApp::keyPressed(int key) {
-    ofLogNotice("Main") << "Running keyPressed handler...";
     change(toolbar->keyPressed(key));
-    ofLogNotice("Main") << "Run keyPressed handler ok.";
 }
 
 void ofApp::keyReleased(int key){

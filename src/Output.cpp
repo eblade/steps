@@ -13,7 +13,7 @@ OutputRouter::OutputRouter() {
 OutputRouter::~OutputRouter() {
     for (int i = 0; i < MAX_OUTPUT_DEVICES; i++) {
         if (midi_output[i] != NULL) {
-            ofLogNotice(APPLICATION) << "Closing midi port " << i 
+            ofLogNotice("OutputRouter") << "Closing midi port " << i 
                  << " \"" << midi_output[i]->getName() << "\"";
             midi_output[i]->closePort();
             delete midi_output[i];
@@ -24,11 +24,11 @@ OutputRouter::~OutputRouter() {
 
 bool OutputRouter::install(int address, OutputSettings settings) {
     if (address < 0 || address >= MAX_OUTPUTS) {
-        ofLogError(APPLICATION) << "ERROR: Bad output address " << address;
+        ofLogError("OutputRouter") << "ERROR: Bad output address " << address;
         return true;
     }
     if (output[address].used) {
-        ofLogError(APPLICATION) << "ERROR: Output address " << address << " in use";
+        ofLogError("OutputRouter") << "ERROR: Output address " << address << " in use";
         return true;
     }
     output[address].type = settings.type;
@@ -39,7 +39,7 @@ bool OutputRouter::install(int address, OutputSettings settings) {
         if (midi_output[settings.device] == NULL) {
             midi_output[settings.device] = new ofxMidiOut();
             midi_output[settings.device]->openPort(settings.device);
-            ofLogNotice(APPLICATION) << "Opened midi port " << settings.device 
+            ofLogNotice("OutputRouter") << "Opened midi port " << settings.device 
                  << " \"" << midi_output[settings.device]->getName() << "\"";
         }
     }
@@ -50,7 +50,7 @@ void OutputRouter::uninstall(int address) {
     if (address >= 0 && address < MAX_OUTPUTS) {
         output[address].used = false;
     } else {
-        ofLogError(APPLICATION) << "WARNING: Bad attempt to unassign output " << address;
+        ofLogError("OutputRouter") << "WARNING: Bad attempt to unassign output " << address;
     }
 }
 
@@ -89,7 +89,7 @@ void OutputRouter::send(int address, OutputEvent event) {
 }
 
 void OutputRouter::sendDummy(OutputSettings settings, OutputEvent event) {
-    ofLogNotice(APPLICATION)
+    ofLogNotice("OutputRouter")
         << "SEND DUMMY device=" << settings.device 
         << " channel=" << settings.channel
         << " note=" << event.note
@@ -97,7 +97,7 @@ void OutputRouter::sendDummy(OutputSettings settings, OutputEvent event) {
 }
 
 void OutputRouter::sendMidi(OutputSettings settings, OutputEvent event) {
-    ofLogNotice(APPLICATION)
+    ofLogNotice("OutputRouter")
         << "SEND MIDI device=" << settings.device 
         << " channel=" << settings.channel
         << " note=" << event.note

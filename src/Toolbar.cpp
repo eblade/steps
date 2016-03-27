@@ -2,8 +2,14 @@
 
 const ofColor Tool::c_back(50, 50, 50);
 const ofColor Tool::c_text(200, 200, 200);
-const ofColor Tool::c_key_back(200, 50, 50);
-const ofColor Tool::c_key_text(0, 0, 0);
+const ofColor Tool::c_back_page(50, 50, 100);
+const ofColor Tool::c_text_page(200, 200, 200);
+const ofColor Tool::c_back_seq(100, 50, 50);
+const ofColor Tool::c_text_seq(200, 200, 200);
+const ofColor Tool::c_back_step(50, 100, 50);
+const ofColor Tool::c_text_step(200, 200, 200);
+const ofColor Tool::c_key_back(20, 20, 20);
+const ofColor Tool::c_key_text(100, 100, 100);
 
 
 Tool::Tool() {
@@ -14,6 +20,7 @@ Tool::Tool(string label, int key, Change* change) {
     init(label, ofToString((char) key));
     this->key[0] = key;
     this->changes->push(change);
+    this->level = change->level;
 }
 
 PersistantTool::PersistantTool() {
@@ -26,10 +33,10 @@ PersistantTool::PersistantTool(string label, int key, Change* change) {
     this->key[0] = key;
     this->changes->push(change);
     this->persistant = true;
+    this->level = change->level;
 }
 
 Tool::~Tool() {
-    ofLogNotice("Tool") << "Destroy. persistant=" << persistant;
     delete changes;
 }
 
@@ -41,6 +48,7 @@ void Tool::init(string label, string key_string) {
     this->key_string = key_string;
     this->changes = new ChangeSet();
     this->persistant = false;
+    this->level = TARGET_LEVEL_APPLICATION;
 }
     
 void Tool::draw(int x, int y, ofTrueTypeFont font) {
@@ -51,12 +59,28 @@ void Tool::draw(int x, int y, ofTrueTypeFont font) {
     );
     ofSetColor(c_key_text);
     font.drawString(ofToString(key_string), x + 3, y + STEP_SPACING + 13);
-    ofSetColor(c_back);
+    if (level == TARGET_LEVEL_APPLICATION) {
+        ofSetColor(c_back);
+    } else if (level == TARGET_LEVEL_PAGE) {
+        ofSetColor(c_back_page);
+    } else if (level == TARGET_LEVEL_SEQUENCER) {
+        ofSetColor(c_back_seq);
+    } else if (level == TARGET_LEVEL_STEP) {
+        ofSetColor(c_back_step);
+    }
     ofDrawRectangle(
         x + STEP_SPACING, y + STEP_SPACING + STEP_KEY_HEIGHT,
         STEP_INNER, STEP_INNER
     );
-    ofSetColor(c_text);
+    if (level == TARGET_LEVEL_APPLICATION) {
+        ofSetColor(c_text);
+    } else if (level == TARGET_LEVEL_PAGE) {
+        ofSetColor(c_text_page);
+    } else if (level == TARGET_LEVEL_SEQUENCER) {
+        ofSetColor(c_text_seq);
+    } else if (level == TARGET_LEVEL_STEP) {
+        ofSetColor(c_text_step);
+    }
     font.drawString(ofToString(label), x + 3, y + STEP_SPACING + STEP_KEY_HEIGHT + 15);
 }
 
@@ -69,6 +93,15 @@ bool Tool::hasKey(int key) {
         }
     }
     return false;
+}
+
+void Tool::addKey(int key) {
+    for (int i = 0; i < MAX_KEYS; i++) {
+        if (this->key[i] == 0) {
+            this->key[i] = key;
+            return;
+        }
+    }
 }
 
 // ============================================================================= 
@@ -114,10 +147,8 @@ void Toolbar::draw(ofTrueTypeFont font) {
 
 ChangeSet* Toolbar::keyPressed(int key) {
     ChangeSet* changes = new ChangeSet();
-    ofLogNotice("Toolbar") << "Toolbar got key " << ofToString((char) key);
     for (int i = 0; i < head; i++) {
         if (tool[i]->hasKey(key)) {
-            ofLogNotice("Toolbar") << "Tool " << i << " has key!";  
             changes->push(tool[i]->changes);
         }
     }
@@ -126,7 +157,6 @@ ChangeSet* Toolbar::keyPressed(int key) {
 
 ChangeSet* Toolbar::mousePressed(int x, int y, int button) {
     ChangeSet* changes = new ChangeSet();
-    ofLogNotice("Toolbar") << "Toolbar got mouse.";
     int i = x / STEP_INNER;
     if (i < MAX_TOOLS && tool[i] != NULL) {
         changes->push(tool[i]->changes);
@@ -137,13 +167,10 @@ ChangeSet* Toolbar::mousePressed(int x, int y, int button) {
 void Toolbar::push(Tool* tool) {
     if (head >= MAX_TOOLS) {
         ofLogError("Toolbar") << "Max tools exceeded!";
+        return;
     }
     this->tool[head] = tool;
     head++;
-}
-
-void Toolbar::update(Page* page) {
-
 }
 
 int Toolbar::getHeight() {

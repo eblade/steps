@@ -10,7 +10,7 @@ OutputStep::OutputStep() {
 ChangeSet* OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
     return changes;
 }
 

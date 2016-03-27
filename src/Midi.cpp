@@ -6,18 +6,19 @@ MidiEvent::MidiEvent(long long time, OutputRouter* output_router, int output, in
     this->output = output;
     this->note = note;
     this->velocity = velocity;
+    this->fired = false;
 }
 
 MidiEvent::~MidiEvent() {
-    if (velocity == 0) {
+    if (velocity == 0 && !fired) {
         fire(); // This is a NoteOff, send it before dying
     }
 }
 
 void MidiEvent::fire() {
-    ofLogNotice(APPLICATION) << "MIDI! " << note << " @" << output << " note " << note << "/" << velocity << endl;
     OutputEvent output_event;
     output_event.note = note;
     output_event.velocity = velocity;
     output_router->send(output, output_event);
+    fired = true;
 }

@@ -4,7 +4,6 @@
 #include "ofMain.h"
 #include "Const.h"
 #include "Change.h"
-#include "Page.h"
 
 
 class Tool {
@@ -14,21 +13,29 @@ class Tool {
         virtual ~Tool();
         virtual void draw(int x, int y, ofTrueTypeFont font);
         virtual bool hasKey(int key);
+        virtual void addKey(int key);
 
         ChangeSet* changes;
         bool persistant;
+        string key_string;
+        string label;
 
     protected:
         virtual void init(string label, string key_string);
         int head;
-        string key_string;
-        string label;
         int key[MAX_KEYS];
+        int level;
         static const ofColor
             c_back,
             c_text,
             c_key_back,
-            c_key_text;
+            c_key_text,
+            c_back_page,
+            c_text_page,
+            c_back_seq,
+            c_text_seq,
+            c_back_step,
+            c_text_step;
 };
 
 
@@ -47,7 +54,6 @@ class Toolbar {
         ChangeSet* keyPressed(int key);
         ChangeSet* mousePressed(int x, int y, int button);
         void push(Tool* tool);
-        void update(Page* page);
         int getHeight();
 
     private:

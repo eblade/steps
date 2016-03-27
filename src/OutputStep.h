@@ -12,9 +12,9 @@ class OutputStep : public Step {
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         ChangeSet* click();
+        int output;
 
     private:
-        int output;
         static const ofColor
             c_has_output,
             c_has_no_output;

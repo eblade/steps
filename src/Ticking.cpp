@@ -82,7 +82,7 @@ void TickBuffer::push(TickEvent* event) {
             return;
         }
     }
-    cout << "WARNING: FULL RING XRUN!" << endl;
+    ofLogError("TickBuffer") << "WARNING: FULL RING XRUN!";
     xruns++;
 }
 

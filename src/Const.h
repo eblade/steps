@@ -26,7 +26,7 @@
 #define MAX_CHANGES 32
 
 // Max number of Tools to put in a Toolbar
-#define MAX_TOOLS 16
+#define MAX_TOOLS 32
 
 // Step Types
 #define STEP_TYPE_NONE 0
@@ -71,7 +71,7 @@
 #define OP_SEQ_DELTA 103
 
 // Sequencer level
-#define OP_STEP_ADD 200 // Require STEP_TYPE
+//#define OP_STEP_ADD 200 // Require STEP_TYPE
 #define OP_STEP_DEL 201
 #define OP_STEP_SET 202
 #define OP_STEP_DELTA 203
@@ -81,6 +81,19 @@
 #define OP_PERIOD_SET 208
 #define OP_PERIOD_DELTA 209
 #define OP_RELEASE_DELTA 211
+#define OP_POSITION_SET 212
+#define OP_POSITION_DELTA 213
+
+#define OP_ADD_STEP_NOTE 250
+#define OP_ADD_STEP_OUTPUT 251
+#define OP_ADD_STEP_DIVISION 252
+
+#define OP_NOTE_SET 300
+#define OP_NOTE_DELTA 301
+#define OP_OCTAVE_SET 302
+#define OP_OCTAVE_DELTA 303
+#define OP_VELOCITY_SET 304
+#define OP_VELOCITY_DELTA 305
 
 
 #endif

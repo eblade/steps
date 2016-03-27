@@ -7,9 +7,35 @@ Page::Page() {
 
     addNewLine(-1);
     cursor = 0;
-    //playing = true;
 
-    ofLogNotice(APPLICATION) << "Page setup ok.";
+    tool_seq_add = new PersistantTool("+\nSEQ", OF_KEY_RETURN,
+        new Change(TARGET_LEVEL_PAGE, OP_SEQ_ADD, 0));
+    tool_seq_add->key_string = "RET";
+
+    tool_step_prev = new PersistantTool("<<\nSTEP", 'h',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, -1));
+    tool_step_prev->addKey(OF_KEY_LEFT);
+
+    tool_seq_next = new PersistantTool("NEXT\nSEQ", 'j',
+        new Change(TARGET_LEVEL_PAGE, OP_SEQ_DELTA, 1));
+    tool_seq_next->addKey(OF_KEY_DOWN);
+
+    tool_seq_prev = new PersistantTool("PREV\nSEQ", 'k',
+        new Change(TARGET_LEVEL_PAGE, OP_SEQ_DELTA, -1));
+    tool_seq_prev->addKey(OF_KEY_UP);
+
+    tool_step_next = new PersistantTool(">>\nSTEP", 'l',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+    tool_step_next->addKey(OF_KEY_RIGHT);
+
+    tool_add_note = new PersistantTool("+\nNOTE", 'n',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE, 0));
+
+    tool_add_div = new PersistantTool("+\nDIV", 'd',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_DIVISION, 8));
+
+    tool_add_output = new PersistantTool("+\nOUT", 'O',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
 }
 
 Page::~Page() {
@@ -42,70 +68,6 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font) {
     }
 }
 
-void Page::keyPressed(int key) {
-    if (key == 'h' || key == OF_KEY_LEFT) {
-        sequencer[cursor]->cursorLeft();
-    } else if (key == 'l' || key == OF_KEY_RIGHT) {
-        sequencer[cursor]->cursorRight();
-    } else if (key == 'k' || key == OF_KEY_UP) {
-        cursorUp();
-    } else if (key == 'j' || key == OF_KEY_DOWN) {
-        cursorDown();
-    } else if (key == ' ') {
-        sequencer[cursor]->cursorClick();
-    //} else if (key == 'P') {
-    //    playing = !playing;
-    } else if (key == 'x' || key == OF_KEY_DEL) {
-        if (sequencer[cursor]->cursor == 0) {
-            deleteLine(cursor);
-        } else {
-            sequencer[cursor]->cursorDelete();
-        }
-    } else if (key == 'q') {
-        sequencer[cursor]->cursorNote(0);
-    } else if (key == '2') {
-        sequencer[cursor]->cursorNote(1);
-    } else if (key == 'w') {
-        sequencer[cursor]->cursorNote(2);
-    } else if (key == '3') {
-        sequencer[cursor]->cursorNote(3);
-    } else if (key == 'e') {
-        sequencer[cursor]->cursorNote(4);
-    } else if (key == 'r') {
-        sequencer[cursor]->cursorNote(5);
-    } else if (key == '5') {
-        sequencer[cursor]->cursorNote(6);
-    } else if (key == 't') {
-        sequencer[cursor]->cursorNote(7);
-    } else if (key == '6') {
-        sequencer[cursor]->cursorNote(8);
-    } else if (key == 'y') {
-        sequencer[cursor]->cursorNote(9);
-    } else if (key == '7') {
-        sequencer[cursor]->cursorNote(10);
-    } else if (key == 'u') {
-        sequencer[cursor]->cursorNote(11);
-    } else if (key == '8') {
-        sequencer[cursor]->cursorNote(12);
-    } else if (key == 'i') {
-        sequencer[cursor]->cursorNote(13);
-    } else if (key == '9') {
-        sequencer[cursor]->cursorNote(14);
-    } else if (key == 'o') {
-        sequencer[cursor]->cursorNote(15);
-    } else if (key == 'p') {
-        sequencer[cursor]->cursorNote(16);
-    } else if (key == OF_KEY_RETURN) {
-        addNewLine(cursor);
-    } else if (key == 'g') {
-        sequencer[cursor]->cursorHold();
-    } else if (key == 'O') {
-        sequencer[cursor]->cursorOutput();
-    } else if (key == 'n') {
-        sequencer[cursor]->cursorDivision(8);
-    }
-}
-
 void Page::mousePressed(int x, int y, int button){
     int col = x / 50;
     int row = y / 50;
@@ -119,6 +81,45 @@ void Page::mousePressed(int x, int y, int button){
     sequencer[row]->setCursor(col);
     if (sequencer[row]->cursor == col) {
         sequencer[row]->cursorClick();
+    }
+}
+
+void Page::populate(Toolbar* toolbar) {
+    toolbar->push(tool_seq_add);
+    toolbar->push(tool_step_prev);
+    toolbar->push(tool_seq_prev);
+    toolbar->push(tool_seq_next);
+    toolbar->push(tool_step_next);
+    toolbar->push(tool_add_note);
+    toolbar->push(tool_add_div);
+    toolbar->push(tool_add_output);
+    if (sequencer[cursor] != NULL) {
+        sequencer[cursor]->populate(toolbar);
+    }
+}
+
+void Page::change(ChangeSet* changes, TickBuffer* buffer) {
+    if (changes == NULL) {
+        return;
+    }
+    changes->rewind();
+    Change* change;
+    while ((change = changes->next(TARGET_LEVEL_PAGE)) != NULL) {
+        switch (change->operation) {
+            case OP_SEQ_ADD:
+                addNewLine(cursor);
+                break;
+            case OP_SEQ_DELTA:
+                if (change->value > 0) {
+                    cursorDown();
+                } else if (change->value < 0) {
+                    cursorUp();
+                }
+                break;
+        }
+    }
+    if (sequencer[cursor] != NULL) {
+        sequencer[cursor]->change(changes, buffer);
     }
 }
 

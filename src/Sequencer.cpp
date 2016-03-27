@@ -83,12 +83,31 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
         switch (change->operation) {
-            case OP_STEP_SET:
+            case OP_POSITION_SET:
                 position = change->value;
+                position = position < MAX_STEPS ? position : 0;
+                position = position >= 0 ? position : 0;
+                if (data[position] == NULL) {
+                    position = 0;
+                }
                 break;
-            case OP_STEP_DELTA:
+            case OP_POSITION_DELTA:
                 position += change->value;
                 position = position < MAX_STEPS ? position : 0;
+                position = position >= 0 ? position : 0;
+                if (data[position] == NULL) {
+                    position = 0;
+                }
+                break;
+            case OP_STEP_SET:
+                cursor = change->value;
+                break;
+            case OP_STEP_DELTA:
+                if (change->value > 0) {
+                    cursorRight();
+                } else if (change->value < 0) {
+                    cursorLeft();
+                }
                 break;
             case OP_ACTIVE_SET:
                 active = change->value ? true : false;
@@ -102,6 +121,7 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 break;
             case OP_PERIOD_SET:
                 period = change->value;
+                break;
             case OP_PERIOD_DELTA:
                 period += change->value;
                 period = period > 0 ? period : 0;
@@ -111,7 +131,34 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                     release = buffer->relative_time + change->value;
                 }
                 break;
+            case OP_ADD_STEP_NOTE: {
+                NoteStep* new_note = new NoteStep();
+                new_note->note = change->value;
+                cursorInsert(new_note);
+                break;
+            }
+            case OP_ADD_STEP_OUTPUT: {
+                OutputStep* new_output = new OutputStep();
+                new_output->output = change->value;
+                cursorInsert(new_output);
+                break;
+            }
+            case OP_ADD_STEP_DIVISION: {
+                DivisionStep* new_division =
+                    new DivisionStep(1, change->value, 1);
+                cursorInsert(new_division);
+                break;
+            }
         }
+    }
+    if (data[cursor] != NULL) {
+        data[cursor]->change(changes);
+    }
+}
+
+void Sequencer::populate(Toolbar* toolbar) {
+    if (data[cursor] != NULL) {
+        data[cursor]->populate(toolbar);
     }
 }
 
@@ -146,7 +193,7 @@ void Sequencer::cursorDelete() {
     }
 }
 
-bool Sequencer::cursorInsert(Step* step) {
+void Sequencer::cursorInsert(Step* step) {
     if (data[cursor] != NULL) {
         if (data[MAX_STEPS - 1] == NULL) {
             for (int i = MAX_STEPS - 1; i >= cursor; i--) {
@@ -154,48 +201,12 @@ bool Sequencer::cursorInsert(Step* step) {
             }
             data[cursor] = step;
             cursor++;
-            return true;
         } else {
-            return false;
+            delete step;
         }
     } else {
         data[cursor] = step;
         cursorRight();
-        return true;
-    }
-}
-
-void Sequencer::cursorNote(int note) {
-    if (data[cursor] != NULL) {
-        if (data[cursor]->type == STEP_TYPE_NOTE) {
-            ((NoteStep*) data[cursor])->note = octave * 12 + note;
-        }
-    } else {
-        data[cursor] = new NoteStep();
-        ((NoteStep*) data[cursor])->note = octave * 12 + note;
-        cursorRight();
-    }
-}
-
-void Sequencer::cursorHold() {
-    Step* step = new Step();
-    // FIXME
-    if (!cursorInsert(step)) {
-        delete step;
-    }
-}
-
-void Sequencer::cursorOutput() {
-    Step* step = new OutputStep();
-    if (!cursorInsert(step)) {
-        delete step;
-    }
-}
-
-void Sequencer::cursorDivision(int denominator) {
-    Step* step = new DivisionStep(1, denominator, 1);
-    if (!cursorInsert(step)) {
-        delete step;
     }
 }
 

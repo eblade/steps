@@ -2,6 +2,7 @@
 #define SEQUENCER_H_
 
 #include "ofMain.h"
+#include "Const.h"
 #include "Step.h"
 #include "NoteStep.h"
 #include "ActivateStep.h"
@@ -9,7 +10,7 @@
 #include "DivisionStep.h"
 #include "Ticking.h"
 #include "Output.h"
-#include "Const.h"
+#include "Toolbar.h"
 
 
 class Sequencer {
@@ -22,15 +23,12 @@ class Sequencer {
         void cursorRight();
         void cursorClick();
         void cursorDelete();
-        bool cursorInsert(Step* step);
-        void cursorHold();
-        void cursorOutput();
-        void cursorNote(int note);
-        void cursorDivision(int denominator);
+        void cursorInsert(Step* step);
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer, OutputRouter* output_router);
         void change(ChangeSet* changes, TickBuffer* buffer);
+        void populate(Toolbar* toolbar);
 
         string name;
         int cursor;
