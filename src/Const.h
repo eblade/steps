@@ -62,6 +62,7 @@
 #define OP_PAGE_SET 2
 #define OP_PAGE_DELTA 3
 #define OP_BPM_SET 4
+#define OP_BPM_DELTA 5
 
 // Page level
 #define OP_SEQ_ADD 100

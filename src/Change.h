@@ -10,6 +10,7 @@ class Change {
         Change();
         Change(int level, int operation, int value);
         Change(int level, int operation);
+        Change* clone();
 
         int level;
 
@@ -27,6 +28,7 @@ class ChangeSet {
         ChangeSet();
         ~ChangeSet();
         void push(Change* change);
+        void push(ChangeSet* changes);
         Change* next(int level);
         void rewind();
 

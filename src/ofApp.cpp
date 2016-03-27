@@ -8,11 +8,11 @@ void ofApp::setup() {
     font.load(OF_TTF_SANS, 9, true, true);
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
-    ofLogNotice(APPLICATION) << "OpenFrameworks setup ok.";
+    ofLogNotice("Main") << "OpenFrameworks setup ok.";
 
     // Setup up the timed buffer
     buffer = new TickBuffer(60);
-    ofLogNotice(APPLICATION) << "TickBuffer setup ok.";
+    ofLogNotice("Main") << "TickBuffer setup ok.";
 
     // Setup up the Output Router
     output_router = new OutputRouter();
@@ -23,13 +23,16 @@ void ofApp::setup() {
     output_settings.type = OUTPUT_TYPE_MIDI;
     output_settings.channel = 1;
     output_router->install(0, output_settings);
-    ofLogNotice(APPLICATION) << "OutputRouter setup ok.";
+    ofLogNotice("Main") << "OutputRouter setup ok.";
 
     // Setup up the Toolbar
     toolbar = new Toolbar();
     tool_play = new PersistantTool("PLAY", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
-    tool_stop = new PersistantTool("STOP", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
-    ofLogNotice(APPLICATION) << "Toolbar setup ok.";
+    tool_stop = new PersistantTool("STOP", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
+    tool_bpm_80 = new PersistantTool("80\nBPM", 'A', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
+    tool_bpm_120 = new PersistantTool("120\nBPM", 'S', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
+    tool_bpm_160 = new PersistantTool("160\nBPM", 'D', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
+    ofLogNotice("Main") << "Toolbar setup ok.";
 
     // Create a new Page
     for (int i = 0; i < MAX_PAGES; i++) {
@@ -37,9 +40,9 @@ void ofApp::setup() {
     }
     active_page = addPage();
     playing = false;
-    ofLogNotice(APPLICATION) << "Page setup ok.";
+    ofLogNotice("Main") << "Page setup ok.";
 
-    ofLogNotice(APPLICATION) << "Done with setup.";
+    ofLogNotice("Main") << "Done with setup.";
 }
 
 void ofApp::exit() {
@@ -77,7 +80,9 @@ void ofApp::draw() {
     }
 
     // Draw the toolbar
+    //ofLogNotice("Main") << "Drawing toolbar...";
     toolbar->draw(font);
+    //ofLogNotice("Main") << "Drew toolbar ok.";
 
     // Draw some debug info to the right
     ofSetColor(200);
@@ -100,17 +105,67 @@ void ofApp::step() {
             page[active_page]->step(buffer, output_router);
         }
         if (toolbar_counter == 0) {
-            ofLogNotice(APPLICATION) << "Updating toolbar...";
+            //ofLogNotice("Main") << "Updating toolbar...";
             Toolbar* new_toolbar = new Toolbar();
             new_toolbar->push(playing ? tool_stop : tool_play);
+            new_toolbar->push(tool_bpm_80);
+            new_toolbar->push(tool_bpm_120);
+            new_toolbar->push(tool_bpm_160);
             new_toolbar->update(page[active_page]);
-            delete this->toolbar;
+            Toolbar* old_toolbar = this->toolbar;
             this->toolbar = new_toolbar;
-            ofLogNotice(APPLICATION) << "Updated toolbar ok.";
+            delete old_toolbar;
+            //ofLogNotice("Main") << "Updated toolbar ok.";
         }
     }
     toolbar_counter++;
     toolbar_counter %= 20;
+}
+
+void ofApp::change(ChangeSet* changes) {
+    ofLogNotice("Main") << "Running application change handler";
+    if (changes == NULL) {
+        return;
+    }
+    changes->rewind();
+    Change* change;
+    while ((change = changes->next(TARGET_LEVEL_APPLICATION)) != NULL) {
+        switch (change->operation) {
+            case OP_PLAY_SET:
+                ofLogNotice("Main") << "Set play " << change->value;
+                playing = change->value ? true : false;
+                break;
+            case OP_PAGE_SET:
+                active_page = change->value;
+                active_page = active_page < MAX_PAGES ? active_page : MAX_PAGES - 1;
+                if (page[active_page] == NULL) {
+                    active_page = 0;
+                }
+                break;
+            case OP_PAGE_DELTA:
+                active_page += change->value;
+                active_page = active_page < MAX_PAGES ? active_page : 0;
+                if (page[active_page] == NULL) {
+                    active_page = 0;
+                }
+                break;
+            case OP_BPM_SET:
+                buffer->bpm = change->value;
+                if (buffer->bpm <= 0) {
+                    buffer->bpm = 1;
+                }
+                break;
+            case OP_BPM_DELTA:
+                buffer->bpm += change->value;
+                if (buffer->bpm <= 0) {
+                    buffer->bpm = 1;
+                }
+                break;
+        }
+    }
+    ofLogNotice("Main") << "Deleting changeset.";
+    delete changes;
+    ofLogNotice("Main") << "Application change handle ok.";
 }
 
 int ofApp::addPage() {
@@ -124,7 +179,9 @@ int ofApp::addPage() {
 }
 
 void ofApp::keyPressed(int key) {
-    toolbar->keyPressed(key);
+    ofLogNotice("Main") << "Running keyPressed handler...";
+    change(toolbar->keyPressed(key));
+    ofLogNotice("Main") << "Run keyPressed handler ok.";
 }
 
 void ofApp::keyReleased(int key){
@@ -142,7 +199,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
     int toolbar_start_y = ofGetHeight() - toolbar->getHeight();
     if (y >= toolbar_start_y) {
-        toolbar->mousePressed(x, y - toolbar_start_y, button);
+        change(toolbar->mousePressed(x, y - toolbar_start_y, button));
     } else if (page[active_page] != NULL) {
         page[active_page]->mousePressed(x, y, button);
     }

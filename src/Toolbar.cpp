@@ -11,7 +11,7 @@ Tool::Tool() {
 }
 
 Tool::Tool(string label, int key, Change* change) {
-    init(label, ofToString(key));
+    init(label, ofToString((char) key));
     this->key[0] = key;
     this->changes->push(change);
 }
@@ -22,13 +22,14 @@ PersistantTool::PersistantTool() {
 }
 
 PersistantTool::PersistantTool(string label, int key, Change* change) {
-    init(label, ofToString(key));
+    init(label, ofToString((char) key));
     this->key[0] = key;
     this->changes->push(change);
     this->persistant = true;
 }
 
 Tool::~Tool() {
+    ofLogNotice("Tool") << "Destroy. persistant=" << persistant;
     delete changes;
 }
 
@@ -57,6 +58,17 @@ void Tool::draw(int x, int y, ofTrueTypeFont font) {
     );
     ofSetColor(c_text);
     font.drawString(ofToString(label), x + 3, y + STEP_SPACING + STEP_KEY_HEIGHT + 15);
+}
+
+bool Tool::hasKey(int key) {
+    for (int i = 0; i < MAX_KEYS; i++) {
+        if (this->key[i] == key) {
+            return true;
+        } else if (this->key[i] == 0) {
+            return false;
+        }
+    }
+    return false;
 }
 
 // ============================================================================= 
@@ -100,17 +112,31 @@ void Toolbar::draw(ofTrueTypeFont font) {
     }
 }
 
-void Toolbar::keyPressed(int key) {
-
+ChangeSet* Toolbar::keyPressed(int key) {
+    ChangeSet* changes = new ChangeSet();
+    ofLogNotice("Toolbar") << "Toolbar got key " << ofToString((char) key);
+    for (int i = 0; i < head; i++) {
+        if (tool[i]->hasKey(key)) {
+            ofLogNotice("Toolbar") << "Tool " << i << " has key!";  
+            changes->push(tool[i]->changes);
+        }
+    }
+    return changes;
 }
 
-void Toolbar::mousePressed(int x, int y, int button) {
-
+ChangeSet* Toolbar::mousePressed(int x, int y, int button) {
+    ChangeSet* changes = new ChangeSet();
+    ofLogNotice("Toolbar") << "Toolbar got mouse.";
+    int i = x / STEP_INNER;
+    if (i < MAX_TOOLS && tool[i] != NULL) {
+        changes->push(tool[i]->changes);
+    }
+    return changes;
 }
 
 void Toolbar::push(Tool* tool) {
     if (head >= MAX_TOOLS) {
-        ofLogError(APPLICATION) << "Max tools exceeded!";
+        ofLogError("Toolbar") << "Max tools exceeded!";
     }
     this->tool[head] = tool;
     head++;

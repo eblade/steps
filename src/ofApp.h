@@ -14,6 +14,7 @@ class ofApp : public ofBaseApp {
         void exit();
 		void update();
 		void draw();
+        void change(ChangeSet* changes);
 		
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -40,4 +41,7 @@ class ofApp : public ofBaseApp {
     
         Tool* tool_play;
         Tool* tool_stop;
+        Tool* tool_bpm_80;
+        Tool* tool_bpm_120;
+        Tool* tool_bpm_160;
 };

@@ -23,6 +23,19 @@ Change::Change(int level, int operation) {
     this->operation = operation;
 }
 
+Change* Change::clone() {
+    Change* copy = new Change();
+    copy->level = this->level;
+    copy->application = this->application;
+    copy->page = this->page;
+    copy->step = this->step;
+    copy->operation = this->operation;
+    copy->value = this->value;
+    return copy;
+}
+
+//==========================================================================
+
 
 ChangeSet::ChangeSet() {
     head = 0;
@@ -46,6 +59,16 @@ void ChangeSet::push(Change* change) {
     }
     this->change[head] = change;
     head++;
+}
+
+void ChangeSet::push(ChangeSet* changes) {
+    for (int i = 0; i < MAX_CHANGES; i++) {
+        if (changes->change[i] != NULL) {
+            this->push(changes->change[i]->clone());
+        } else {
+            return;
+        }
+    }
 }
 
 Change* ChangeSet::next(int level) {

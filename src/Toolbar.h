@@ -13,6 +13,7 @@ class Tool {
         Tool(string label, int key, Change* change);
         virtual ~Tool();
         virtual void draw(int x, int y, ofTrueTypeFont font);
+        virtual bool hasKey(int key);
 
         ChangeSet* changes;
         bool persistant;
@@ -43,8 +44,8 @@ class Toolbar {
         Toolbar();
         ~Toolbar();
         void draw(ofTrueTypeFont font);
-        void keyPressed(int key);
-        void mousePressed(int x, int y, int button);
+        ChangeSet* keyPressed(int key);
+        ChangeSet* mousePressed(int x, int y, int button);
         void push(Tool* tool);
         void update(Page* page);
         int getHeight();
