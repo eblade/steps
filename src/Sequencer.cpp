@@ -71,6 +71,7 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         last_executed = position;
         state.output = output;
         state.period = period;
+        state.release = release;
         change(step->execute(buffer, state), buffer);
         if (last_executed >= position) {
             break;
@@ -126,11 +127,18 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 period += change->value;
                 period = period > 0 ? period : 0;
                 break;
-            case OP_RELEASE_DELTA:
-                if (buffer != NULL) {
-                    release = buffer->relative_time + change->value;
-                }
+            case OP_RELEASE_SET:
+                release = change->long_value;
                 break;
+            case OP_RELEASE_DELTA:
+                release += change->value;
+                break;
+            //case OP_LAST_START_SET:
+            //    last_start = change->long_value;
+            //    break;
+            //case OP_LAST_START_DELTA:
+            //    last_start += change->value;
+            //    break;
             case OP_ADD_STEP_NOTE: {
                 NoteStep* new_note = new NoteStep();
                 new_note->note = change->value;
@@ -221,4 +229,10 @@ int Sequencer::getLength() {
 
 void Sequencer::setCursor(int wanted) {
     cursor = min(wanted, getLength());
+}
+
+void Sequencer::sync() {
+    position = 0;
+    release = 0;
+    last_executed = 0;
 }

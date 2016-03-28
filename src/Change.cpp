@@ -17,6 +17,13 @@ Change::Change(int level, int operation, int value) {
     this->value = value;
 }
 
+Change::Change(int level, int operation, long long long_value) {
+    Change();
+    this->level = level;
+    this->operation = operation;
+    this->long_value = long_value;
+}
+
 Change::Change(int level, int operation) {
     Change();
     this->level = level;

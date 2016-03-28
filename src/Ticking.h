@@ -25,10 +25,10 @@ class TickBuffer {
         void draw(int x, int y);
         bool timeFor(long long time);
 
-        long long start_time;
+        long long sync_time;
+        long long last_time;
         int period;
         int xruns;
-        long long relative_time;
         float bpm;
 
     private:
@@ -36,7 +36,6 @@ class TickBuffer {
         long long now();
         long long position;
         long ticks;
-        long long last_time;
 };
 
 

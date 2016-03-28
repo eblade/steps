@@ -119,7 +119,7 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_SYNC:
                 for (int i = 0; i < MAX_SEQUENCERS; i++) {
                     if (sequencer[i] != NULL) {
-                        sequencer[i]->position = 0;
+                        sequencer[i]->sync();
                     } else {
                         break;
                     }

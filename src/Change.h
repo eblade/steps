@@ -9,6 +9,7 @@ class Change {
     public:
         Change();
         Change(int level, int operation, int value);
+        Change(int level, int operation, long long long_value);
         Change(int level, int operation);
         Change* clone();
 
@@ -21,6 +22,7 @@ class Change {
 
         int operation;
         int value;
+        long long long_value;
 };
 
 class ChangeSet {

@@ -29,6 +29,7 @@ class Sequencer {
         void step(TickBuffer* buffer, OutputRouter* output_router);
         void change(ChangeSet* changes, TickBuffer* buffer);
         void populate(Toolbar* toolbar);
+        void sync();
 
         string name;
         int cursor;
