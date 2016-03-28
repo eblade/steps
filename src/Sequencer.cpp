@@ -133,12 +133,6 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_RELEASE_DELTA:
                 release += change->value;
                 break;
-            //case OP_LAST_START_SET:
-            //    last_start = change->long_value;
-            //    break;
-            //case OP_LAST_START_DELTA:
-            //    last_start += change->value;
-            //    break;
             case OP_ADD_STEP_NOTE: {
                 NoteStep* new_note = new NoteStep();
                 new_note->note = change->value;
@@ -155,6 +149,12 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 DivisionStep* new_division =
                     new DivisionStep(1, change->value, 1);
                 cursorInsert(new_division);
+                break;
+            }
+            case OP_ADD_STEP_SYNC: {
+                SyncStep* new_sync =
+                    new SyncStep(change->value);
+                cursorInsert(new_sync);
                 break;
             }
         }

@@ -1,6 +1,7 @@
 #include "OutputStep.h"
 
 OutputStep::OutputStep() {
+    type = STEP_TYPE_OUTPUT;
     output = 0;
 
     tool_0 = new PersistantTool("OUT\n0", '0',

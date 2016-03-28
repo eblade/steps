@@ -30,6 +30,7 @@ class Page {
         Tool* tool_add_note;
         Tool* tool_add_div;
         Tool* tool_add_output;
+        Tool* tool_add_sync;
 
     private:
         int cursor;

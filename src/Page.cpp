@@ -36,6 +36,9 @@ Page::Page() {
 
     tool_add_output = new PersistantTool("+\nOUT", 'O',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
+
+    tool_add_output = new PersistantTool("+\nSYNC", 'S',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
 }
 
 Page::~Page() {

@@ -8,6 +8,7 @@
 #include "ActivateStep.h"
 #include "OutputStep.h"
 #include "DivisionStep.h"
+#include "SyncStep.h"
 #include "Ticking.h"
 #include "Output.h"
 #include "Toolbar.h"

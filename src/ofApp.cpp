@@ -32,9 +32,9 @@ void ofApp::setup() {
     tool_stop = new PersistantTool("STOP", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
     tool_stop->changes->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC));
     tool_sync = new PersistantTool("SYNC\nALL", 's', new Change(TARGET_LEVEL_PAGE, OP_SYNC, 0));
-    tool_bpm_80 = new PersistantTool("80\nBPM", 'A', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
-    tool_bpm_120 = new PersistantTool("120\nBPM", 'S', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
-    tool_bpm_160 = new PersistantTool("160\nBPM", 'D', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
+    tool_bpm_80 = new PersistantTool("80\nBPM", 'Q', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
+    tool_bpm_120 = new PersistantTool("120\nBPM", 'W', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
+    tool_bpm_160 = new PersistantTool("160\nBPM", 'E', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
     ofLogNotice("Main") << "Toolbar setup ok.";
 
     // Create a new Page

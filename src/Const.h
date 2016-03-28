@@ -28,12 +28,16 @@
 // Max number of Tools to put in a Toolbar
 #define MAX_TOOLS 32
 
+// Max number of Labels to use on a Page
+#define MAX_LABELS 16
+
 // Step Types
 #define STEP_TYPE_NONE 0
 #define STEP_TYPE_NOTE 1
 #define STEP_TYPE_DIVISION 2
 #define STEP_TYPE_ACTIVATE 3
-#define STEP_TYPE_HOLD 4
+#define STEP_TYPE_OUTPUT 4
+#define STEP_TYPE_SYNC 5
 
 // Output Types
 #define OUTPUT_TYPE_DUMMY 0
@@ -91,13 +95,17 @@
 #define OP_ADD_STEP_NOTE 250
 #define OP_ADD_STEP_OUTPUT 251
 #define OP_ADD_STEP_DIVISION 252
+#define OP_ADD_STEP_SYNC 253
 
+// Step level
 #define OP_NOTE_SET 300
 #define OP_NOTE_DELTA 301
 #define OP_OCTAVE_SET 302
 #define OP_OCTAVE_DELTA 303
 #define OP_VELOCITY_SET 304
 #define OP_VELOCITY_DELTA 305
+#define OP_LABEL_SET 306
+#define OP_LABEL_DELTA 307
 
 #define OP_NUMERATOR_SET 350
 #define OP_DENOMINATOR_SET 352
