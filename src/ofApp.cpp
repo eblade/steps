@@ -30,6 +30,7 @@ void ofApp::setup() {
     toolbar = new Toolbar();
     tool_play = new PersistantTool("PLAY", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
     tool_stop = new PersistantTool("STOP", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
+    tool_sync = new PersistantTool("SYNC\nALL", 's', new Change(TARGET_LEVEL_PAGE, OP_SYNC, 0));
     tool_bpm_80 = new PersistantTool("80\nBPM", 'A', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
     tool_bpm_120 = new PersistantTool("120\nBPM", 'S', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
     tool_bpm_160 = new PersistantTool("160\nBPM", 'D', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
@@ -108,6 +109,7 @@ void ofApp::step() {
         if (toolbar_counter == 0) {
             Toolbar* new_toolbar = new Toolbar();
             new_toolbar->push(playing ? tool_stop : tool_play);
+            new_toolbar->push(tool_sync);
             new_toolbar->push(tool_bpm_80);
             new_toolbar->push(tool_bpm_120);
             new_toolbar->push(tool_bpm_160);

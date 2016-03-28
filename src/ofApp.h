@@ -44,4 +44,5 @@ class ofApp : public ofBaseApp {
         Tool* tool_bpm_80;
         Tool* tool_bpm_120;
         Tool* tool_bpm_160;
+        Tool* tool_sync;
 };

@@ -116,6 +116,16 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
                     cursorUp();
                 }
                 break;
+            case OP_SYNC:
+                for (int i = 0; i < MAX_SEQUENCERS; i++) {
+                    if (sequencer[i] != NULL) {
+                        sequencer[i]->position = 0;
+                    } else {
+                        break;
+                    }
+                    buffer->reset();
+                }
+                break;
         }
     }
     if (sequencer[cursor] != NULL) {
