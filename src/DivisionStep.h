@@ -5,6 +5,7 @@
 #include "Step.h"
 #include "Change.h"
 #include "Toolbar.h"
+#include "Output.h"
 
 
 class Division {

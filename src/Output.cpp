@@ -3,6 +3,7 @@
 OutputRouter::OutputRouter() {
     for (int i = 0; i < MAX_OUTPUTS; i++) {
         output[i] = OutputSettings();
+        peak[i] = 0;
     }
     for (int i = 0; i < MAX_OUTPUT_DEVICES; i++) {
         midi_output[i] = NULL;
@@ -73,6 +74,12 @@ string OutputRouter::getOutputString(int address) {
     return "?";
 }
 
+int OutputRouter::getPeak(int address) {
+    peak[address]--;
+    peak[address] = peak[address] >= 0 ? peak[address] : 0;
+    return peak[address];
+}
+
 void OutputRouter::send(int address, OutputEvent event) {
     if (!(address >= 0 && address < MAX_OUTPUTS) || output[address].used == false) {
         cerr << "ERROR: Output " << address << " is not installed";
@@ -86,6 +93,7 @@ void OutputRouter::send(int address, OutputEvent event) {
             sendMidi(output[address], event);
             break;
     }
+    peak[address] = 55;
 }
 
 void OutputRouter::sendDummy(OutputSettings settings, OutputEvent event) {
@@ -108,3 +116,22 @@ void OutputRouter::sendMidi(OutputSettings settings, OutputEvent event) {
     }
     midi_output[settings.device]->sendNoteOn(settings.channel, event.note, event.velocity);
 }
+
+const ofColor OutputColors::color[] = {
+    ofColor(50, 50, 50),
+    ofColor(100, 50, 50),
+    ofColor(50, 100, 50),
+    ofColor(50, 50, 100),
+    ofColor(100, 100, 50),
+    ofColor(100, 50, 100),
+    ofColor(50, 100, 100),
+    ofColor(200, 100, 50),
+    ofColor(100, 200, 50),
+    ofColor(100, 50, 200),
+    ofColor(50, 100, 200),
+    ofColor(50, 200, 100),
+    ofColor(0, 0, 0),
+    ofColor(20, 50, 100),
+    ofColor(50, 20, 100),
+    ofColor(100, 50, 20)
+};

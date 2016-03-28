@@ -91,9 +91,11 @@ void ofApp::draw() {
 
     buffer->draw(ofGetWidth() - 90, 50);
 
-    ofSetColor(200);
     for (int i = 0; i < MAX_OUTPUTS; i++) {
-        font.drawString(output_router->getOutputString(i), ofGetWidth() - 90, 150 + 15*i);
+        ofSetColor(OutputColors::color[i % OUTPUT_COLORS]);
+        ofDrawRectangle(ofGetWidth() - 90, 138 + 15 * i, 85, 15);
+        ofSetColor(200 + output_router->getPeak(i));
+        font.drawString(output_router->getOutputString(i), ofGetWidth() - 87, 150 + 15*i);
     }
 }
 
