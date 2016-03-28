@@ -82,7 +82,7 @@ int OutputRouter::getPeak(int address) {
 
 void OutputRouter::send(int address, OutputEvent event) {
     if (!(address >= 0 && address < MAX_OUTPUTS) || output[address].used == false) {
-        cerr << "ERROR: Output " << address << " is not installed";
+        ofLogError("OutputRouter") << "Output " << address << " is not installed";
         return;
     }
     switch (output[address].type) {
