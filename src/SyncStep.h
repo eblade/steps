@@ -9,6 +9,7 @@
 class SyncStep : public Step {
     public:
         SyncStep(int label);
+        ~SyncStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         void populate(Toolbar* toolbar);

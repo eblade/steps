@@ -31,6 +31,9 @@
 // Max number of Labels to use on a Page
 #define MAX_LABELS 16
 
+// Max TickBuffer size
+#define TICK_BUFFER_SIZE 256
+
 // Step Types
 #define STEP_TYPE_NONE 0
 #define STEP_TYPE_NOTE 1

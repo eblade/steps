@@ -34,6 +34,17 @@ DivisionStep::DivisionStep(int numerator, int denominator, int tuplet) : Step() 
 
 DivisionStep::~DivisionStep() {
     delete division;
+    delete tool_1;
+    delete tool_1_2;
+    delete tool_1_4;
+    delete tool_1_8;
+    delete tool_1_16;
+    delete tool_1_32;
+    delete tool_1_64;
+    delete tool_triplet;
+    delete tool_no_tuplet;
+    delete tool_tuplet_up;
+    delete tool_tuplet_down;
 }
 
 ChangeSet* DivisionStep::execute(TickBuffer* buffer, SequencerState sequencer) {

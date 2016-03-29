@@ -41,6 +41,7 @@ class Sequencer {
         long long release;
         int output;
         int period;
+        int label;
         Step* data[MAX_STEPS];
 };
 

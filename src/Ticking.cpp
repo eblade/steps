@@ -6,6 +6,7 @@ TickBuffer::TickBuffer(int resolution) {
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         buffer[i] = NULL;
     }
+    this->changes = new ChangeSet(true);
     this->reset();
 }
 
@@ -91,6 +92,18 @@ long long TickBuffer::now() {
 
 bool TickBuffer::timeFor(long long time) {
     return time < (now() - period / 2);
+}
+
+void TickBuffer::hold(ChangeSet* changes) {
+    if (changes != NULL) {
+        this->changes->push(changes);
+    }
+}
+
+ChangeSet* TickBuffer::release() {
+    ChangeSet* changes_to_release = this->changes;
+    this->changes = new ChangeSet(true);
+    return changes_to_release;
 }
 
 void TickBuffer::draw(int x, int y) {

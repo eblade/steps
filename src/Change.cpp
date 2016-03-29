@@ -44,10 +44,15 @@ Change* Change::clone() {
 //==========================================================================
 
 
-ChangeSet::ChangeSet() {
+ChangeSet::ChangeSet(bool upstream) {
     head = 0;
     for (int i = 0; i < MAX_CHANGES; i++) {
         change[i] = NULL;
+    }
+    if (!upstream) {
+        this->upstream = new ChangeSet(true);
+    } else {
+        this->upstream = NULL;
     }
 }
 
@@ -57,6 +62,9 @@ ChangeSet::~ChangeSet() {
             delete change[i];
             change[i] = NULL;
         }
+    }
+    if (upstream != NULL) {
+        delete upstream;
     }
 }
 
@@ -92,4 +100,14 @@ Change* ChangeSet::next(int level) {
 
 void ChangeSet::rewind() {
     head = 0;
+}
+
+int ChangeSet::getLength() {
+    int i;
+    for (i = head; i < MAX_CHANGES; i++) {
+        if (change[i] == NULL) {
+            return i;
+        }
+    }
+    return i;
 }

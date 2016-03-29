@@ -102,26 +102,24 @@ void ofApp::draw() {
 }
 
 void ofApp::step() {
-    static int toolbar_counter = 0;
+    ChangeSet* upstream = buffer->release();
     if (page[active_page] != NULL) {
         if (playing) {
             page[active_page]->step(buffer, output_router);
+            page[active_page]->change(upstream, buffer);
         }
-        if (toolbar_counter == 0) {
-            Toolbar* new_toolbar = new Toolbar();
-            new_toolbar->push(playing ? tool_stop : tool_play);
-            new_toolbar->push(tool_sync);
-            new_toolbar->push(tool_bpm_80);
-            new_toolbar->push(tool_bpm_120);
-            new_toolbar->push(tool_bpm_160);
-            page[active_page]->populate(new_toolbar);
-            Toolbar* old_toolbar = this->toolbar;
-            this->toolbar = new_toolbar;
-            delete old_toolbar;
-        }
+        Toolbar* new_toolbar = new Toolbar();
+        new_toolbar->push(playing ? tool_stop : tool_play);
+        new_toolbar->push(tool_sync);
+        new_toolbar->push(tool_bpm_80);
+        new_toolbar->push(tool_bpm_120);
+        new_toolbar->push(tool_bpm_160);
+        page[active_page]->populate(new_toolbar);
+        Toolbar* old_toolbar = this->toolbar;
+        this->toolbar = new_toolbar;
+        delete old_toolbar;
     }
-    toolbar_counter++;
-    toolbar_counter %= 20;
+    delete upstream;
 }
 
 void ofApp::change(ChangeSet* changes) {

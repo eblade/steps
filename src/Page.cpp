@@ -37,7 +37,7 @@ Page::Page() {
     tool_add_output = new PersistantTool("+\nOUT", 'O',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
 
-    tool_add_output = new PersistantTool("+\nSYNC", 'S',
+    tool_add_sync = new PersistantTool("+\nSYNC", 'S',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
 }
 
@@ -48,6 +48,15 @@ Page::~Page() {
             sequencer[i] = NULL;
         }
     }
+    delete tool_seq_add;
+    delete tool_seq_next;
+    delete tool_seq_prev;
+    delete tool_step_prev;
+    delete tool_step_next;
+    delete tool_add_note;
+    delete tool_add_div;
+    delete tool_add_output;
+    delete tool_add_sync;
 }
 
 void Page::step(TickBuffer* buffer, OutputRouter* output_router) {
@@ -96,6 +105,7 @@ void Page::populate(Toolbar* toolbar) {
     toolbar->push(tool_add_note);
     toolbar->push(tool_add_div);
     toolbar->push(tool_add_output);
+    toolbar->push(tool_add_sync);
     if (sequencer[cursor] != NULL) {
         sequencer[cursor]->populate(toolbar);
     }
@@ -122,7 +132,12 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_SYNC:
                 for (int i = 0; i < MAX_SEQUENCERS; i++) {
                     if (sequencer[i] != NULL) {
-                        sequencer[i]->sync();
+                        int label = sequencer[i]->label;
+                        if (label != 0) {
+                            if (change->value == 0 || label == change->value) {
+                                sequencer[i]->sync();
+                            }
+                        }
                     } else {
                         break;
                     }

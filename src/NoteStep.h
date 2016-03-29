@@ -11,10 +11,12 @@
 class NoteStep : public Step {
     public:
         NoteStep();
+        ~NoteStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
+        ChangeSet* click();
         int getLength();
 
         int note;
@@ -22,6 +24,8 @@ class NoteStep : public Step {
         int velocity;
         OutputRouter* output_router;
 
+        Tool* tool_activate;
+        Tool* tool_deactivate;
         Tool* tool_note_0;
         Tool* tool_note_1;
         Tool* tool_note_2;

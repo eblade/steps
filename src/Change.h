@@ -27,12 +27,14 @@ class Change {
 
 class ChangeSet {
     public:
-        ChangeSet();
+        ChangeSet(bool upstream=false);
         ~ChangeSet();
         void push(Change* change);
         void push(ChangeSet* changes);
         Change* next(int level);
         void rewind();
+        ChangeSet* upstream;
+        int getLength();
 
     private:
         int head;

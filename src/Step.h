@@ -12,10 +12,12 @@ struct SequencerState {
     SequencerState () :
         output(0),
         period(0),
+        label(0),
         release(0)
         {}
     int output;
     int period;
+    int label;
     long long release;
     OutputRouter* output_router;
 };

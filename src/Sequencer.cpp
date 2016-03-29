@@ -10,6 +10,7 @@ Sequencer::Sequencer() {
     release = 0;
     output = 0;
     period = 1000;
+    label = 0;
 
     for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
@@ -72,6 +73,7 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         state.output = output;
         state.period = period;
         state.release = release;
+        state.label = label;
         change(step->execute(buffer, state), buffer);
         if (last_executed >= position) {
             break;
@@ -133,6 +135,9 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_RELEASE_DELTA:
                 release += change->value;
                 break;
+            case OP_LABEL_SET:
+                label = change->value;
+                break;
             case OP_ADD_STEP_NOTE: {
                 NoteStep* new_note = new NoteStep();
                 new_note->note = change->value;
@@ -161,6 +166,9 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
     }
     if (data[cursor] != NULL) {
         data[cursor]->change(changes);
+    }
+    if (buffer != NULL) {
+        buffer->hold(changes->upstream);
     }
 }
 

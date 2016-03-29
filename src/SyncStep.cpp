@@ -41,6 +41,23 @@ SyncStep::SyncStep(int label) : Step() {
         new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA, -1));
 }
 
+SyncStep::~SyncStep() {
+    delete tool_activate;
+    delete tool_deactivate;
+    delete tool_label_0;
+    delete tool_label_1;
+    delete tool_label_2;
+    delete tool_label_3;
+    delete tool_label_4;
+    delete tool_label_5;
+    delete tool_label_6;
+    delete tool_label_7;
+    delete tool_label_8;
+    delete tool_label_9;
+    delete tool_label_up;
+    delete tool_label_down;
+}
+
 int SyncStep::getLength() {
     return length;
 }
@@ -51,8 +68,9 @@ ChangeSet* SyncStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     start = sequencer.release > 0 ? sequencer.release : buffer->last_time;
     stop = start + sequencer.period;
     if (active) {
-        changes->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC, label));
+        changes->upstream->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC, label));
     }
+    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 0)); // Do not recieve sync
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
     return changes;
@@ -72,7 +90,7 @@ void SyncStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
             ofSetColor(c_inactive);
         }
     }
-    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
+    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING, STEP_INNER, STEP_INNER);
 
     if (active) {
         ofSetColor(ofColor::white);

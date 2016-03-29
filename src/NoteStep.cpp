@@ -16,6 +16,10 @@ NoteStep::NoteStep() : Step() {
     velocity = 100;
     length = 1000;
 
+    tool_activate = new PersistantTool("TURN\nON", ' ',
+        new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 1));
+    tool_deactivate = new PersistantTool("TURN\nOFF", ' ',
+        new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 0));
     tool_note_0 = new PersistantTool("C", 'q',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 0));
     tool_note_1 = new PersistantTool("C#", '2',
@@ -52,6 +56,29 @@ NoteStep::NoteStep() : Step() {
         new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 127));
     tool_normal = new PersistantTool("VEL\nNOR", '.',
         new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 100));
+}
+
+NoteStep::~NoteStep() {
+    delete tool_activate;
+    delete tool_deactivate;
+    delete tool_note_0;
+    delete tool_note_1;
+    delete tool_note_2;
+    delete tool_note_3;
+    delete tool_note_4;
+    delete tool_note_5;
+    delete tool_note_6;
+    delete tool_note_7;
+    delete tool_note_8;
+    delete tool_note_9;
+    delete tool_note_10;
+    delete tool_note_11;
+    delete tool_note_up;
+    delete tool_note_down;
+    delete tool_octave_up;
+    delete tool_octave_down;
+    delete tool_accent;
+    delete tool_normal;
 }
 
 int NoteStep::getLength() {
@@ -112,6 +139,11 @@ void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 }
 
 void NoteStep::populate(Toolbar* toolbar) {
+    if (active) {
+        toolbar->push(tool_deactivate);
+    } else {
+        toolbar->push(tool_activate);
+    }
     toolbar->push(tool_octave_down);
     toolbar->push(tool_octave_up);
     toolbar->push(tool_note_down);
@@ -164,6 +196,14 @@ void NoteStep::change(ChangeSet* changes) {
                 velocity = velocity > 127 ? 127 : velocity;
                 velocity = velocity < 0 ? 0 : velocity;
                 break;
+            case OP_ACTIVE_SET:
+                active = change->value ? true : false;
+                break;
         }
     }
+}
+
+ChangeSet* NoteStep::click() {
+    ChangeSet* changes = new ChangeSet();
+    return changes;
 }

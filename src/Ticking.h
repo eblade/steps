@@ -3,8 +3,9 @@
 
 #include "ofMain.h"
 #include <chrono>
+#include "Const.h"
+#include "Change.h"
 
-#define TICK_BUFFER_SIZE 256
 
 class TickEvent {
     public:
@@ -24,6 +25,8 @@ class TickBuffer {
         void push(TickEvent* event);
         void draw(int x, int y);
         bool timeFor(long long time);
+        void hold(ChangeSet* changes);
+        ChangeSet* release();
 
         long long sync_time;
         long long last_time;
@@ -36,6 +39,7 @@ class TickBuffer {
         long long now();
         long long position;
         long ticks;
+        ChangeSet* changes;
 };
 
 
