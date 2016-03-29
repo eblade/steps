@@ -11,33 +11,33 @@ SyncStep::SyncStep(int label) : Step() {
     this->label = label;
     length = 1000;
 
-    tool_activate = new PersistantTool("TURN\nON", ' ',
+    tool_activate = new Tool("TURN\nON", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 1));
-    tool_deactivate = new PersistantTool("TURN\nOFF", ' ',
+    tool_deactivate = new Tool("TURN\nOFF", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 0));
-    tool_label_0 = new PersistantTool("LABEL\n#0", '0',
+    tool_label_0 = new Tool("LABEL\n#0", '0',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 0));
-    tool_label_1 = new PersistantTool("LABEL\n#1", '1',
+    tool_label_1 = new Tool("LABEL\n#1", '1',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 1));
-    tool_label_2 = new PersistantTool("LABEL\n#2", '2',
+    tool_label_2 = new Tool("LABEL\n#2", '2',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 2));
-    tool_label_3 = new PersistantTool("LABEL\n#3", '3',
+    tool_label_3 = new Tool("LABEL\n#3", '3',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 3));
-    tool_label_4 = new PersistantTool("LABEL\n#4", '4',
+    tool_label_4 = new Tool("LABEL\n#4", '4',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 4));
-    tool_label_5 = new PersistantTool("LABEL\n#5", '5',
+    tool_label_5 = new Tool("LABEL\n#5", '5',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 5));
-    tool_label_6 = new PersistantTool("LABEL\n#6", '6',
+    tool_label_6 = new Tool("LABEL\n#6", '6',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 6));
-    tool_label_7 = new PersistantTool("LABEL\n#7", '7',
+    tool_label_7 = new Tool("LABEL\n#7", '7',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 7));
-    tool_label_8 = new PersistantTool("LABEL\n#8", '8',
+    tool_label_8 = new Tool("LABEL\n#8", '8',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 8));
-    tool_label_9 = new PersistantTool("LABEL\n#9", '9',
+    tool_label_9 = new Tool("LABEL\n#9", '9',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 9));
-    tool_label_up = new PersistantTool("LABEL\n+1", '+',
+    tool_label_up = new Tool("LABEL\n+1", '+',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA, 1));
-    tool_label_down = new PersistantTool("LABEL\n-1", '-',
+    tool_label_down = new Tool("LABEL\n-1", '-',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA, -1));
 }
 

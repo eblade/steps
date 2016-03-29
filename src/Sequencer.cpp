@@ -82,6 +82,9 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
 }
 
 void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
+    if (changes == NULL) {
+        return;
+    }
     changes->rewind();
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
@@ -210,6 +213,9 @@ void Sequencer::cursorDelete() {
 }
 
 void Sequencer::cursorInsert(Step* step) {
+    if (cursor == 0) {
+        cursor = 1;
+    }
     if (data[cursor] != NULL) {
         if (data[MAX_STEPS - 1] == NULL) {
             for (int i = MAX_STEPS - 1; i >= cursor; i--) {

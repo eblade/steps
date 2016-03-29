@@ -23,19 +23,6 @@ Tool::Tool(string label, int key, Change* change) {
     this->level = change->level;
 }
 
-PersistantTool::PersistantTool() {
-    init("?", "");
-    this->persistant = true;
-}
-
-PersistantTool::PersistantTool(string label, int key, Change* change) {
-    init(label, ofToString((char) key));
-    this->key[0] = key;
-    this->changes->push(change);
-    this->persistant = true;
-    this->level = change->level;
-}
-
 Tool::~Tool() {
     delete changes;
 }
@@ -47,7 +34,6 @@ void Tool::init(string label, string key_string) {
     this->label = label;
     this->key_string = key_string;
     this->changes = new ChangeSet();
-    this->persistant = false;
     this->level = TARGET_LEVEL_APPLICATION;
     this->peak = 50;
 }
@@ -124,14 +110,7 @@ Toolbar::Toolbar() {
 }
 
 Toolbar::~Toolbar() {
-    for (int i = 0; i < MAX_TOOLS; i++) {
-        if (tool[i] != NULL) {
-            if (!tool[i]->persistant) {
-                delete tool[i];
-            }
-            tool[i] = NULL;
-        }
-    }
+
 }
 
 void Toolbar::draw(ofTrueTypeFont font) {

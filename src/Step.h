@@ -37,11 +37,4 @@ class Step {
         bool active;
 };
 
-class DummyEvent : public TickEvent {
-    public:
-        DummyEvent(string name, long long time);
-        void fire();
-        string name;
-};
-
 #endif /* STEP_H_ */

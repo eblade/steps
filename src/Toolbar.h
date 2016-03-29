@@ -17,7 +17,6 @@ class Tool {
         virtual void flash(int peak = 200);
 
         ChangeSet* changes;
-        bool persistant;
         string key_string;
         string label;
         int peak;
@@ -38,13 +37,6 @@ class Tool {
             c_text_seq,
             c_back_step,
             c_text_step;
-};
-
-
-class PersistantTool : public Tool {
-    public:
-        PersistantTool();
-        PersistantTool(string label, int key, Change* change);
 };
 
 

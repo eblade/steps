@@ -4,29 +4,29 @@ OutputStep::OutputStep() {
     type = STEP_TYPE_OUTPUT;
     output = 0;
 
-    tool_0 = new PersistantTool("OUT\n0", '0',
+    tool_0 = new Tool("OUT\n0", '0',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 0));
-    tool_1 = new PersistantTool("OUT\n1", '1',
+    tool_1 = new Tool("OUT\n1", '1',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 1));
-    tool_2 = new PersistantTool("OUT\n2", '2',
+    tool_2 = new Tool("OUT\n2", '2',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 2));
-    tool_3 = new PersistantTool("OUT\n3", '3',
+    tool_3 = new Tool("OUT\n3", '3',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 3));
-    tool_4 = new PersistantTool("OUT\n4", '4',
+    tool_4 = new Tool("OUT\n4", '4',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 4));
-    tool_5 = new PersistantTool("OUT\n5", '5',
+    tool_5 = new Tool("OUT\n5", '5',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 5));
-    tool_6 = new PersistantTool("OUT\n6", '6',
+    tool_6 = new Tool("OUT\n6", '6',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 6));
-    tool_7 = new PersistantTool("OUT\n7", '7',
+    tool_7 = new Tool("OUT\n7", '7',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 7));
-    tool_8 = new PersistantTool("OUT\n8", '8',
+    tool_8 = new Tool("OUT\n8", '8',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 8));
-    tool_9 = new PersistantTool("OUT\n9", '9',
+    tool_9 = new Tool("OUT\n9", '9',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET, 9));
-    tool_up = new PersistantTool("+\nOUT", '+',
+    tool_up = new Tool("+\nOUT", '+',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_DELTA, 1));
-    tool_down = new PersistantTool("-\nOUT", '-',
+    tool_down = new Tool("-\nOUT", '-',
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_DELTA, -1));
 }
 

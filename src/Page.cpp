@@ -8,37 +8,41 @@ Page::Page() {
     addNewLine(-1);
     cursor = 0;
 
-    tool_seq_add = new PersistantTool("+\nSEQ", OF_KEY_RETURN,
+    tool_seq_add = new Tool("+\nSEQ", OF_KEY_RETURN,
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_ADD, 0));
     tool_seq_add->key_string = "RET";
 
-    tool_step_prev = new PersistantTool("<<\nSTEP", 'h',
+    tool_step_prev = new Tool("<<\nSTEP", 'h',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, -1));
     tool_step_prev->addKey(OF_KEY_LEFT);
 
-    tool_seq_next = new PersistantTool("NEXT\nSEQ", 'j',
+    tool_seq_next = new Tool("NEXT\nSEQ", 'j',
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_DELTA, 1));
     tool_seq_next->addKey(OF_KEY_DOWN);
 
-    tool_seq_prev = new PersistantTool("PREV\nSEQ", 'k',
+    tool_seq_prev = new Tool("PREV\nSEQ", 'k',
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_DELTA, -1));
     tool_seq_prev->addKey(OF_KEY_UP);
 
-    tool_step_next = new PersistantTool(">>\nSTEP", 'l',
+    tool_step_next = new Tool(">>\nSTEP", 'l',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
     tool_step_next->addKey(OF_KEY_RIGHT);
 
-    tool_add_note = new PersistantTool("+\nNOTE", 'n',
+    tool_add_note = new Tool("+\nNOTE", 'n',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE, 0));
 
-    tool_add_div = new PersistantTool("+\nDIV", 'd',
+    tool_add_div = new Tool("+\nDIV", 'd',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_DIVISION, 8));
 
-    tool_add_output = new PersistantTool("+\nOUT", 'O',
+    tool_add_output = new Tool("+\nOUT", 'O',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
 
-    tool_add_sync = new PersistantTool("+\nSYNC", 'S',
+    tool_add_sync = new Tool("+\nSYNC", 'S',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
+
+    tool_del_step = new Tool("DEL", OF_KEY_DEL,
+        new Change(TARGET_LEVEL_PAGE, OP_STEP_DEL, -1));
+    tool_del_step->key_string = "DEL";
 }
 
 Page::~Page() {
@@ -57,6 +61,7 @@ Page::~Page() {
     delete tool_add_div;
     delete tool_add_output;
     delete tool_add_sync;
+    delete tool_del_step;
 }
 
 void Page::step(TickBuffer* buffer, OutputRouter* output_router) {
@@ -106,6 +111,7 @@ void Page::populate(Toolbar* toolbar) {
     toolbar->push(tool_add_div);
     toolbar->push(tool_add_output);
     toolbar->push(tool_add_sync);
+    toolbar->push(tool_del_step);
     if (sequencer[cursor] != NULL) {
         sequencer[cursor]->populate(toolbar);
     }
@@ -144,6 +150,15 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
                     buffer->reset();
                 }
                 break;
+            case OP_STEP_DEL: 
+                if (sequencer[cursor] != NULL) {
+                    if (sequencer[cursor]->cursor == 0) {
+                        deleteLine(cursor);
+                    } else {
+                        sequencer[cursor]->cursorDelete();
+                    }
+                }
+                break;
         }
     }
     if (sequencer[cursor] != NULL) {
@@ -172,14 +187,17 @@ void Page::deleteLine(int line) {
         if (line == 0 && sequencer[1] == NULL) {
             return; // can't delete the last line
         }
-        Sequencer* retired = sequencer[cursor];
+        Sequencer* retired = sequencer[line];
         for (int i = line; i < (MAX_SEQUENCERS - 1); i++) {
             sequencer[i] = sequencer[i + 1];
         }
-        if (line == cursor) {
+        if (line == cursor && sequencer[line] != NULL) {
             sequencer[line]->setCursor(retired->cursor);
         }
         sequencer[MAX_SEQUENCERS - 1] = NULL;
+        if (sequencer[cursor] == NULL) {
+            cursor--;
+        }
         delete retired;
     }
 }

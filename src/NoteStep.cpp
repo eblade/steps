@@ -16,45 +16,45 @@ NoteStep::NoteStep() : Step() {
     velocity = 100;
     length = 1000;
 
-    tool_activate = new PersistantTool("TURN\nON", ' ',
+    tool_activate = new Tool("TURN\nON", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 1));
-    tool_deactivate = new PersistantTool("TURN\nOFF", ' ',
+    tool_deactivate = new Tool("TURN\nOFF", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 0));
-    tool_note_0 = new PersistantTool("C", 'q',
+    tool_note_0 = new Tool("C", 'q',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 0));
-    tool_note_1 = new PersistantTool("C#", '2',
+    tool_note_1 = new Tool("C#", '2',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 1));
-    tool_note_2 = new PersistantTool("D", 'w',
+    tool_note_2 = new Tool("D", 'w',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 2));
-    tool_note_3 = new PersistantTool("D#", '3',
+    tool_note_3 = new Tool("D#", '3',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 3));
-    tool_note_4 = new PersistantTool("E", 'e',
+    tool_note_4 = new Tool("E", 'e',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 4));
-    tool_note_5 = new PersistantTool("F", 'r',
+    tool_note_5 = new Tool("F", 'r',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 5));
-    tool_note_6 = new PersistantTool("F#", '5',
+    tool_note_6 = new Tool("F#", '5',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 6));
-    tool_note_7 = new PersistantTool("G", 't',
+    tool_note_7 = new Tool("G", 't',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 7));
-    tool_note_8 = new PersistantTool("G#", '6',
+    tool_note_8 = new Tool("G#", '6',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 8));
-    tool_note_9 = new PersistantTool("A", 'y',
+    tool_note_9 = new Tool("A", 'y',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 9));
-    tool_note_10 = new PersistantTool("A#", '7',
+    tool_note_10 = new Tool("A#", '7',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 10));
-    tool_note_11 = new PersistantTool("B", 'u',
+    tool_note_11 = new Tool("B", 'u',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_SET, 11));
-    tool_note_up = new PersistantTool("+\n1/2", '+',
+    tool_note_up = new Tool("+\n1/2", '+',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_DELTA, 1));
-    tool_note_down = new PersistantTool("-\n1/2", '-',
+    tool_note_down = new Tool("-\n1/2", '-',
         new Change(TARGET_LEVEL_STEP, OP_NOTE_DELTA, -1));
-    tool_octave_up = new PersistantTool("+\n8va", 'a',
+    tool_octave_up = new Tool("+\n8va", 'a',
         new Change(TARGET_LEVEL_STEP, OP_OCTAVE_DELTA, 1));
-    tool_octave_down = new PersistantTool("-\n8va", 'z',
+    tool_octave_down = new Tool("-\n8va", 'z',
         new Change(TARGET_LEVEL_STEP, OP_OCTAVE_DELTA, -1));
-    tool_accent = new PersistantTool("VEL\nACC", '.',
+    tool_accent = new Tool("VEL\nACC", '.',
         new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 127));
-    tool_normal = new PersistantTool("VEL\nNOR", '.',
+    tool_normal = new Tool("VEL\nNOR", '.',
         new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET, 100));
 }
 

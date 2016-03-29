@@ -26,7 +26,7 @@
 #define MAX_CHANGES 32
 
 // Max number of Tools to put in a Toolbar
-#define MAX_TOOLS 32
+#define MAX_TOOLS 64
 
 // Max number of Labels to use on a Page
 #define MAX_LABELS 16

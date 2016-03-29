@@ -31,6 +31,7 @@ class Page {
         Tool* tool_add_div;
         Tool* tool_add_output;
         Tool* tool_add_sync;
+        Tool* tool_del_step;
 
     private:
         int cursor;
