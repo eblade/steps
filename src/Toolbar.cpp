@@ -49,10 +49,20 @@ void Tool::init(string label, string key_string) {
     this->changes = new ChangeSet();
     this->persistant = false;
     this->level = TARGET_LEVEL_APPLICATION;
+    this->peak = 50;
+}
+
+void Tool::flash(int peak) {
+    this->peak = peak;
 }
     
 void Tool::draw(int x, int y, ofTrueTypeFont font) {
-    ofSetColor(c_key_back);
+    ofSetColor(20 + peak);
+    if (peak > 0) {
+        peak -= 10;
+    } else {
+        peak = 0;
+    }
     ofDrawRectangle(
         x + STEP_SPACING, y + STEP_SPACING,
         STEP_INNER, STEP_KEY_HEIGHT
@@ -149,6 +159,7 @@ ChangeSet* Toolbar::keyPressed(int key) {
     ChangeSet* changes = new ChangeSet();
     for (int i = 0; i < head; i++) {
         if (tool[i]->hasKey(key)) {
+            tool[i]->flash();
             changes->push(tool[i]->changes);
         }
     }
@@ -159,6 +170,7 @@ ChangeSet* Toolbar::mousePressed(int x, int y, int button) {
     ChangeSet* changes = new ChangeSet();
     int i = x / STEP_INNER;
     if (i < MAX_TOOLS && tool[i] != NULL) {
+        tool[i]->flash();
         changes->push(tool[i]->changes);
     }
     return changes;

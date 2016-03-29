@@ -14,11 +14,13 @@ class Tool {
         virtual void draw(int x, int y, ofTrueTypeFont font);
         virtual bool hasKey(int key);
         virtual void addKey(int key);
+        virtual void flash(int peak = 200);
 
         ChangeSet* changes;
         bool persistant;
         string key_string;
         string label;
+        int peak;
 
     protected:
         virtual void init(string label, string key_string);
