@@ -147,7 +147,6 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
                     } else {
                         break;
                     }
-                    buffer->reset();
                 }
                 break;
             case OP_STEP_DEL: 
