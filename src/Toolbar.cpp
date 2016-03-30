@@ -147,7 +147,7 @@ ChangeSet* Toolbar::keyPressed(int key) {
 
 ChangeSet* Toolbar::mousePressed(int x, int y, int button) {
     ChangeSet* changes = new ChangeSet();
-    int i = x / STEP_INNER;
+    int i = x / STEP_OUTER;
     if (i < MAX_TOOLS && tool[i] != NULL) {
         tool[i]->flash();
         changes->push(tool[i]->changes);

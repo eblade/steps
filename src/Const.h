@@ -48,7 +48,7 @@
 
 // Step dimensions
 #define STEP_INNER 46
-#define STEP_OUTER 46
+#define STEP_OUTER 50
 #define STEP_SPACING 2
 #define STEP_KEY_HEIGHT 20
 

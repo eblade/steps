@@ -86,8 +86,8 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font) {
 }
 
 void Page::mousePressed(int x, int y, int button){
-    int col = x / 50;
-    int row = y / 50;
+    int col = x / STEP_OUTER;
+    int row = y / STEP_OUTER;
 
     if (row >= MAX_SEQUENCERS) {
         return;
