@@ -118,6 +118,12 @@ void ActivateStep::change(ChangeSet* changes) {
                 break;
             case OP_ACTIVE_SET:
                 active = change->value ? true : false;
+                changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, change->value));
+                if (change->value == 0) {
+                    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
+                } else {
+                    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
+                }
                 break;
         }
     }
@@ -130,7 +136,7 @@ ChangeSet* ActivateStep::click() {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 1));
     } else {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 0));
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET, 0));
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
     }
     return changes;
 }
