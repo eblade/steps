@@ -11,6 +11,7 @@ Sequencer::Sequencer() {
     output = 0;
     period = 1000;
     label = 0;
+    cursor_shade = 255;
 
     for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
@@ -41,7 +42,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
         }
 
         if (onThisRow && col == cursor) {
-            ofSetColor(ofColor::white);
+            ofSetColor(cursor_shade);
             ofDrawRectangle(x, y, STEP_OUTER, STEP_SPACING);
             ofDrawRectangle(x, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
             ofDrawRectangle(x + STEP_OUTER - STEP_SPACING, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
@@ -51,6 +52,10 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
         if (data[col] == NULL) {
             break;
         }
+    }
+    cursor_shade -= 3;
+    if (cursor_shade < 100) {
+        cursor_shade = 255;
     }
 }
 

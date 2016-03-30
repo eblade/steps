@@ -42,6 +42,7 @@ class Sequencer {
         int output;
         int period;
         int label;
+        int cursor_shade;
         Step* data[MAX_STEPS];
 };
 
