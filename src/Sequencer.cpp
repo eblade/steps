@@ -122,6 +122,9 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 break;
             case OP_ACTIVE_SET:
                 active = change->value ? true : false;
+                if (!active) {
+                    last_executed = 0;
+                }
                 break;
             case OP_OUTPUT_SET:
                 output = change->value;
@@ -145,6 +148,9 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 break;
             case OP_LABEL_SET:
                 label = change->value;
+                break;
+            case OP_SYNC:
+                this->sync();
                 break;
             case OP_ADD_STEP_NOTE: {
                 NoteStep* new_note = new NoteStep();
