@@ -60,11 +60,11 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
 }
 
 void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
-    SequencerState state;
-    state.output_router = output_router;
     if (!active) {
         return;
     }
+    SequencerState state;
+    state.output_router = output_router;
     while (true) {
         if (data[position] == NULL) {
             position = 0;
