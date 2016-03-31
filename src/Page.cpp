@@ -40,9 +40,9 @@ Page::Page() {
     tool_add_sync = new Tool("+\nSYNC", 'S',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
 
-    tool_del_step = new Tool("DEL", OF_KEY_DEL,
+    tool_del_step = new Tool("DEL", 'x',
         new Change(TARGET_LEVEL_PAGE, OP_STEP_DEL, -1));
-    tool_del_step->key_string = "DEL";
+    tool_del_step->addKey(OF_KEY_DEL);
 }
 
 Page::~Page() {
