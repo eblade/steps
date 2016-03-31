@@ -19,8 +19,8 @@ Steps is not:
 To compile, you need:
 
 * A C++14 compiler
-* [OpenFramworks](http://openframeworks.cc/)
-* [ofxMidi plugin for OpenFramwworks](https://github.com/danomatika/ofxMidi)
+* [OpenFrameworks](http://openframeworks.cc/)
+* [ofxMidi plugin for OpenFrameworks](https://github.com/danomatika/ofxMidi)
 
 I compile it on Linux, but it might be cross-platform.
 
