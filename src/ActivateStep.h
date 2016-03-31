@@ -16,7 +16,10 @@ class ActivateStep : public Step {
         ChangeSet* click();
 
         int label;
+        bool hold;
 
+        Tool* tool_hold;
+        Tool* tool_dont_hold;
         Tool* tool_activate;
         Tool* tool_deactivate;
         Tool* tool_label_0;

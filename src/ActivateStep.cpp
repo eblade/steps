@@ -9,11 +9,16 @@ ActivateStep::ActivateStep() : Step() {
     type = STEP_TYPE_ACTIVATE;
     label = 0;
     changed_label = true;
+    hold = false;
 
     tool_activate = new Tool("TURN\nON", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 1));
     tool_deactivate = new Tool("TURN\nOFF", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 0));
+    tool_hold = new Tool("HOLD", 'h',
+        new Change(TARGET_LEVEL_STEP, OP_HOLD_SET, 1));
+    tool_dont_hold = new Tool("DON'T\nHOLD", 'h',
+        new Change(TARGET_LEVEL_STEP, OP_HOLD_SET, 0));
     tool_label_0 = new Tool("LABEL\n#0", '0',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 0));
     tool_label_1 = new Tool("LABEL\n#1", '1',
@@ -43,6 +48,8 @@ ActivateStep::ActivateStep() : Step() {
 ActivateStep::~ActivateStep() {
     delete tool_activate;
     delete tool_deactivate;
+    delete tool_hold;
+    delete tool_dont_hold;
     delete tool_label_0;
     delete tool_label_1;
     delete tool_label_2;
@@ -59,7 +66,9 @@ ActivateStep::~ActivateStep() {
 
 ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+    if (!hold || sequencer.release == 0) { // release == 0 means just synced
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+    }
     if (changed_label) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, label));
         changed_label = false;
@@ -79,6 +88,11 @@ void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     
     ofSetColor(255);
     font.drawString(ofToString("#") + ofToString(label), x + 3, y + 13);
+    if (hold && executing) {
+        font.drawString(ofToString("HELD"), x + 3, y + 28);
+    } else if (hold) {
+        font.drawString(ofToString("HOLD"), x + 3, y + 28);
+    }
 }
 
 void ActivateStep::populate(Toolbar* toolbar) {
@@ -86,6 +100,11 @@ void ActivateStep::populate(Toolbar* toolbar) {
         toolbar->push(tool_deactivate);
     } else {
         toolbar->push(tool_activate);
+    }
+    if (hold) {
+        toolbar->push(tool_dont_hold);
+    } else {
+        toolbar->push(tool_hold);
     }
     toolbar->push(tool_label_down);
     toolbar->push(tool_label_up);
@@ -125,18 +144,25 @@ void ActivateStep::change(ChangeSet* changes) {
                     changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
                 }
                 break;
+            case OP_HOLD_SET:
+                hold = change->value ? true : false;
+                break;
         }
     }
 }
 
 ChangeSet* ActivateStep::click() {
     ChangeSet* changes = new ChangeSet();
-    active = !active;
-    if (active) {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 1));
+    if (hold) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     } else {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 0));
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
+        active = !active;
+        if (active) {
+            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 1));
+        } else {
+            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 0));
+            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
+        }
     }
     return changes;
 }
