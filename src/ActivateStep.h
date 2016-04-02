@@ -14,9 +14,12 @@ class ActivateStep : public Step {
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
         ChangeSet* click();
+        void write(ofstream& f);
 
-        int label;
-        bool hold;
+        int getLabel();
+        void setLabel(int label);
+        bool getHold();
+        void setHold(bool hold);
 
         Tool* tool_hold;
         Tool* tool_dont_hold;
@@ -40,6 +43,8 @@ class ActivateStep : public Step {
             c_off;
 
     private:
+        int label;
+        bool hold;
         bool changed_label;
 };
 

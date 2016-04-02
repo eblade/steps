@@ -102,6 +102,14 @@ void DivisionStep::change(ChangeSet* changes) {
     }
 }
 
+void DivisionStep::write(ofstream& f) {
+    f << "delta-cursor 1\n"
+      << "add-division-step\n" 
+      << "set-numerator " << ofToString(division->numerator) << "\n" 
+      << "set-denominator " << ofToString(division->denominator) << "\n" 
+      << "set-tuplet " << ofToString(division->tuplet) << "\n";
+}
+
 Division::Division(int numerator, int denominator, int tuplet) {
     this->numerator = numerator;
     this->denominator = denominator;

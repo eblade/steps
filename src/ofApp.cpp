@@ -6,9 +6,11 @@ void ofApp::setup() {
 
     // Graphics
     font.load(OF_TTF_SANS, 9, true, true);
+    font_big.load(OF_TTF_MONO, 14, true, true);
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
     ofSetWindowTitle(APPLICATION);
+    ofSetEscapeQuitsApp(false);
     ofLogNotice("Main") << "OpenFrameworks setup ok.";
 
     // Setup up the timed buffer
@@ -28,20 +30,29 @@ void ofApp::setup() {
 
     // Setup up the Toolbar
     toolbar = new Toolbar();
+    tool_cmd = new Tool("CMD", ':', new Change(TARGET_LEVEL_APPLICATION, OP_COMMAND_MODE));
     tool_play = new Tool("PLAY", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 1));
     tool_stop = new Tool("STOP", 'p', new Change(TARGET_LEVEL_APPLICATION, OP_PLAY_SET, 0));
     tool_stop->changes->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC));
-    tool_sync = new Tool("SYNC\nALL", 's', new Change(TARGET_LEVEL_PAGE, OP_SYNC, 0));
+    tool_sync = new Tool("SYNC\nALL", 'S', new Change(TARGET_LEVEL_PAGE, OP_SYNC, 0));
     tool_bpm_80 = new Tool("80\nBPM", 'Q', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 80));
     tool_bpm_120 = new Tool("120\nBPM", 'W', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 120));
     tool_bpm_160 = new Tool("160\nBPM", 'E', new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET, 160));
+    tool_add_page = new Tool("+\nPAGE", 'P', new Change(TARGET_LEVEL_APPLICATION, OP_PAGE_ADD));
     ofLogNotice("Main") << "Toolbar setup ok.";
 
-    // Create a new Page
+    // Setup the CommandLine
+    command_line = new CommandLine();
+    command_mode = false;
+
+    // "Globals"
+    filename = "untitled";
+
+    // Clear all pages and reset active page to 0
     for (int i = 0; i < MAX_PAGES; i++) {
         page[i] = NULL;
     }
-    active_page = addPage();
+    active_page = 0;
     playing = false;
     ofLogNotice("Main") << "Page setup ok.";
 
@@ -52,14 +63,25 @@ void ofApp::exit() {
     delete buffer;
     delete output_router;
     delete toolbar;
+    delete tool_cmd;
     delete tool_play;
     delete tool_stop;
+    delete tool_bpm_80;
+    delete tool_bpm_120;
+    delete tool_bpm_160;
+    delete tool_sync;
+    delete tool_add_page;
     for (int i = 0; i < MAX_PAGES; i++) {
         if (page[i] != NULL) {
             delete page[i];
             page[i] = NULL;
         }
     }
+}
+
+void ofApp::reset() {
+    exit();
+    setup();
 }
 
 void ofApp::update() {
@@ -80,18 +102,26 @@ void ofApp::draw() {
     // Draw the active page
     if (page[active_page] != NULL) {
         page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font);
+
+    } else if (active_page == 0) {
+        ofSetColor(200, 100, 80);
+        font_big.drawString("Click +PAGE to create a page.", 15, 30);
     }
 
-    // Draw the toolbar
-    toolbar->draw(font);
+    // Draw the toolbar or command line
+    if (command_mode) {
+        command_line->draw(font_big);
+    } else {
+        toolbar->draw(font);
+    }
 
     // Draw some debug info to the right
     ofSetColor(200);
-    font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 10);
-    font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 25);
-    font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 40);
+    font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 15);
+    font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 30);
+    font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 45);
 
-    buffer->draw(ofGetWidth() - 90, 50);
+    buffer->draw(ofGetWidth() - 90, 55);
 
     for (int i = 0; i < MAX_OUTPUTS; i++) {
         ofSetColor(OutputColors::color[i % OUTPUT_COLORS]);
@@ -108,17 +138,21 @@ void ofApp::step() {
             page[active_page]->step(buffer, output_router);
             page[active_page]->change(upstream, buffer);
         }
-        Toolbar* new_toolbar = new Toolbar();
-        new_toolbar->push(playing ? tool_stop : tool_play);
-        new_toolbar->push(tool_sync);
-        new_toolbar->push(tool_bpm_80);
-        new_toolbar->push(tool_bpm_120);
-        new_toolbar->push(tool_bpm_160);
-        page[active_page]->populate(new_toolbar);
-        Toolbar* old_toolbar = this->toolbar;
-        this->toolbar = new_toolbar;
-        delete old_toolbar;
     }
+    Toolbar* new_toolbar = new Toolbar();
+    new_toolbar->push(tool_cmd);
+    new_toolbar->push(playing ? tool_stop : tool_play);
+    new_toolbar->push(tool_sync);
+    new_toolbar->push(tool_bpm_80);
+    new_toolbar->push(tool_bpm_120);
+    new_toolbar->push(tool_bpm_160);
+    new_toolbar->push(tool_add_page);
+    if (page[active_page] != NULL) {
+        page[active_page]->populate(new_toolbar);
+    }
+    Toolbar* old_toolbar = this->toolbar;
+    this->toolbar = new_toolbar;
+    delete old_toolbar;
     delete upstream;
 }
 
@@ -135,6 +169,9 @@ void ofApp::change(ChangeSet* changes) {
                 if (playing) {
                     buffer->reset();
                 }
+                break;
+            case OP_PAGE_ADD:
+                active_page = addPage();
                 break;
             case OP_PAGE_SET:
                 active_page = change->value;
@@ -162,6 +199,25 @@ void ofApp::change(ChangeSet* changes) {
                     buffer->bpm = 1;
                 }
                 break;
+            case OP_COMMAND_MODE:
+                command_line->clear();
+                command_mode = true;
+                break;
+            case OP_NORMAL_MODE:
+                command_mode = false;
+                break;
+            case OP_FILENAME_SET:
+                filename = change->string_value;
+                break;
+            case OP_WRITE:
+                write(filename);
+                break;
+            case OP_EDIT:
+                edit(filename);
+                break;
+            case OP_EXIT:
+                ofExit(change->value);
+                break;
         }
     }
     if (page[active_page] != NULL) {
@@ -180,8 +236,48 @@ int ofApp::addPage() {
     return -1;
 }
 
+void ofApp::write(string filename) {
+    ofstream f(filename);
+    if (f.is_open()) {
+        f << "# " << APPLICATION << " v." << VERSION << "\n";
+        f << "set-bpm " << ofToString(buffer->bpm) << "\n";
+        for (int i = 0; i < MAX_PAGES; i++) {
+            if (page[i] == NULL) {
+                break;
+            }
+            page[i]->write(f);
+        }
+        f << "set-page " << ofToString(active_page) << "\n";
+        f << "# end of file\n";
+        f.close();
+        ofLogNotice("Main") << "Wrote to " << filename << ".";
+    } else {
+        ofLogError("Main") << "Unable to open file \"" << filename << "\"";
+    }
+}
+
+void ofApp::edit(string filename) {
+    command_mode = true;
+    ifstream f(filename);
+    if (f.is_open()) {
+        reset();
+        string command;
+        while (getline(f, command)) {
+            change(command_line->run(command));
+        }
+        f.close();
+        ofLogNotice("Main") << "Read from " << filename << ".";
+    } else {
+        ofLogError("Main") << "Unable to open file \"" << filename << "\"";
+    }
+}
+
 void ofApp::keyPressed(int key) {
-    change(toolbar->keyPressed(key));
+    if (command_mode) {
+        change(command_line->keyPressed(key));
+    } else {
+        change(toolbar->keyPressed(key));
+    }
 }
 
 void ofApp::keyReleased(int key){
@@ -199,7 +295,9 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
     int toolbar_start_y = ofGetHeight() - toolbar->getHeight();
     if (y >= toolbar_start_y) {
-        change(toolbar->mousePressed(x, y - toolbar_start_y, button));
+        if (!command_mode) {
+            change(toolbar->mousePressed(x, y - toolbar_start_y, button));
+        }
     } else if (page[active_page] != NULL) {
         page[active_page]->mousePressed(x, y, button);
     }

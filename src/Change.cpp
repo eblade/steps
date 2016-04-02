@@ -1,6 +1,37 @@
 #include "Change.h"
 
 Change::Change() {
+    this->init();
+}
+
+Change::Change(int level, int operation, int value) {
+    this->init();
+    this->level = level;
+    this->operation = operation;
+    this->value = value;
+}
+
+Change::Change(int level, int operation, long long long_value) {
+    this->init();
+    this->level = level;
+    this->operation = operation;
+    this->long_value = long_value;
+}
+
+Change::Change(int level, int operation, string string_value) {
+    this->init();
+    this->level = level;
+    this->operation = operation;
+    this->string_value = string_value;
+}
+
+Change::Change(int level, int operation) {
+    this->init();
+    this->level = level;
+    this->operation = operation;
+}
+
+void Change::init() {
     level = TARGET_LEVEL_APPLICATION;
     application = THE_ACTIVE_ONE;
     page = NONE;
@@ -8,26 +39,8 @@ Change::Change() {
     step = NONE;
     operation = OP_NONE;
     value = 0;
-}
-
-Change::Change(int level, int operation, int value) {
-    Change();
-    this->level = level;
-    this->operation = operation;
-    this->value = value;
-}
-
-Change::Change(int level, int operation, long long long_value) {
-    Change();
-    this->level = level;
-    this->operation = operation;
-    this->long_value = long_value;
-}
-
-Change::Change(int level, int operation) {
-    Change();
-    this->level = level;
-    this->operation = operation;
+    long_value = 0;
+    string_value = "";
 }
 
 Change* Change::clone() {

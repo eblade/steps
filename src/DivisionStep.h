@@ -23,12 +23,13 @@ class Division {
 
 class DivisionStep : public Step {
     public:
-        DivisionStep(int numerator, int denominator, int tuplet);
+        DivisionStep(int numerator=1, int denominator=8, int tuplet=1);
         ~DivisionStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
+        void write(ofstream& f);
 
         Division* division;
 

@@ -15,8 +15,10 @@ class OutputStep : public Step {
         ChangeSet* click();
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
+        void write(ofstream& f);
 
-        int output;
+        int getOutput();
+        void setOutput(int output);
 
         Tool* tool_0;
         Tool* tool_1;
@@ -30,6 +32,9 @@ class OutputStep : public Step {
         Tool* tool_9;
         Tool* tool_up;
         Tool* tool_down;
+
+    private:
+        int output;
 };
 
 #endif

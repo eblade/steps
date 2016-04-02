@@ -32,7 +32,12 @@ class Step {
         virtual int getLength();
         virtual void change(ChangeSet* changes);
         virtual void populate(Toolbar* toolbar);
+        virtual void write(ofstream& f);
 
+        virtual bool getActive();
+        virtual void setActive(bool active);
+
+    protected:
         int type;
         bool active;
 };

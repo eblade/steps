@@ -16,8 +16,10 @@ class SyncStep : public Step {
         void change(ChangeSet* changes);
         ChangeSet* click();
         int getLength();
+        void write(ofstream& f);
 
-        int label;
+        int getLabel();
+        void setLabel(int label);
 
         Tool* tool_activate;
         Tool* tool_deactivate;
@@ -35,6 +37,7 @@ class SyncStep : public Step {
         Tool* tool_label_down;
 
     private:
+        int label;
         int length;
         static const ofColor
             c_active,

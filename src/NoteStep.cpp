@@ -173,28 +173,22 @@ void NoteStep::change(ChangeSet* changes) {
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
             case OP_NOTE_SET:
-                note = change->value;
+                setNote(change->value);
                 break;
             case OP_NOTE_DELTA:
-                note += change->value;
-                note = note > 11 ? 11 : note;
-                note = note < 0 ? 0 : note;
+                setNote(note + change->value);
                 break;
             case OP_OCTAVE_SET:
-                octave = change->value;
+                setOctave(change->value);
                 break;
             case OP_OCTAVE_DELTA:
-                octave += change->value;
-                octave = octave > 10 ? 10 : octave;
-                octave = octave < 0 ? 0 : octave;
+                setOctave(octave + change->value);
                 break;
             case OP_VELOCITY_SET:
-                velocity = change->value;
+                setVelocity(change->value);
                 break;
             case OP_VELOCITY_DELTA:
-                velocity += change->value;
-                velocity = velocity > 127 ? 127 : velocity;
-                velocity = velocity < 0 ? 0 : velocity;
+                setVelocity(velocity + change->value);
                 break;
             case OP_ACTIVE_SET:
                 active = change->value ? true : false;
@@ -206,4 +200,49 @@ void NoteStep::change(ChangeSet* changes) {
 ChangeSet* NoteStep::click() {
     ChangeSet* changes = new ChangeSet();
     return changes;
+}
+
+void NoteStep::write(ofstream& f) {
+    f << "delta-cursor 1\n"
+      << "add-note-step\n"
+      << "set-active " << (active ? "1" : "0") << "\n"
+      << "set-note " << ofToString(note) << "\n"
+      << "set-octave " << ofToString(octave) << "\n"
+      << "set-velocity " << ofToString(velocity) << "\n";
+}
+
+int NoteStep::getNote() { return this->note; }
+
+void NoteStep::setNote(int note) {
+    if (note < 0) {
+        this->note = 0;
+    } else if (note >= 11) {
+        this->note = 11;
+    } else {
+        this->note = note;
+    }
+}
+
+int NoteStep::getOctave() { return this->octave; }
+
+void NoteStep::setOctave(int octave) {
+    if (octave < 0) {
+        this->octave = 0;
+    } else if (octave >= 10) {
+        this->octave = 10;
+    } else {
+        this->octave = octave;
+    }
+}
+
+int NoteStep::getVelocity() { return this->velocity; }
+
+void NoteStep::setVelocity(int velocity) {
+    if (velocity < 0) {
+        this->velocity = 0;
+    } else if (velocity >= 127) {
+        this->velocity = 127;
+    } else {
+        this->velocity = velocity;
+    }
 }

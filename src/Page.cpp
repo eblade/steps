@@ -5,7 +5,7 @@ Page::Page() {
         sequencer[i] = NULL;
     }
 
-    addNewLine(-1);
+    //addNewLine(-1);
     cursor = 0;
 
     tool_seq_add = new Tool("+\nSEQ", OF_KEY_RETURN,
@@ -30,15 +30,23 @@ Page::Page() {
 
     tool_add_note = new Tool("+\nNOTE", 'n',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE, 0));
+    tool_add_note->changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_div = new Tool("+\nDIV", 'd',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_DIVISION, 8));
+    tool_add_div->changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_output = new Tool("+\nOUT", 'O',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
+    tool_add_output->changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
-    tool_add_sync = new Tool("+\nSYNC", 'S',
+    tool_add_sync = new Tool("+\nSYNC", 's',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
+    tool_add_sync->changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_del_step = new Tool("DEL", 'x',
         new Change(TARGET_LEVEL_PAGE, OP_STEP_DEL, -1));
@@ -166,6 +174,16 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
     }
 }
 
+void Page::write(ofstream& f) {
+    f << "add-page\n";
+    for (int i = 0; i < MAX_SEQUENCERS; i++) {
+        if (sequencer[i] == NULL) {
+            break;
+        }
+        sequencer[i]->write(f);
+    }
+}
+
 void Page::cursorUp() {
     if (cursor > 0) {
         cursor--;
@@ -206,11 +224,19 @@ void Page::addNewLine(int afterLine) {
     if (afterLine >= MAX_SEQUENCERS) {
         return;
     }
-    if (sequencer[afterLine + 1] == NULL) {
+
+    // This is the first line to be added
+    if (cursor == 0 && sequencer[0] == NULL) {
+        sequencer[0] = new Sequencer();
+
+    // Cursor is on the last existing line
+    } else if (sequencer[afterLine + 1] == NULL) {
         sequencer[afterLine + 1] = new Sequencer();
         if (cursor == afterLine) {
             cursor++;
         }
+    
+    // Cursor is before other lines
     } else if (sequencer[MAX_SEQUENCERS-1] == NULL && afterLine > 0) {
         for (int i = MAX_SEQUENCERS - 1; i > afterLine; i--) {
             sequencer[i] = sequencer[i - 1];

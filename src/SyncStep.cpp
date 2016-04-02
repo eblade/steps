@@ -125,17 +125,9 @@ void SyncStep::change(ChangeSet* changes) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
-            case OP_LABEL_SET:
-                label = change->value;
-                break;
-            case OP_LABEL_DELTA:
-                label += change->value;
-                label = label > MAX_LABELS ? MAX_LABELS : label;
-                label = label < 0 ? 0 : label;
-                break;
-            case OP_ACTIVE_SET:
-                active = change->value ? true : false;
-                break;
+            case OP_LABEL_SET: setLabel(change->value); break;
+            case OP_LABEL_DELTA: setLabel(label + change->value); break;
+            case OP_ACTIVE_SET: setActive(change->value); break;
         }
     }
 }
@@ -146,4 +138,22 @@ ChangeSet* SyncStep::click() {
         changes->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC, label));
     }
     return changes;
+}
+
+void SyncStep::write(ofstream& f) {
+    f << "delta-cursor 1\n"
+      << "add-sync-step\n"
+      << "set-label " << ofToString(label) << "\n";
+}
+
+int SyncStep::getLabel() { return label; }
+
+void SyncStep::setLabel(int label) {
+    if (label < 0) {
+        this->label = 0;
+    } else if (label >= MAX_LABELS - 1) {
+        this->label = MAX_LABELS - 1;
+    } else {
+        this->label = label;
+    }
 }

@@ -154,13 +154,13 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 break;
             case OP_ADD_STEP_NOTE: {
                 NoteStep* new_note = new NoteStep();
-                new_note->note = change->value;
+                new_note->setNote(change->value);
                 cursorInsert(new_note);
                 break;
             }
             case OP_ADD_STEP_OUTPUT: {
                 OutputStep* new_output = new OutputStep();
-                new_output->output = change->value;
+                new_output->setOutput(change->value);
                 cursorInsert(new_output);
                 break;
             }
@@ -189,6 +189,17 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
 void Sequencer::populate(Toolbar* toolbar) {
     if (data[cursor] != NULL) {
         data[cursor]->populate(toolbar);
+    }
+}
+
+void Sequencer::write(ofstream& f) {
+    f << "add-sequencer\n";
+    f << "set-cursor 0\n";
+    for (int i = 0; i < MAX_STEPS; i++) {
+        if (data[i] == NULL) {
+            break;
+        }
+        data[i]->write(f);
     }
 }
 
@@ -224,7 +235,7 @@ void Sequencer::cursorDelete() {
 }
 
 void Sequencer::cursorInsert(Step* step) {
-    if (cursor == 0) {
+    if (cursor == 0 && data[0] != NULL) {
         cursor = 1;
     }
     if (data[cursor] != NULL) {
@@ -233,13 +244,11 @@ void Sequencer::cursorInsert(Step* step) {
                 data[i] = data[i - 1];
             }
             data[cursor] = step;
-            cursor++;
         } else {
             delete step;
         }
     } else {
         data[cursor] = step;
-        cursorRight();
     }
 }
 

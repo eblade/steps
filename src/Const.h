@@ -1,8 +1,9 @@
 #ifndef CONST_H_
 #define CONST_H_
 
-// Application name
+// Application name and version
 #define APPLICATION "Steps"
+#define VERSION "0"
 
 // Max number of Pages buffered
 #define MAX_PAGES 8
@@ -34,6 +35,9 @@
 // Max TickBuffer size
 #define TICK_BUFFER_SIZE 256
 
+// Max CommandLine length
+#define MAX_COMMAND 128
+
 // Step Types
 #define STEP_TYPE_NONE 0
 #define STEP_TYPE_NOTE 1
@@ -64,18 +68,26 @@
 
 // Change operations
 // Application level
+#define OP_EXIT -1 
 #define OP_NONE 0
-#define OP_PLAY_SET 1
-#define OP_PAGE_SET 2
+#define OP_PLAY_SET 1 // play|stop
+#define OP_PAGE_SET 2 // set-page
 #define OP_PAGE_DELTA 3
-#define OP_BPM_SET 4
+#define OP_BPM_SET 4 // set-bpm
 #define OP_BPM_DELTA 5
 #define OP_SYNC 6
+#define OP_COMMAND_MODE 7
+#define OP_NORMAL_MODE 8
+#define OP_FILENAME_SET 9
+#define OP_WRITE 10 // write
+#define OP_PAGE_ADD 11 // add-page
+#define OP_PAGE_DEL 12 // del-page
+#define OP_EDIT 13 // edit
 
 // Page level
-#define OP_SEQ_ADD 100
-#define OP_SEQ_DEL 101
-#define OP_SEQ_SET 102
+#define OP_SEQ_ADD 100 // add-sequencer
+#define OP_SEQ_DEL 101 // del-sequencer
+#define OP_SEQ_SET 102 // set-sequencer
 #define OP_SEQ_DELTA 103
 
 // Sequencer level
@@ -83,8 +95,8 @@
 #define OP_STEP_DEL 201
 #define OP_STEP_SET 202
 #define OP_STEP_DELTA 203
-#define OP_ACTIVE_SET 204
-#define OP_OUTPUT_SET 206
+#define OP_ACTIVE_SET 204 // set-active BOOL
+#define OP_OUTPUT_SET 206 // set-output INT
 #define OP_OUTPUT_DELTA 207
 #define OP_PERIOD_SET 208
 #define OP_PERIOD_DELTA 209
@@ -95,25 +107,26 @@
 #define OP_LAST_START_SET 214 // LONG
 #define OP_LAST_START_DELTA 215
 
-#define OP_ADD_STEP_NOTE 250
-#define OP_ADD_STEP_OUTPUT 251
-#define OP_ADD_STEP_DIVISION 252
-#define OP_ADD_STEP_SYNC 253
+#define OP_ADD_STEP_ACTIVATE 250 // add-activate-step
+#define OP_ADD_STEP_NOTE 251 // add-note-step
+#define OP_ADD_STEP_OUTPUT 252 // add-output-step
+#define OP_ADD_STEP_DIVISION 253 // add-division-step
+#define OP_ADD_STEP_SYNC 254 // add-sync-step
 
 // Step level
-#define OP_NOTE_SET 300
-#define OP_NOTE_DELTA 301
-#define OP_OCTAVE_SET 302
+#define OP_NOTE_SET 300 // set-note INT
+#define OP_NOTE_DELTA 301 
+#define OP_OCTAVE_SET 302 // set-octave INT
 #define OP_OCTAVE_DELTA 303
-#define OP_VELOCITY_SET 304
+#define OP_VELOCITY_SET 304 // set-velocity INT
 #define OP_VELOCITY_DELTA 305
-#define OP_LABEL_SET 306
+#define OP_LABEL_SET 306 // set-label INT
 #define OP_LABEL_DELTA 307
-#define OP_HOLD_SET 308
+#define OP_HOLD_SET 308 // set-hold BOOL
 
-#define OP_NUMERATOR_SET 350
-#define OP_DENOMINATOR_SET 352
-#define OP_TUPLET_SET 354
+#define OP_NUMERATOR_SET 350 // set-numerator INT
+#define OP_DENOMINATOR_SET 352 // set-denominator INT
+#define OP_TUPLET_SET 354 // set-denominator INT
 #define OP_TUPLET_DELTA 355
 
 

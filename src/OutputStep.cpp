@@ -73,13 +73,29 @@ void OutputStep::change(ChangeSet* changes) {
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
             case OP_OUTPUT_SET:
-                output = change->value;
+                setOutput(change->value);
                 break;
             case OP_OUTPUT_DELTA:
-                output += change->value;
-                output %= MAX_OUTPUTS;
+                setOutput(output + change->value);
                 break;
         }
     }
 }
 
+void OutputStep::write(ofstream& f) {
+    f << "delta-cursor 1\n"
+      << "add-output-step\n"
+      << "set-output " << ofToString(output) << "\n";
+}
+
+int OutputStep::getOutput() { return this->output; }
+
+void OutputStep::setOutput(int output) {
+    if (output < 0) {
+        this->output = 0;
+    } else if (output >= MAX_OUTPUTS - 1) {
+        this->output = MAX_OUTPUTS - 1;
+    } else {
+        this->output = output;
+    }
+}

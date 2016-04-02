@@ -18,11 +18,14 @@ class NoteStep : public Step {
         void change(ChangeSet* changes);
         ChangeSet* click();
         int getLength();
+        void write(ofstream& f);
 
-        int note;
-        int octave;
-        int velocity;
-        OutputRouter* output_router;
+        int getNote();
+        void setNote(int note);
+        int getOctave();
+        void setOctave(int octave);
+        int getVelocity();
+        void setVelocity(int velocity);
 
         Tool* tool_activate;
         Tool* tool_deactivate;
@@ -46,6 +49,9 @@ class NoteStep : public Step {
         Tool* tool_normal;
 
     private:
+        int note;
+        int octave;
+        int velocity;
         int length;
         static const ofColor
             c_active,

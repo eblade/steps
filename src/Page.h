@@ -21,6 +21,7 @@ class Page {
         void deleteLine(int line);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes, TickBuffer* buffer);
+        void write(ofstream& f);
 
         Tool* tool_seq_add;
         Tool* tool_seq_next;

@@ -32,3 +32,13 @@ void Step::populate(Toolbar* toolbar) {
 void Step::change(ChangeSet* changes) {
 
 }
+
+void Step::write(ofstream& f) {
+    f << "# unknown step\n";
+}
+
+bool Step::getActive() { return active; };
+
+void Step::setActive(bool active) {
+    this->active = active ? true : false;
+}

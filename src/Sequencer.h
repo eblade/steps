@@ -31,6 +31,7 @@ class Sequencer {
         void change(ChangeSet* changes, TickBuffer* buffer);
         void populate(Toolbar* toolbar);
         void sync();
+        void write(ofstream& f);
 
         string name;
         int cursor;

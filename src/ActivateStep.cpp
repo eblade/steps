@@ -125,28 +125,20 @@ void ActivateStep::change(ChangeSet* changes) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
-            case OP_LABEL_SET:
-                changed_label = (label != change->value);
-                label = change->value;
-                break;
-            case OP_LABEL_DELTA:
-                changed_label = (change->value != 0);
-                label += change->value;
-                label = label > MAX_LABELS ? MAX_LABELS : label;
-                label = label < 0 ? 0 : label;
-                break;
-            case OP_ACTIVE_SET:
-                active = change->value ? true : false;
-                changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, change->value));
+            case OP_LABEL_SET: setLabel(change->value); break;
+            case OP_LABEL_DELTA: setLabel(label + change->value); break;
+            case OP_ACTIVE_SET: setActive(change->value);
+                changes->upstream->push(
+                    new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, change->value));
                 if (change->value == 0) {
-                    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
+                    changes->upstream->push(
+                        new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
                 } else {
-                    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
+                    changes->upstream->push(
+                        new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
                 }
                 break;
-            case OP_HOLD_SET:
-                hold = change->value ? true : false;
-                break;
+            case OP_HOLD_SET: setHold(change->value); break;
         }
     }
 }
@@ -165,4 +157,30 @@ ChangeSet* ActivateStep::click() {
         }
     }
     return changes;
+}
+
+void ActivateStep::write(ofstream& f) {
+    f << "set-active " << (active ? "1" : "0") << "\n"
+      << "set-label " << ofToString(label) << "\n"
+      << "set-hold " << (hold ? "1" : "0") << "\n";
+}
+
+int ActivateStep::getLabel() { return label; }
+
+void ActivateStep::setLabel(int label) {
+    int what_it_was = this->label;
+    if (label < 0) {
+        this->label = 0;
+    } else if (label >= MAX_LABELS - 1) {
+        this->label = MAX_LABELS - 1;
+    } else {
+        this->label = label;
+    }
+    changed_label = this->label != what_it_was;
+}
+
+bool ActivateStep::getHold() { return hold; };
+
+void ActivateStep::setHold(bool hold) {
+    this->hold = hold ? true : false;
 }
