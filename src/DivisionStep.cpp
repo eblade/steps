@@ -49,8 +49,10 @@ DivisionStep::~DivisionStep() {
 
 ChangeSet* DivisionStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_PERIOD_SET, division->getPeriod(buffer->bpm)));
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+    changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_PERIOD_SET, division->getPeriod(buffer->getBPM())));
+    changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
     return changes;
 }
 

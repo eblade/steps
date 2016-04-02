@@ -28,11 +28,11 @@ class TickBuffer {
         void hold(ChangeSet* changes);
         ChangeSet* release();
 
-        long long sync_time;
-        long long last_time;
-        int period;
-        int xruns;
-        float bpm;
+        float getBPM();
+        void setBPM(float bpm);
+        int getPeriod();
+        int getXRuns();
+        long long getLastTime();
 
     private:
         TickEvent* buffer[TICK_BUFFER_SIZE];
@@ -40,6 +40,10 @@ class TickBuffer {
         long long position;
         long ticks;
         ChangeSet* changes;
+        float bpm;
+        long long last_time;
+        int period;
+        int xruns;
 };
 
 

@@ -81,7 +81,7 @@ void Page::step(TickBuffer* buffer, OutputRouter* output_router) {
     }
 }
 
-void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font) {
+void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor) {
     ofSetColor(0);
     ofDrawRectangle(x, y, width, height);
 
@@ -89,7 +89,7 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font) {
         if (sequencer[i] == NULL) {
             break;
         }
-        sequencer[i]->draw(i, i==cursor, font);
+        sequencer[i]->draw(i, draw_cursor && i==cursor, font);
     }
 }
 

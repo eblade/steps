@@ -38,6 +38,9 @@
 // Max CommandLine length
 #define MAX_COMMAND 128
 
+// Max beats per minute (BPM)
+#define MAX_BPM 300
+
 // Step Types
 #define STEP_TYPE_NONE 0
 #define STEP_TYPE_NOTE 1
@@ -83,6 +86,7 @@
 #define OP_PAGE_ADD 11 // add-page
 #define OP_PAGE_DEL 12 // del-page
 #define OP_EDIT 13 // edit
+#define OP_NEW 14 // new
 
 // Page level
 #define OP_SEQ_ADD 100 // add-sequencer

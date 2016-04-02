@@ -17,8 +17,7 @@ TickBuffer::~TickBuffer() {
 void TickBuffer::reset() {
     xruns = 0;
     ticks = -1; // first tick is never of full length
-    sync_time = now();
-    last_time = sync_time;
+    last_time = now();
     clear();
 }
 
@@ -34,7 +33,6 @@ void TickBuffer::clear() {
 
 void TickBuffer::tick() {
     if (ticks == -1) {
-        sync_time = now();
         last_time = now();
         ticks = 0;
     }
@@ -128,3 +126,21 @@ void TickBuffer::draw(int x, int y) {
         ofDrawRectangle(px, py, size, size);
     }
 }
+
+float TickBuffer::getBPM() { return bpm; }
+
+void TickBuffer::setBPM(float bpm) {
+    if (bpm < 1.) {
+        this->bpm = 1;
+    } else if (bpm > MAX_BPM) {
+        this->bpm = MAX_BPM;
+    } else {
+        this->bpm = bpm;
+    }
+}
+
+int TickBuffer::getPeriod() { return period; }
+
+int TickBuffer::getXRuns() { return xruns; }
+
+long long TickBuffer::getLastTime() { return last_time; }

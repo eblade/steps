@@ -35,17 +35,20 @@ class ofApp : public ofBaseApp {
         void write(string filename);
         void edit(string filename);
         
+        bool getPlaying();
+        void setPlaying(bool playing);
+        string getFilename();
+        void setFilename(string filename);
+        int getActivePage();
+        void setActivePage(int active_page);
+        bool getCommandMode();
+        void setCommandMode(bool command_mode);
+
         ofTrueTypeFont font;
         ofTrueTypeFont font_big;
         TickBuffer* buffer;
         OutputRouter* output_router;
-        bool playing;
-        Page* page[MAX_PAGES];
-        int active_page;
         Toolbar* toolbar;
-        bool command_mode;
-        CommandLine* command_line;
-        string filename;
     
         Tool* tool_cmd;
         Tool* tool_play;
@@ -55,4 +58,13 @@ class ofApp : public ofBaseApp {
         Tool* tool_bpm_160;
         Tool* tool_sync;
         Tool* tool_add_page;
+
+    private:
+        Page* page[MAX_PAGES];
+        CommandLine* command_line;
+
+        bool playing;
+        string filename;
+        int active_page;
+        bool command_mode;
 };

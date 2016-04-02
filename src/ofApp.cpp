@@ -5,7 +5,7 @@ void ofApp::setup() {
     ofSetLogLevel(OF_LOG_VERBOSE);
 
     // Graphics
-    font.load(OF_TTF_SANS, 9, true, true);
+    font.load(OF_TTF_MONO, 10, true, true);
     font_big.load(OF_TTF_MONO, 14, true, true);
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
@@ -46,14 +46,14 @@ void ofApp::setup() {
     command_mode = false;
 
     // "Globals"
-    filename = "untitled";
+    setFilename("untitled");
 
     // Clear all pages and reset active page to 0
     for (int i = 0; i < MAX_PAGES; i++) {
         page[i] = NULL;
     }
     active_page = 0;
-    playing = false;
+    setPlaying(false);
     ofLogNotice("Main") << "Page setup ok.";
 
     ofLogNotice("Main") << "Done with setup.";
@@ -101,7 +101,7 @@ void ofApp::draw() {
 
     // Draw the active page
     if (page[active_page] != NULL) {
-        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font);
+        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font, !command_mode);
 
     } else if (active_page == 0) {
         ofSetColor(200, 100, 80);
@@ -118,7 +118,7 @@ void ofApp::draw() {
     // Draw some debug info to the right
     ofSetColor(200);
     font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 15);
-    font.drawString("bpm: " + ofToString(buffer->bpm), ofGetWidth() - 90, 30);
+    font.drawString("bpm: " + ofToString(buffer->getBPM()), ofGetWidth() - 90, 30);
     font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 45);
 
     buffer->draw(ofGetWidth() - 90, 55);
@@ -164,60 +164,19 @@ void ofApp::change(ChangeSet* changes) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_APPLICATION)) != NULL) {
         switch (change->operation) {
-            case OP_PLAY_SET:
-                playing = change->value ? true : false;
-                if (playing) {
-                    buffer->reset();
-                }
-                break;
-            case OP_PAGE_ADD:
-                active_page = addPage();
-                break;
-            case OP_PAGE_SET:
-                active_page = change->value;
-                active_page = active_page < MAX_PAGES ? active_page : MAX_PAGES - 1;
-                if (page[active_page] == NULL) {
-                    active_page = 0;
-                }
-                break;
-            case OP_PAGE_DELTA:
-                active_page += change->value;
-                active_page = active_page < MAX_PAGES ? active_page : 0;
-                if (page[active_page] == NULL) {
-                    active_page = 0;
-                }
-                break;
-            case OP_BPM_SET:
-                buffer->bpm = change->value;
-                if (buffer->bpm <= 0) {
-                    buffer->bpm = 1;
-                }
-                break;
-            case OP_BPM_DELTA:
-                buffer->bpm += change->value;
-                if (buffer->bpm <= 0) {
-                    buffer->bpm = 1;
-                }
-                break;
-            case OP_COMMAND_MODE:
-                command_line->clear();
-                command_mode = true;
-                break;
-            case OP_NORMAL_MODE:
-                command_mode = false;
-                break;
-            case OP_FILENAME_SET:
-                filename = change->string_value;
-                break;
-            case OP_WRITE:
-                write(filename);
-                break;
-            case OP_EDIT:
-                edit(filename);
-                break;
-            case OP_EXIT:
-                ofExit(change->value);
-                break;
+            case OP_PLAY_SET: setPlaying(change->value); break;
+            case OP_PAGE_ADD: active_page = addPage(); break;
+            case OP_PAGE_SET: setActivePage(change->value); break;
+            case OP_PAGE_DELTA: setActivePage(active_page + change->value); break;
+            case OP_BPM_SET: buffer->setBPM(change->value); break;
+            case OP_BPM_DELTA: buffer->setBPM(buffer->getBPM() + change->value); break;
+            case OP_COMMAND_MODE: setCommandMode(true); break;
+            case OP_NORMAL_MODE: setCommandMode(false); break;
+            case OP_FILENAME_SET: setFilename(change->string_value); break;
+            case OP_WRITE: write(getFilename()); break;
+            case OP_EDIT: edit(getFilename()); break;
+            case OP_NEW: reset(); break;
+            case OP_EXIT: ofExit(change->value); break;
         }
     }
     if (page[active_page] != NULL) {
@@ -240,7 +199,7 @@ void ofApp::write(string filename) {
     ofstream f(filename);
     if (f.is_open()) {
         f << "# " << APPLICATION << " v." << VERSION << "\n";
-        f << "set-bpm " << ofToString(buffer->bpm) << "\n";
+        f << "set-bpm " << ofToString(buffer->getBPM()) << "\n";
         for (int i = 0; i < MAX_PAGES; i++) {
             if (page[i] == NULL) {
                 break;
@@ -260,7 +219,6 @@ void ofApp::edit(string filename) {
     command_mode = true;
     ifstream f(filename);
     if (f.is_open()) {
-        reset();
         string command;
         while (getline(f, command)) {
             change(command_line->run(command));
@@ -327,3 +285,40 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+bool ofApp::getPlaying() { return playing; }
+
+void ofApp::setPlaying(bool playing) {
+    if (this->playing) {
+        buffer->reset();
+    }
+    this->playing = playing;
+}
+
+string ofApp::getFilename() { return filename; }
+
+void ofApp::setFilename(string filename) {
+    ofLogNotice("Main") << "Setting filename to \"" << filename << "\"";
+    this->filename.assign(filename);
+    ofLogNotice("Main") << "Filename is now \"" << this->filename << "\"";
+    ofSetWindowTitle(ofToString(APPLICATION) + " [" + this->filename + "]");
+}
+
+int ofApp::getActivePage() { return active_page; }
+
+void ofApp::setActivePage(int active_page) {
+    active_page = active_page < MAX_PAGES ? active_page : MAX_PAGES - 1;
+    active_page = active_page >= 0 ? active_page : 0;
+    if (page[active_page] == NULL) {
+        active_page = 0;
+    }
+    this->active_page = active_page;
+}
+
+bool ofApp::getCommandMode() { return command_mode; }
+
+void ofApp::setCommandMode(bool command_mode) {
+    if (command_mode && !this->command_mode) {
+        command_line->clear();
+    }
+    this->command_mode = command_mode;
+}

@@ -40,5 +40,5 @@ void Step::write(ofstream& f) {
 bool Step::getActive() { return active; };
 
 void Step::setActive(bool active) {
-    this->active = active ? true : false;
+    this->active = active;
 }

@@ -100,37 +100,51 @@ void CommandLine::execute(ChangeSet* changes) {
     // comment
     if (command.isComment()) {
         // pass
-    
+
     // quit
     } else if (command.is("q") || command.is("quit")) {
     //} else if (strncmp(command, "q", 2) == 0) {
         ofLogNotice("CommandLine") << "Sending OP_EXIT";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_EXIT, 0));
 
+    // new
+    } else if (command.is("n") || command.is("new")) {
+        ofLogNotice("CommandLine") << "Sending OP_NEW.";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_NEW));
+        if (command.hasArgument()) {
+            ofLogNotice("CommandLine")
+                << "Sending OP_FILENAME_SET("
+                << ofToString(command.argument) << ").";
+            changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_FILENAME_SET,
+                                     ofToString(command.argument)));
+        }
+
     // write
     } else if (command.is("w") || command.is("write")) {
         if (command.hasArgument()) {
             ofLogNotice("CommandLine")
-                << "Sending OP_FILENAME_SET(" 
+                << "Sending OP_FILENAME_SET("
                 << ofToString(command.argument) << ").";
             changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_FILENAME_SET,
                                      ofToString(command.argument)));
         }
-        ofLogNotice("CommandLine") << "Sending OP_WRITE."; 
+        ofLogNotice("CommandLine") << "Sending OP_WRITE.";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_WRITE));
-    
+
     // edit
     } else if (command.is("e") || command.is("edit")) {
+        ofLogNotice("CommandLine") << "Sending OP_NEW.";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_NEW));
         if (command.hasArgument()) {
             ofLogNotice("CommandLine")
-                << "Sending OP_FILENAME_SET(" 
+                << "Sending OP_FILENAME_SET("
                 << ofToString(command.argument) << ").";
             changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_FILENAME_SET,
                                      ofToString(command.argument)));
         }
-        ofLogNotice("CommandLine") << "Sending OP_EDIT."; 
+        ofLogNotice("CommandLine") << "Sending OP_EDIT.";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_EDIT));
-    
+
     // add-page
     } else if (command.is("add-page")) {
         ofLogNotice("CommandLine") << "Sending OP_PAGE_ADD";
@@ -294,9 +308,9 @@ void CommandLine::execute(ChangeSet* changes) {
 
     // Invalid/unrecognized
     } else {
-        ofLogError("CommandLine") 
-            << "Invalid command \"" 
-            << ofToString(command.command) << "\"."; 
+        ofLogError("CommandLine")
+            << "Invalid command \""
+            << ofToString(command.command) << "\".";
         error_msg = "Invalid command \"" + ofToString(command.command) + "\"";
         error = true;
     }

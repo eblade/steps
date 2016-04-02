@@ -65,7 +65,7 @@ int SyncStep::getLength() {
 ChangeSet* SyncStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     long long start, stop;
     ChangeSet* changes = new ChangeSet();
-    start = sequencer.release > 0 ? sequencer.release : buffer->last_time;
+    start = sequencer.release > 0 ? sequencer.release : buffer->getLastTime();
     stop = start + sequencer.period;
     if (active) {
         changes->upstream->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC, label));
