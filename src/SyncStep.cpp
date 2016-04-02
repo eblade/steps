@@ -143,6 +143,7 @@ ChangeSet* SyncStep::click() {
 void SyncStep::write(ofstream& f) {
     f << "delta-cursor 1\n"
       << "add-sync-step\n"
+      << "set-active " << ofToString(active ? "1" : "0") << "\n"
       << "set-label " << ofToString(label) << "\n";
 }
 

@@ -15,6 +15,14 @@ class Division {
         string getNumeratorString();
         string getDenominatorString();
 
+        int getNumerator();
+        void setNumerator(int numerator);
+        int getDenominator();
+        void setDenominator(int denominator);
+        int getTuplet();
+        void setTuplet(int tuplet);
+
+    private:
         int numerator;
         int denominator;
         int tuplet;

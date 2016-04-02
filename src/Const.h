@@ -125,9 +125,11 @@
 #define OP_HOLD_SET 308 // set-hold BOOL
 
 #define OP_NUMERATOR_SET 350 // set-numerator INT
+#define OP_NUMERATOR_DELTA 351 // delta-numerator INT
 #define OP_DENOMINATOR_SET 352 // set-denominator INT
-#define OP_TUPLET_SET 354 // set-denominator INT
-#define OP_TUPLET_DELTA 355
+#define OP_DENOMINATOR_DELTA 353 // delta-denominator INT
+#define OP_TUPLET_SET 354 // set-tuplet INT
+#define OP_TUPLET_DELTA 355 // delta-tuplet
 
 
 #endif

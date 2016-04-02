@@ -70,7 +70,7 @@ void DivisionStep::populate(Toolbar* toolbar) {
     toolbar->push(tool_1_16);
     toolbar->push(tool_1_32);
     toolbar->push(tool_1_64);
-    if (division->tuplet > 1) {
+    if (division->getTuplet() > 1) {
         toolbar->push(tool_no_tuplet);
     } else {
         toolbar->push(tool_triplet);
@@ -85,18 +85,22 @@ void DivisionStep::change(ChangeSet* changes) {
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
             case OP_NUMERATOR_SET:
-                division->numerator = change->value;
+                division->setNumerator(change->value);
+                break;
+            case OP_NUMERATOR_DELTA:
+                division->setNumerator(division->getNumerator() + change->value);
                 break;
             case OP_DENOMINATOR_SET:
-                division->denominator = change->value;
+                division->setDenominator(change->value);
+                break;
+            case OP_DENOMINATOR_DELTA:
+                division->setDenominator(division->getDenominator() + change->value);
                 break;
             case OP_TUPLET_SET:
-                division->tuplet = change->value;
+                division->setTuplet(change->value);
                 break;
             case OP_TUPLET_DELTA:
-                division->tuplet += change->value;
-                division->tuplet = division->tuplet > 11 ? 11 : division->tuplet;
-                division->tuplet = division->tuplet < 1 ? 1 : division->tuplet;
+                division->setTuplet(division->getTuplet() + change->value);
                 break;
         }
     }
@@ -105,15 +109,51 @@ void DivisionStep::change(ChangeSet* changes) {
 void DivisionStep::write(ofstream& f) {
     f << "delta-cursor 1\n"
       << "add-division-step\n" 
-      << "set-numerator " << ofToString(division->numerator) << "\n" 
-      << "set-denominator " << ofToString(division->denominator) << "\n" 
-      << "set-tuplet " << ofToString(division->tuplet) << "\n";
+      << "set-numerator " << ofToString(division->getNumerator()) << "\n" 
+      << "set-denominator " << ofToString(division->getDenominator()) << "\n" 
+      << "set-tuplet " << ofToString(division->getTuplet()) << "\n";
 }
 
 Division::Division(int numerator, int denominator, int tuplet) {
-    this->numerator = numerator;
-    this->denominator = denominator;
-    this->tuplet = tuplet;
+    setNumerator(numerator);
+    setDenominator(denominator);
+    setTuplet(tuplet);
+}
+
+int Division::getNumerator() { return numerator; }
+
+void Division::setNumerator(int numerator) {
+    if (numerator < 1) {
+        this->numerator = 1;
+    } else if (numerator > 64) {
+        this->numerator = 64;
+    } else {
+        this->numerator = numerator;
+    }
+}
+
+int Division::getDenominator() { return denominator; }
+
+void Division::setDenominator(int denominator) {
+    if (denominator < 1) {
+        this->denominator = 1;
+    } else if (denominator > 64) {
+        this->denominator = 64;
+    } else {
+        this->denominator = denominator;
+    }
+}
+
+int Division::getTuplet() { return tuplet; }
+
+void Division::setTuplet(int tuplet) {
+    if (tuplet < 1) {
+        this->tuplet = 1;
+    } else if (tuplet > 13) {
+        this->tuplet = 13;
+    } else {
+        this->tuplet = tuplet;
+    }
 }
 
 int Division::getPeriod(float bpm) {

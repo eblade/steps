@@ -136,6 +136,18 @@ void CommandLine::execute(ChangeSet* changes) {
         ofLogNotice("CommandLine") << "Sending OP_PAGE_ADD";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_PAGE_ADD));
 
+    // set-bpm INT
+    } else if (command.is("set-bpm")) {
+        ofLogNotice("CommandLine") << "Sending OP_BPM_SET";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_BPM_SET,
+                                 command.argumentAsInt(0)));
+
+    // delta-bpm INT
+    } else if (command.is("delta-bpm")) {
+        ofLogNotice("CommandLine") << "Sending OP_BPM_DELTA";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_BPM_DELTA,
+                                 command.argumentAsInt(0)));
+
     // set-page INT
     } else if (command.is("set-page")) {
         ofLogNotice("CommandLine") << "Sending OP_PAGE_SET";
@@ -157,30 +169,6 @@ void CommandLine::execute(ChangeSet* changes) {
     } else if (command.is("add-note-step")) {
         ofLogNotice("CommandLine") << "Sending OP_ADD_STEP_NOTE";
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE));
-
-    // set-active BOOL
-    } else if (command.is("set-active")) {
-        ofLogNotice("CommandLine") << "Sending OP_ACTIVE_SET";
-        changes->push(new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET,
-                                 command.argumentAsBool()));
-
-    // set-note INT
-    } else if (command.is("set-note")) {
-        ofLogNotice("CommandLine") << "Sending OP_NOTE_SET";
-        changes->push(new Change(TARGET_LEVEL_STEP, OP_NOTE_SET,
-                                 command.argumentAsInt()));
-
-    // set-octave INT
-    } else if (command.is("set-octave")) {
-        ofLogNotice("CommandLine") << "Sending OP_OCTAVE_SET";
-        changes->push(new Change(TARGET_LEVEL_STEP, OP_OCTAVE_SET,
-                                 command.argumentAsInt()));
-
-    // set-velocity INT
-    } else if (command.is("set-velocity")) {
-        ofLogNotice("CommandLine") << "Sending OP_VELOCITY_SET";
-        changes->push(new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET,
-                                 command.argumentAsInt()));
 
     // add-division-step
     } else if (command.is("add-division-step")) {
@@ -207,6 +195,102 @@ void CommandLine::execute(ChangeSet* changes) {
         ofLogNotice("CommandLine") << "Sending OP_STEP_DELTA";
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA,
                                  command.argumentAsInt(1)));
+
+    // set-active BOOL
+    } else if (command.is("set-active")) {
+        ofLogNotice("CommandLine") << "Sending OP_ACTIVE_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET,
+                                 command.argumentAsBool()));
+
+    // set-label INT
+    } else if (command.is("set-label")) {
+        ofLogNotice("CommandLine") << "Sending OP_LABEL_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_LABEL_SET,
+                                 command.argumentAsInt()));
+
+    // delta-label INT
+    } else if (command.is("delta-label")) {
+        ofLogNotice("CommandLine") << "Sending OP_LABEL_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-note INT
+    } else if (command.is("set-note")) {
+        ofLogNotice("CommandLine") << "Sending OP_NOTE_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_NOTE_SET,
+                                 command.argumentAsInt()));
+
+    // delta-note INT
+    } else if (command.is("delta-note")) {
+        ofLogNotice("CommandLine") << "Sending OP_NOTE_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_NOTE_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-octave INT
+    } else if (command.is("set-octave")) {
+        ofLogNotice("CommandLine") << "Sending OP_OCTAVE_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_OCTAVE_SET,
+                                 command.argumentAsInt()));
+
+    // delta-octave INT
+    } else if (command.is("delta-octave")) {
+        ofLogNotice("CommandLine") << "Sending OP_OCTAVE_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_OCTAVE_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-velocity INT
+    } else if (command.is("set-velocity")) {
+        ofLogNotice("CommandLine") << "Sending OP_VELOCITY_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_VELOCITY_SET,
+                                 command.argumentAsInt()));
+
+    // delta-velocity INT
+    } else if (command.is("delta-velocity")) {
+        ofLogNotice("CommandLine") << "Sending OP_VELOCITY_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_VELOCITY_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-hold BOOL
+    } else if (command.is("set-hold")) {
+        ofLogNotice("CommandLine") << "Sending OP_HOLD_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_HOLD_SET,
+                                 command.argumentAsBool()));
+
+    // set-numerator INT
+    } else if (command.is("set-numerator")) {
+        ofLogNotice("CommandLine") << "Sending OP_NUMERATOR_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_NUMERATOR_SET,
+                                 command.argumentAsInt()));
+
+    // delta-numerator INT
+    } else if (command.is("delta-numerator")) {
+        ofLogNotice("CommandLine") << "Sending OP_NUMERATOR_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_NUMERATOR_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-denominator INT
+    } else if (command.is("set-denominator")) {
+        ofLogNotice("CommandLine") << "Sending OP_DENOMINATOR_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_DENOMINATOR_SET,
+                                 command.argumentAsInt()));
+
+    // delta-denominator INT
+    } else if (command.is("delta-denominator")) {
+        ofLogNotice("CommandLine") << "Sending OP_DENOMINATOR_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_DENOMINATOR_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-tuplet INT
+    } else if (command.is("set-tuplet")) {
+        ofLogNotice("CommandLine") << "Sending OP_TUPLET_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_TUPLET_SET,
+                                 command.argumentAsInt()));
+
+    // delta-tuplet INT
+    } else if (command.is("delta-tuplet")) {
+        ofLogNotice("CommandLine") << "Sending OP_TUPLET_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_TUPLET_DELTA,
+                                 command.argumentAsInt()));
 
     // Invalid/unrecognized
     } else {
