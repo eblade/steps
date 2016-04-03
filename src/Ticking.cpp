@@ -44,6 +44,7 @@ void TickBuffer::tick() {
         if (next_event != NULL) {
             long long next_time = next_event->time;
             if ((next_time <= this_time) || ((next_time - this_time) < (period / 2))) {
+                ofLogNotice("TickBuffer") << "Time delta: " << (this_time - next_time);
                 next_event->fire();
                 delete next_event;
                 buffer[position] = NULL;
