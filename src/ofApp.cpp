@@ -288,9 +288,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 bool ofApp::getPlaying() { return playing; }
 
 void ofApp::setPlaying(bool playing) {
-    if (this->playing) {
-        buffer->reset();
-    }
+    buffer->reset();
     this->playing = playing;
 }
 
