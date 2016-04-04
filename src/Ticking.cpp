@@ -39,22 +39,16 @@ void TickBuffer::tick() {
 
     long long this_time = now();
     period = this_time - last_time;
-    while (true) {
-        TickEvent* next_event = buffer[position];
-        if (next_event != NULL) {
-            long long next_time = next_event->time;
-            if ((next_time <= this_time) || ((next_time - this_time) < (period / 2))) {
-                ofLogNotice("TickBuffer") << "Time delta: " << (this_time - next_time);
-                next_event->fire();
-                delete next_event;
-                buffer[position] = NULL;
-                position++;
-                position = position % TICK_BUFFER_SIZE;
-            } else {
-                break;
-            }
-        } else {
-            break;
+    TickEvent* next_event = buffer[position];
+    if (next_event != NULL) {
+        long long next_time = next_event->time;
+        if ((next_time <= this_time) || ((next_time - this_time) < (period / 2))) {
+            ofLogNotice("TickBuffer") << "Time delta: " << (this_time - next_time);
+            next_event->fire();
+            delete next_event;
+            buffer[position] = NULL;
+            position++;
+            position = position % TICK_BUFFER_SIZE;
         }
     }
     ticks++;
@@ -106,16 +100,20 @@ ChangeSet* TickBuffer::release() {
 }
 
 void TickBuffer::draw(int x, int y) {
-    int px, py, size;
+    int px, py, size, delta;
+    long long now = this->now();
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         px = x + (i % 16) * 5;
         py = y + (i / 16) * 5;
         if (buffer[i] == NULL) {
             ofSetColor(ofColor::gray);
-        } else if (i == position) {
-            ofSetColor(ofColor::yellow);
         } else {
-            ofSetColor(ofColor::green);
+            delta = buffer[i]->time - now;
+            if (delta >= 0) {
+                ofSetColor(ofColor::green);
+            } else {
+                ofSetColor(ofColor::red);
+            }
         }
         if (i == position) {
             size = 5;
