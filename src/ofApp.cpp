@@ -7,11 +7,14 @@ void ofApp::setup() {
     // Graphics
     font.load(OF_TTF_MONO, 10, true, true);
     font_big.load(OF_TTF_MONO, 14, true, true);
+    ofBackground(ofColor::black);
+    ofSetBackgroundAuto(false);
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
     ofSetWindowTitle(APPLICATION);
     ofSetEscapeQuitsApp(false);
     ofLogNotice("Main") << "OpenFrameworks setup ok.";
+    redraw_all = true;
 
     // Setup up the timed buffer
     buffer = new TickBuffer(60);
@@ -89,6 +92,16 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
+    // Hack for drawing things again after startup
+    static int init_counter = 10;
+    if (init_counter > 0) {
+        if (init_counter == 1) {
+            redraw_all = true;
+        }
+        init_counter--;
+    }
+
+    // Run the logics
     step();
     if (playing) {
         buffer->tick();
@@ -97,13 +110,15 @@ void ofApp::draw() {
     }
 
     // Clear the background
-    ofBackground(ofColor::black);
+    if (redraw_all) {
+        ofBackground(0);
+    }
 
     // Draw the active page
     if (page[active_page] != NULL) {
-        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font, !command_mode);
+        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font, !command_mode, redraw_all);
 
-    } else if (active_page == 0) {
+    } else if (redraw_all && active_page == 0) {
         ofSetColor(200, 100, 80);
         font_big.drawString("Click +PAGE to create a page.", 15, 30);
     }
@@ -112,10 +127,12 @@ void ofApp::draw() {
     if (command_mode) {
         command_line->draw(font_big);
     } else {
-        toolbar->draw(font);
+        toolbar->draw(font, redraw_all);
     }
 
     // Draw some debug info to the right
+    ofSetColor(0);
+    ofDrawRectangle(ofGetWidth() - 95, 0, 95, 140);
     ofSetColor(200);
     font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 15);
     font.drawString("bpm: " + ofToString(buffer->getBPM()), ofGetWidth() - 90, 30);
@@ -129,6 +146,8 @@ void ofApp::draw() {
         ofSetColor(200 + output_router->getPeak(i));
         font.drawString(output_router->getOutputString(i), ofGetWidth() - 87, 150 + 15*i);
     }
+
+    redraw_all = false;
 }
 
 void ofApp::step() {
@@ -151,6 +170,7 @@ void ofApp::step() {
         page[active_page]->populate(new_toolbar);
     }
     Toolbar* old_toolbar = this->toolbar;
+    new_toolbar->markForRedraw(old_toolbar);
     this->toolbar = new_toolbar;
     delete old_toolbar;
     delete upstream;
@@ -177,6 +197,7 @@ void ofApp::change(ChangeSet* changes) {
             case OP_EDIT: edit(getFilename()); break;
             case OP_NEW: reset(); break;
             case OP_EXIT: ofExit(change->value); break;
+            case OP_REDRAW_ALL: redraw_all = true; break;
         }
     }
     if (page[active_page] != NULL) {
@@ -315,6 +336,9 @@ void ofApp::setActivePage(int active_page) {
 bool ofApp::getCommandMode() { return command_mode; }
 
 void ofApp::setCommandMode(bool command_mode) {
+    if (command_mode != this->command_mode) {
+        redraw_all = true;
+    }
     if (command_mode && !this->command_mode) {
         command_line->clear();
     }

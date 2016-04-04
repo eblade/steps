@@ -5,7 +5,6 @@ Page::Page() {
         sequencer[i] = NULL;
     }
 
-    //addNewLine(-1);
     cursor = 0;
 
     tool_seq_add = new Tool("+\nSEQ", OF_KEY_RETURN,
@@ -81,15 +80,17 @@ void Page::step(TickBuffer* buffer, OutputRouter* output_router) {
     }
 }
 
-void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor) {
-    ofSetColor(0);
-    ofDrawRectangle(x, y, width, height);
+void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor, bool redraw_all) {
+    if (redraw_all) {
+        ofSetColor(0);
+        ofDrawRectangle(x, y, width, height);
+    }
 
     for (int i = 0; i < MAX_SEQUENCERS; i++) {
         if (sequencer[i] == NULL) {
             break;
         }
-        sequencer[i]->draw(i, draw_cursor && i==cursor, font);
+        sequencer[i]->draw(i, draw_cursor && i==cursor, font, redraw_all);
     }
 }
 
@@ -105,7 +106,7 @@ void Page::mousePressed(int x, int y, int button){
     }
     cursor = row;
     sequencer[row]->setCursor(col);
-    if (sequencer[row]->cursor == col) {
+    if (sequencer[row]->getCursor() == col) {
         sequencer[row]->cursorClick();
     }
 }
@@ -147,7 +148,7 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_SYNC:
                 for (int i = 0; i < MAX_SEQUENCERS; i++) {
                     if (sequencer[i] != NULL) {
-                        int label = sequencer[i]->label;
+                        int label = sequencer[i]->getLabel();
                         if (label != 0) {
                             if (change->value == 0 || label == change->value) {
                                 sequencer[i]->sync();
@@ -160,7 +161,7 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
                 break;
             case OP_STEP_DEL: 
                 if (sequencer[cursor] != NULL) {
-                    if (sequencer[cursor]->cursor == 0) {
+                    if (sequencer[cursor]->getCursor() == 0) {
                         deleteLine(cursor);
                     } else {
                         sequencer[cursor]->cursorDelete();
@@ -186,16 +187,22 @@ void Page::write(ofstream& f) {
 
 void Page::cursorUp() {
     if (cursor > 0) {
+        if (sequencer[cursor] != NULL) {
+            sequencer[cursor]->cursorBlank();
+        }
         cursor--;
-        sequencer[cursor]->setCursor(sequencer[cursor + 1]->cursor);
+        sequencer[cursor]->setCursor(sequencer[cursor + 1]->getCursor());
     }
 }
 
 void Page::cursorDown() {
     if (cursor < (MAX_SEQUENCERS - 1)) {
         if (sequencer[cursor + 1] != NULL) {
+            if (sequencer[cursor] != NULL) {
+                sequencer[cursor]->cursorBlank();
+            }
             cursor++;
-            sequencer[cursor]->setCursor(sequencer[cursor - 1]->cursor);
+            sequencer[cursor]->setCursor(sequencer[cursor - 1]->getCursor());
         }
     }
 }
@@ -210,7 +217,7 @@ void Page::deleteLine(int line) {
             sequencer[i] = sequencer[i + 1];
         }
         if (line == cursor && sequencer[line] != NULL) {
-            sequencer[line]->setCursor(retired->cursor);
+            sequencer[line]->setCursor(retired->getCursor());
         }
         sequencer[MAX_SEQUENCERS - 1] = NULL;
         if (sequencer[cursor] == NULL) {
@@ -233,6 +240,9 @@ void Page::addNewLine(int afterLine) {
     } else if (sequencer[afterLine + 1] == NULL) {
         sequencer[afterLine + 1] = new Sequencer();
         if (cursor == afterLine) {
+            if (sequencer[cursor] != NULL) {
+                sequencer[cursor]->cursorBlank();
+            }
             cursor++;
         }
     
@@ -243,6 +253,9 @@ void Page::addNewLine(int afterLine) {
         }
         sequencer[afterLine + 1] = new Sequencer();
         if (cursor >= afterLine) {
+            if (sequencer[cursor] != NULL) {
+                sequencer[cursor]->cursorBlank();
+            }
             cursor++;
         }
     }

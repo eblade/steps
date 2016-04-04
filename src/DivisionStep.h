@@ -14,6 +14,7 @@ class Division {
         int getPeriod(float bpm);
         string getNumeratorString();
         string getDenominatorString();
+        bool needsRedraw();
 
         int getNumerator();
         void setNumerator(int numerator);
@@ -26,6 +27,7 @@ class Division {
         int numerator;
         int denominator;
         int tuplet;
+        bool changed;
 };
 
 
@@ -38,6 +40,7 @@ class DivisionStep : public Step {
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
         void write(ofstream& f);
+        bool needsRedraw();
 
         Division* division;
 

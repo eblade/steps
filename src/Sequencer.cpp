@@ -2,7 +2,6 @@
 
 
 Sequencer::Sequencer() {
-    name = "";
     active = true;
     octave = 3;
     position = 0;
@@ -12,6 +11,7 @@ Sequencer::Sequencer() {
     period = 1000;
     label = 0;
     cursor_shade = 255;
+    redraw = true;
 
     for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
@@ -19,26 +19,38 @@ Sequencer::Sequencer() {
 
     data[0] = new ActivateStep();
     cursor = 1;
+    cursor_blank = -1;
     ofLogNotice(APPLICATION) << "Seqeuncer setup ok.";
 }
 
-void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
-    int x, y;
+void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_all) {
+    redraw_all = redraw || redraw_all;
 
+    int x, y;
     x = 0;
     y = STEP_OUTER * row;
+
+    if (redraw_all) {
+        ofSetColor(0);
+        ofDrawRectangle(x, y, ofGetWidth(), STEP_OUTER);
+    }
+
     for (int col = 0; col < MAX_STEPS; col++) {
         x = STEP_OUTER * col;
 
         if (data[col] != NULL) {
-            data[col]->draw(x, y, col==last_executed, font);
-        } else {
-            if (active) {
-                ofSetColor(ActivateStep::c_on);
-            } else {
-                ofSetColor(ActivateStep::c_off);
+            if (redraw_all || data[col]->needsRedraw()) {
+                data[col]->draw(x, y, col==last_executed, font);
             }
-            ofDrawRectangle(x, y, 5, STEP_OUTER);
+        }
+
+        if (col == cursor_blank) {
+            ofSetColor(0);
+            ofDrawRectangle(x, y, STEP_OUTER, STEP_SPACING);
+            ofDrawRectangle(x, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
+            ofDrawRectangle(x + STEP_OUTER - STEP_SPACING, y + STEP_SPACING, STEP_SPACING, STEP_INNER);
+            ofDrawRectangle(x, y + STEP_OUTER - STEP_SPACING, STEP_OUTER, STEP_SPACING);
+            cursor_blank = -1;
         }
 
         if (onThisRow && col == cursor) {
@@ -53,10 +65,13 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font) {
             break;
         }
     }
+
     cursor_shade -= 3;
     if (cursor_shade < 100) {
         cursor_shade = 255;
     }
+
+    redraw = false;
 }
 
 void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
@@ -74,6 +89,9 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
             break;
         }
         Step* step = data[position];
+        if (data[last_executed] != NULL) {
+            data[last_executed]->markForRedraw();
+        }
         last_executed = position;
         state.output = output;
         state.period = period;
@@ -94,22 +112,8 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
         switch (change->operation) {
-            case OP_POSITION_SET:
-                position = change->value;
-                position = position < MAX_STEPS ? position : 0;
-                position = position >= 0 ? position : 0;
-                if (data[position] == NULL) {
-                    position = 0;
-                }
-                break;
-            case OP_POSITION_DELTA:
-                position += change->value;
-                position = position < MAX_STEPS ? position : 0;
-                position = position >= 0 ? position : 0;
-                if (data[position] == NULL) {
-                    position = 0;
-                }
-                break;
+            case OP_POSITION_SET: setPosition(change->value); break;
+            case OP_POSITION_DELTA: setPosition(position + change->value); break;
             case OP_STEP_SET:
                 cursor = change->value;
                 break;
@@ -123,6 +127,9 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_ACTIVE_SET:
                 active = change->value ? true : false;
                 if (!active) {
+                    if (data[last_executed] != NULL) {
+                        data[last_executed]->markForRedraw();
+                    }
                     last_executed = 0;
                 }
                 break;
@@ -205,6 +212,7 @@ void Sequencer::write(ofstream& f) {
 
 void Sequencer::cursorLeft() {
     if (cursor > 0) {
+        cursor_blank = cursor;
         cursor--;
     }
 }
@@ -212,6 +220,7 @@ void Sequencer::cursorLeft() {
 void Sequencer::cursorRight() {
     if (cursor < (MAX_STEPS - 1)) {
         if (data[cursor] != NULL) {
+            cursor_blank = cursor;
             cursor++;
         }
     }
@@ -231,6 +240,7 @@ void Sequencer::cursorDelete() {
         }
         data[MAX_STEPS - 1] = NULL;
         delete retired;
+        redraw = true;
     }
 }
 
@@ -244,12 +254,17 @@ void Sequencer::cursorInsert(Step* step) {
                 data[i] = data[i - 1];
             }
             data[cursor] = step;
+            redraw = true;
         } else {
             delete step;
         }
     } else {
         data[cursor] = step;
     }
+}
+
+void Sequencer::cursorBlank() {
+    cursor_blank = cursor;
 }
 
 int Sequencer::getLength() {
@@ -261,6 +276,8 @@ int Sequencer::getLength() {
     return MAX_STEPS;
 }
 
+int Sequencer::getCursor() { return cursor; }
+
 void Sequencer::setCursor(int wanted) {
     cursor = min(wanted, getLength());
 }
@@ -268,5 +285,25 @@ void Sequencer::setCursor(int wanted) {
 void Sequencer::sync() {
     position = 0;
     release = 0;
+    if (data[last_executed] != NULL) {
+        data[last_executed]->markForRedraw();
+    }
     last_executed = 0;
 }
+
+void Sequencer::setPosition(int position) {
+    position = position < MAX_STEPS ? position : 0;
+    position = position >= 0 ? position : 0;
+    if (data[position] == NULL) {
+        position = 0;
+    }
+    if (data[position] != NULL) {
+        data[position]->markForRedraw();
+    }
+    if (data[this->position] != NULL) {
+        data[this->position]->markForRedraw();
+    }
+    this->position = position;
+}
+
+int Sequencer::getLabel() { return label; }

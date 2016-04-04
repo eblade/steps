@@ -157,4 +157,5 @@ void SyncStep::setLabel(int label) {
     } else {
         this->label = label;
     }
+    changed = true;
 }

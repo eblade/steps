@@ -103,9 +103,13 @@ void CommandLine::execute(ChangeSet* changes) {
 
     // quit
     } else if (command.is("q") || command.is("quit")) {
-    //} else if (strncmp(command, "q", 2) == 0) {
         ofLogNotice("CommandLine") << "Sending OP_EXIT";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_EXIT, 0));
+
+    // redraw
+    } else if (command.is("r") || command.is("redraw")) {
+        ofLogNotice("CommandLine") << "Sending OP_REDRAW_ALL";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_REDRAW_ALL));
 
     // new
     } else if (command.is("n") || command.is("new")) {

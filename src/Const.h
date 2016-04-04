@@ -87,6 +87,7 @@
 #define OP_PAGE_DEL 12 // del-page
 #define OP_EDIT 13 // edit
 #define OP_NEW 14 // new
+#define OP_REDRAW_ALL 15 // redraw
 
 // Page level
 #define OP_SEQ_ADD 100 // add-sequencer

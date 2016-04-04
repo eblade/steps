@@ -18,13 +18,15 @@ class Sequencer {
     public:
         Sequencer();
 
-        void draw(int row, bool inThisRow, ofTrueTypeFont font);
+        void draw(int row, bool inThisRow, ofTrueTypeFont font, bool redraw_all=false);
 
         void cursorLeft();
         void cursorRight();
         void cursorClick();
         void cursorDelete();
         void cursorInsert(Step* step);
+        void cursorBlank();
+        int getCursor();
         void setCursor(int wanted);
         int getLength();
         void step(TickBuffer* buffer, OutputRouter* output_router);
@@ -32,8 +34,11 @@ class Sequencer {
         void populate(Toolbar* toolbar);
         void sync();
         void write(ofstream& f);
+        void setPosition(int position);
+        int getLabel();
 
-        string name;
+    private:
+        bool redraw;
         int cursor;
         bool active;
         int octave;
@@ -44,6 +49,7 @@ class Sequencer {
         int period;
         int label;
         int cursor_shade;
+        int cursor_blank;
         Step* data[MAX_STEPS];
 };
 

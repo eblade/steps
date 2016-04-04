@@ -3,6 +3,7 @@
 Step::Step() {
     type = STEP_TYPE_NONE;
     active = true;
+    changed = true;
 }
 
 int Step::getLength() {
@@ -37,8 +38,22 @@ void Step::write(ofstream& f) {
     f << "# unknown step\n";
 }
 
+bool Step::needsRedraw() {
+    if (changed) {
+        changed = false;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void Step::markForRedraw() {
+    changed = true;
+}
+
 bool Step::getActive() { return active; };
 
 void Step::setActive(bool active) {
     this->active = active;
+    this->changed = true;
 }

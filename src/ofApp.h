@@ -67,4 +67,5 @@ class ofApp : public ofBaseApp {
         string filename;
         int active_page;
         bool command_mode;
+        bool redraw_all;
 };

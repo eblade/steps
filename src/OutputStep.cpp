@@ -98,4 +98,5 @@ void OutputStep::setOutput(int output) {
     } else {
         this->output = output;
     }
+    changed = true;
 }

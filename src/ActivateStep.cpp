@@ -68,11 +68,15 @@ ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
     if (!hold || sequencer.release == 0) { // release == 0 means just synced
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+        changed = true;
     }
     if (changed_label) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, label));
         changed_label = false;
     } else {
+        if (label != sequencer.label) {
+            changed = true;
+        }
         label = sequencer.label;
     }
     return changes;
@@ -177,10 +181,12 @@ void ActivateStep::setLabel(int label) {
         this->label = label;
     }
     changed_label = this->label != what_it_was;
+    changed = true;
 }
 
 bool ActivateStep::getHold() { return hold; };
 
 void ActivateStep::setHold(bool hold) {
     this->hold = hold ? true : false;
+    changed = true;
 }

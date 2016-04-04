@@ -57,6 +57,8 @@ ChangeSet* DivisionStep::execute(TickBuffer* buffer, SequencerState sequencer) {
 }
 
 void DivisionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+    ofSetColor(20);
+    ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
     ofSetColor(c_text);
     ofDrawRectangle(x + STEP_SPACING, y + 18, STEP_INNER, 1);
     font.drawString(division->getNumeratorString(), x + 6, y + 13);
@@ -116,10 +118,20 @@ void DivisionStep::write(ofstream& f) {
       << "set-tuplet " << ofToString(division->getTuplet()) << "\n";
 }
 
+bool DivisionStep::needsRedraw() {
+    if (division->needsRedraw() || changed) {
+        changed = false;
+        return true;
+    } else {
+        return false;
+    }
+}
+
 Division::Division(int numerator, int denominator, int tuplet) {
     setNumerator(numerator);
     setDenominator(denominator);
     setTuplet(tuplet);
+    changed = true;
 }
 
 int Division::getNumerator() { return numerator; }
@@ -132,6 +144,7 @@ void Division::setNumerator(int numerator) {
     } else {
         this->numerator = numerator;
     }
+    changed = true;
 }
 
 int Division::getDenominator() { return denominator; }
@@ -144,6 +157,7 @@ void Division::setDenominator(int denominator) {
     } else {
         this->denominator = denominator;
     }
+    changed = true;
 }
 
 int Division::getTuplet() { return tuplet; }
@@ -156,6 +170,7 @@ void Division::setTuplet(int tuplet) {
     } else {
         this->tuplet = tuplet;
     }
+    changed = true;
 }
 
 int Division::getPeriod(float bpm) {
@@ -178,4 +193,13 @@ string Division::getDenominatorString() {
         result += "~" + ofToString(tuplet);
     }
     return result;
+}
+
+bool Division::needsRedraw() {
+    if (changed) {
+        changed = false;
+        return true;
+    } else {
+        return false;
+    }
 }

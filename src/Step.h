@@ -33,6 +33,8 @@ class Step {
         virtual void change(ChangeSet* changes);
         virtual void populate(Toolbar* toolbar);
         virtual void write(ofstream& f);
+        virtual bool needsRedraw();
+        virtual void markForRedraw();
 
         virtual bool getActive();
         virtual void setActive(bool active);
@@ -40,6 +42,7 @@ class Step {
     protected:
         int type;
         bool active;
+        bool changed;
 };
 
 #endif /* STEP_H_ */
