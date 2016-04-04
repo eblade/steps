@@ -191,7 +191,7 @@ void NoteStep::change(ChangeSet* changes) {
                 setVelocity(velocity + change->value);
                 break;
             case OP_ACTIVE_SET:
-                active = change->value ? true : false;
+                setActive(change->value);
                 break;
         }
     }
