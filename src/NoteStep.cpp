@@ -221,6 +221,7 @@ void NoteStep::setNote(int note) {
     } else {
         this->note = note;
     }
+    changed = true;
 }
 
 int NoteStep::getOctave() { return this->octave; }
@@ -233,6 +234,7 @@ void NoteStep::setOctave(int octave) {
     } else {
         this->octave = octave;
     }
+    changed = true;
 }
 
 int NoteStep::getVelocity() { return this->velocity; }
@@ -245,4 +247,5 @@ void NoteStep::setVelocity(int velocity) {
     } else {
         this->velocity = velocity;
     }
+    changed = true;
 }
