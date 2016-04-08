@@ -43,9 +43,10 @@ void TickBuffer::tick() {
     if (next_event != NULL) {
         double next_time = next_event->time;
         if (next_time < (this_time - period)) {
-            ofLogNotice("TickBuffer") << "Time: " << ((long long) (this_time * 1000.))
-                                      << " Period: " << period
-                                      << " Off by: " << (this_time - next_time);
+            ofLogNotice("TickBuffer") << "now=" << ((long long) (this_time * 1000.))
+                                      << " event=" << ((long long) (next_time * 1000.))
+                                      << " period=" << period
+                                      << " delta=" << (this_time - next_time);
             next_event->fire();
             delete next_event;
             buffer[position] = NULL;

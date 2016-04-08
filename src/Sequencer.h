@@ -40,7 +40,6 @@ class Sequencer {
     private:
         bool redraw;
         int cursor;
-        bool active;
         int octave;
         int position;
         int last_executed;

@@ -66,7 +66,12 @@ ActivateStep::~ActivateStep() {
 
 ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
-    if (!hold || sequencer.release == 0) { // release == 0 means just synced
+    if (!active) {
+        // If inactive, make sure sequencer is not has no old idea of when to release
+        if (sequencer.release != 0.) {
+            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, 0.));
+        }
+    } else if (!hold || sequencer.release == 0) { // release == 0 means just synced
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
         changed = true;
     }
@@ -153,12 +158,6 @@ ChangeSet* ActivateStep::click() {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     } else {
         active = !active;
-        if (active) {
-            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 1));
-        } else {
-            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, 0));
-            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
-        }
     }
     return changes;
 }

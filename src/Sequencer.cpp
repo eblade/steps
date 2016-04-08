@@ -2,7 +2,6 @@
 
 
 Sequencer::Sequencer() {
-    active = true;
     octave = 3;
     position = 0;
     last_executed = 0;
@@ -75,9 +74,6 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_a
 }
 
 void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
-    if (!active) {
-        return;
-    }
     SequencerState state;
     state.output_router = output_router;
     while (true) {
@@ -122,15 +118,6 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                     cursorRight();
                 } else if (change->value < 0) {
                     cursorLeft();
-                }
-                break;
-            case OP_ACTIVE_SET:
-                active = change->value ? true : false;
-                if (!active) {
-                    if (data[last_executed] != NULL) {
-                        data[last_executed]->markForRedraw();
-                    }
-                    last_executed = 0;
                 }
                 break;
             case OP_OUTPUT_SET:
