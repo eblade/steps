@@ -9,7 +9,7 @@ class Change {
     public:
         Change();
         Change(int level, int operation, int value);
-        Change(int level, int operation, long long long_value);
+        Change(int level, int operation, double float_value);
         Change(int level, int operation, string string_value);
         Change(int level, int operation);
         void init();
@@ -24,7 +24,7 @@ class Change {
 
         int operation;
         int value;
-        long long long_value;
+        double float_value;
         string string_value;
 };
 

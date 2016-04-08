@@ -8,7 +8,7 @@
 
 class MidiEvent : public TickEvent {
     public:
-        MidiEvent(long long time, OutputRouter* output_router, int output, int note, int velocity);
+        MidiEvent(double time, OutputRouter* output_router, int output, int note, int velocity);
         ~MidiEvent();
         void fire();
         OutputRouter* output_router;

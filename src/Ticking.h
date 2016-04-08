@@ -12,7 +12,7 @@ class TickEvent {
         TickEvent() { time = 0; }
         virtual ~TickEvent() {}
         virtual void fire() = 0;
-        long long time;
+        double time;
 };
 
 class TickBuffer {
@@ -24,25 +24,25 @@ class TickBuffer {
         void tick();
         void push(TickEvent* event);
         void draw(int x, int y);
-        bool timeFor(long long time);
+        bool timeFor(double time);
         void hold(ChangeSet* changes);
         ChangeSet* release();
 
         float getBPM();
         void setBPM(float bpm);
-        int getPeriod();
         int getXRuns();
-        long long getLastTime();
+        double getLastTime();
+        bool isFresh();
 
     private:
         TickEvent* buffer[TICK_BUFFER_SIZE];
-        long long now();
-        long long position;
+        double now();
+        int position;
         long ticks;
         ChangeSet* changes;
-        float bpm;
-        long long last_time;
-        int period;
+        double bpm;
+        double last_time;
+        double period;
         int xruns;
 };
 

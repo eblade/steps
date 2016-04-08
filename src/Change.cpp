@@ -11,11 +11,11 @@ Change::Change(int level, int operation, int value) {
     this->value = value;
 }
 
-Change::Change(int level, int operation, long long long_value) {
+Change::Change(int level, int operation, double float_value) {
     this->init();
     this->level = level;
     this->operation = operation;
-    this->long_value = long_value;
+    this->float_value = float_value;
 }
 
 Change::Change(int level, int operation, string string_value) {
@@ -39,7 +39,7 @@ void Change::init() {
     step = NONE;
     operation = OP_NONE;
     value = 0;
-    long_value = 0;
+    float_value = 0.;
     string_value = "";
 }
 
@@ -51,6 +51,8 @@ Change* Change::clone() {
     copy->step = this->step;
     copy->operation = this->operation;
     copy->value = this->value;
+    copy->float_value = this->float_value;
+    copy->string_value.assign(this->string_value);
     return copy;
 }
 

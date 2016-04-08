@@ -1,7 +1,7 @@
 #include "Ticking.h"
 
 TickBuffer::TickBuffer(int resolution) {
-    period = 1000 / resolution;
+    period = 1. / ((double) resolution);
     bpm = 120.;
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         buffer[i] = NULL;
@@ -37,13 +37,15 @@ void TickBuffer::tick() {
         ticks = 0;
     }
 
-    long long this_time = now();
+    double this_time = now();
     period = this_time - last_time;
     TickEvent* next_event = buffer[position];
     if (next_event != NULL) {
-        long long next_time = next_event->time;
-        if ((next_time <= this_time) || ((next_time - this_time) < (period / 2))) {
-            ofLogNotice("TickBuffer") << "Time delta: " << (this_time - next_time);
+        double next_time = next_event->time;
+        if (next_time < (this_time - period)) {
+            ofLogNotice("TickBuffer") << "Time: " << ((long long) (this_time * 1000.))
+                                      << " Period: " << period
+                                      << " Off by: " << (this_time - next_time);
             next_event->fire();
             delete next_event;
             buffer[position] = NULL;
@@ -77,14 +79,14 @@ void TickBuffer::push(TickEvent* event) {
     xruns++;
 }
 
-long long TickBuffer::now() {
-    return (long long) std::chrono::duration_cast<std::chrono::milliseconds>(
+double TickBuffer::now() {
+    return ((double) std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()
-    ).count();
+    ).count()) / 1000000.;
 }
 
-bool TickBuffer::timeFor(long long time) {
-    return time < (now() - period / 2);
+bool TickBuffer::timeFor(double time) {
+    return time < (now() - period / 2.);
 }
 
 void TickBuffer::hold(ChangeSet* changes) {
@@ -101,7 +103,7 @@ ChangeSet* TickBuffer::release() {
 
 void TickBuffer::draw(int x, int y) {
     int px, py, size, delta;
-    long long now = this->now();
+    double now = this->now();
     for (int i = 0; i < TICK_BUFFER_SIZE; i++) {
         px = x + (i % 16) * 5;
         py = y + (i / 16) * 5;
@@ -138,8 +140,10 @@ void TickBuffer::setBPM(float bpm) {
     }
 }
 
-int TickBuffer::getPeriod() { return period; }
-
 int TickBuffer::getXRuns() { return xruns; }
 
-long long TickBuffer::getLastTime() { return last_time; }
+double TickBuffer::getLastTime() { return last_time; }
+
+bool TickBuffer::isFresh() {
+    return ticks == -1;
+}

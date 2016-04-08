@@ -6,9 +6,9 @@ Sequencer::Sequencer() {
     octave = 3;
     position = 0;
     last_executed = 0;
-    release = 0;
+    release = 0.;
     output = 0;
-    period = 1000;
+    period = 1.;
     label = 0;
     cursor_shade = 255;
     redraw = true;
@@ -141,17 +141,18 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 output = output < MAX_OUTPUTS ? output : 0;
                 break;
             case OP_PERIOD_SET:
-                period = change->value;
+                period = change->float_value;
+                ofLogNotice("Sequencer") << "Period set to " << period;
                 break;
             case OP_PERIOD_DELTA:
-                period += change->value;
+                period += change->float_value;
                 period = period > 0 ? period : 0;
                 break;
             case OP_RELEASE_SET:
-                release = change->long_value;
+                release = change->float_value;
                 break;
             case OP_RELEASE_DELTA:
-                release += change->value;
+                release += change->float_value;
                 break;
             case OP_LABEL_SET:
                 label = change->value;
@@ -284,7 +285,7 @@ void Sequencer::setCursor(int wanted) {
 
 void Sequencer::sync() {
     position = 0;
-    release = 0;
+    release = 0.;
     if (data[last_executed] != NULL) {
         data[last_executed]->markForRedraw();
     }

@@ -86,9 +86,9 @@ int NoteStep::getLength() {
 }
 
 ChangeSet* NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    long long start, stop;
+    double start, stop;
     ChangeSet* changes = new ChangeSet();
-    start = sequencer.release > 0 ? sequencer.release : buffer->getLastTime();
+    start = buffer->isFresh() ? buffer->getLastTime() : sequencer.release;
     stop = start + sequencer.period;
     if (active) {
         MidiEvent* start_event = new MidiEvent(
@@ -107,8 +107,8 @@ ChangeSet* NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
             0
         );
         buffer->push(stop_event);
+        ofLogNotice("TIMING") << "stop-start=" << (stop - start);
     }
-    //changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LAST_START_SET, start));
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
     return changes;

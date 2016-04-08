@@ -11,7 +11,7 @@
 class Division {
     public: 
         Division(int numerator, int denominator, int tuplet);
-        int getPeriod(float bpm);
+        double getPeriod(double bpm);
         string getNumeratorString();
         string getDenominatorString();
         bool needsRedraw();

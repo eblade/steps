@@ -173,12 +173,12 @@ void Division::setTuplet(int tuplet) {
     changed = true;
 }
 
-int Division::getPeriod(float bpm) {
-    float base = ((float) numerator) / ((float) denominator);
+double Division::getPeriod(double bpm) {
+    double base = ((double) numerator) / ((double) denominator);
     if (tuplet > 1) {
-        base *= ((float) tuplet - 1) / ((float) tuplet );
+        base *= ((double) tuplet - 1) / ((double) tuplet );
     }
-    return (int) (base / (bpm / 60. / 4.) * 1000.);
+    return base / (bpm / 60. / 4.);
 }
 
 string Division::getNumeratorString() {

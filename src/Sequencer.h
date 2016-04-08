@@ -44,9 +44,9 @@ class Sequencer {
         int octave;
         int position;
         int last_executed;
-        long long release;
+        double release;
         int output;
-        int period;
+        double period;
         int label;
         int cursor_shade;
         int cursor_blank;

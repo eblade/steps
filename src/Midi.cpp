@@ -1,6 +1,6 @@
 #include "Midi.h"
 
-MidiEvent::MidiEvent(long long time, OutputRouter* output_router, int output, int note, int velocity) {
+MidiEvent::MidiEvent(double time, OutputRouter* output_router, int output, int note, int velocity) {
     this->time = time;
     this->output_router = output_router;
     this->output = output;

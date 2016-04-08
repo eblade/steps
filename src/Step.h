@@ -16,9 +16,9 @@ struct SequencerState {
         release(0)
         {}
     int output;
-    int period;
+    double period;
     int label;
-    long long release;
+    double release;
     OutputRouter* output_router;
 };
 
