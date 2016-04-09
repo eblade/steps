@@ -23,6 +23,7 @@ class ActivateStep : public Step {
 
         Tool* tool_hold;
         Tool* tool_dont_hold;
+        Tool* tool_kill;
         Tool* tool_activate;
         Tool* tool_deactivate;
         Tool* tool_label_0;

@@ -136,5 +136,6 @@
 #define OP_TUPLET_SET 354 // set-tuplet INT
 #define OP_TUPLET_DELTA 355 // delta-tuplet
 
+#define OP_KILL 360
 
 #endif

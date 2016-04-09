@@ -15,10 +15,12 @@ ActivateStep::ActivateStep() : Step() {
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 1));
     tool_deactivate = new Tool("TURN\nOFF", ' ',
         new Change(TARGET_LEVEL_STEP, OP_ACTIVE_SET, 0));
-    tool_hold = new Tool("HOLD", 'h',
+    tool_hold = new Tool("HOLD", 'H',
         new Change(TARGET_LEVEL_STEP, OP_HOLD_SET, 1));
-    tool_dont_hold = new Tool("DON'T\nHOLD", 'h',
+    tool_dont_hold = new Tool("DON'T\nHOLD", 'H',
         new Change(TARGET_LEVEL_STEP, OP_HOLD_SET, 0));
+    tool_kill = new Tool("KILL", 'K',
+        new Change(TARGET_LEVEL_STEP, OP_KILL, 0));
     tool_label_0 = new Tool("LABEL\n#0", '0',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 0));
     tool_label_1 = new Tool("LABEL\n#1", '1',
@@ -50,6 +52,7 @@ ActivateStep::~ActivateStep() {
     delete tool_deactivate;
     delete tool_hold;
     delete tool_dont_hold;
+    delete tool_kill;
     delete tool_label_0;
     delete tool_label_1;
     delete tool_label_2;
@@ -107,6 +110,7 @@ void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 void ActivateStep::populate(Toolbar* toolbar) {
     if (active) {
         toolbar->push(tool_deactivate);
+        toolbar->push(tool_kill);
     } else {
         toolbar->push(tool_activate);
     }
@@ -136,17 +140,11 @@ void ActivateStep::change(ChangeSet* changes) {
         switch (change->operation) {
             case OP_LABEL_SET: setLabel(change->value); break;
             case OP_LABEL_DELTA: setLabel(label + change->value); break;
-            case OP_ACTIVE_SET: setActive(change->value);
-                changes->upstream->push(
-                    new Change(TARGET_LEVEL_SEQUENCER, OP_ACTIVE_SET, change->value));
-                if (change->value == 0) {
-                    changes->upstream->push(
-                        new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
-                } else {
-                    changes->upstream->push(
-                        new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
-                }
+            case OP_KILL:
+                setActive(0);
+                changes->upstream->push( new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
                 break;
+            case OP_ACTIVE_SET: setActive(change->value); break;
             case OP_HOLD_SET: setHold(change->value); break;
         }
     }
@@ -158,6 +156,7 @@ ChangeSet* ActivateStep::click() {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     } else {
         active = !active;
+        changed = true;
     }
     return changes;
 }
