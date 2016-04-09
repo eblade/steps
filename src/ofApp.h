@@ -68,4 +68,5 @@ class ofApp : public ofBaseApp {
         int active_page;
         bool command_mode;
         bool redraw_all;
+        int init_counter;
 };

@@ -59,6 +59,9 @@ void ofApp::setup() {
     setPlaying(false);
     ofLogNotice("Main") << "Page setup ok.";
 
+    // Hack for drawing things again after startup and resize
+    init_counter = 10;
+
     ofLogNotice("Main") << "Done with setup.";
 }
 
@@ -92,8 +95,6 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
-    // Hack for drawing things again after startup
-    static int init_counter = 10;
     if (init_counter > 0) {
         if (init_counter == 1) {
             redraw_all = true;
@@ -296,7 +297,7 @@ void ofApp::mouseExited(int x, int y){
 }
 
 void ofApp::windowResized(int w, int h){
-
+    init_counter = 5;
 }
 
 void ofApp::gotMessage(ofMessage msg){
