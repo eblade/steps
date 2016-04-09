@@ -104,6 +104,9 @@ void Page::mousePressed(int x, int y, int button){
     if (sequencer[row] == NULL) {
         return;
     }
+    if (sequencer[cursor] != NULL) {
+        sequencer[cursor]->cursorBlank();
+    }
     cursor = row;
     sequencer[row]->setCursor(col);
     if (sequencer[row]->getCursor() == col) {
