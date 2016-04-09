@@ -28,7 +28,7 @@ void ofApp::setup() {
     output_settings.device = 1;
     output_settings.type = OUTPUT_TYPE_MIDI;
     output_settings.channel = 1;
-    output_router->install(0, output_settings);
+    output_router->install(output_settings);
     ofLogNotice("Main") << "OutputRouter setup ok.";
 
     // Setup up the Toolbar
@@ -199,6 +199,20 @@ void ofApp::change(ChangeSet* changes) {
             case OP_NEW: reset(); break;
             case OP_EXIT: ofExit(change->value); break;
             case OP_REDRAW_ALL: redraw_all = true; break;
+            case OP_OUTPUT_MIDI_INSTALL: {
+                OutputSettings output_settings;
+                output_settings.type = OUTPUT_TYPE_MIDI;
+                output_settings.device = change->value;
+                output_settings.channel = 0;
+                output_router->install(output_settings);
+            }
+                break;
+            case OP_OUTPUT_MIDI_UNINSTALL: output_router->uninstall(); break;
+            case OP_OUTPUT_SELECT_SET: output_router->setOutput(change->value); break;
+            case OP_OUTPUT_SELECT_DELTA: output_router->setOutput(output_router->getOutput() + change->value); break;
+            case OP_CHANNEL_SET: output_router->setChannel(change->value); break;
+            case OP_CHANNEL_DELTA: output_router->setChannel(output_router->getChannel() + change->value); break;
+
         }
     }
     if (page[active_page] != NULL) {

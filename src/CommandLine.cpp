@@ -154,6 +154,42 @@ void CommandLine::execute(ChangeSet* changes) {
         ofLogNotice("CommandLine") << "Sending OP_PAGE_ADD";
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_PAGE_ADD));
 
+    // midi-install INT
+    } else if (command.is("midi-install")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_MIDI_INSTALL";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_OUTPUT_MIDI_INSTALL,
+                                 command.argumentAsInt(0)));
+
+    // midi-uninstall INT
+    } else if (command.is("midi-uninstall")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_MIDI_UNINSTALL";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_OUTPUT_MIDI_UNINSTALL,
+                                 command.argumentAsInt(0)));
+
+    // set-output-select INT
+    } else if (command.is("set-output-select")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_SELECT_SET";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_OUTPUT_SELECT_SET,
+                                 command.argumentAsInt(0)));
+
+    // delta-output-select INT
+    } else if (command.is("delta-output-select")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_SELECT_DELTA";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_OUTPUT_SELECT_DELTA,
+                                 command.argumentAsInt(0)));
+
+    // set-channel INT
+    } else if (command.is("set-channel")) {
+        ofLogNotice("CommandLine") << "Sending OP_CHANNEL_SET";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_CHANNEL_SET,
+                                 command.argumentAsInt(0)));
+
+    // delta-channel INT
+    } else if (command.is("delta-channel")) {
+        ofLogNotice("CommandLine") << "Sending OP_CHANNEL_DELTA";
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_CHANNEL_DELTA,
+                                 command.argumentAsInt(0)));
+
     // set-bpm INT
     } else if (command.is("set-bpm")) {
         ofLogNotice("CommandLine") << "Sending OP_BPM_SET";

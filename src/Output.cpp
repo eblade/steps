@@ -9,6 +9,7 @@ OutputRouter::OutputRouter() {
         midi_output[i] = NULL;
     }
     ofxMidiOut::listPorts();
+    active_output = 0;
 };
 
 OutputRouter::~OutputRouter() {
@@ -23,19 +24,15 @@ OutputRouter::~OutputRouter() {
     };
 };
 
-bool OutputRouter::install(int address, OutputSettings settings) {
-    if (address < 0 || address >= MAX_OUTPUTS) {
-        ofLogError("OutputRouter") << "ERROR: Bad output address " << address;
+bool OutputRouter::install(OutputSettings settings) {
+    if (output[active_output].used) {
+        ofLogError("OutputRouter") << "ERROR: Output address " << active_output << " in use";
         return true;
     }
-    if (output[address].used) {
-        ofLogError("OutputRouter") << "ERROR: Output address " << address << " in use";
-        return true;
-    }
-    output[address].type = settings.type;
-    output[address].device = settings.device;
-    output[address].channel = settings.channel;
-    output[address].used = true;
+    output[active_output].type = settings.type;
+    output[active_output].device = settings.device;
+    output[active_output].channel = settings.channel;
+    output[active_output].used = true;
     if (settings.type == OUTPUT_TYPE_MIDI) {
         if (midi_output[settings.device] == NULL) {
             midi_output[settings.device] = new ofxMidiOut();
@@ -47,26 +44,43 @@ bool OutputRouter::install(int address, OutputSettings settings) {
     return false;
 }
 
-void OutputRouter::uninstall(int address) {
-    if (address >= 0 && address < MAX_OUTPUTS) {
-        output[address].used = false;
+void OutputRouter::uninstall() {
+    output[active_output].used = false;
+}
+
+int OutputRouter::getChannel() { return output[active_output].channel; }
+
+void OutputRouter::setChannel(int channel) {
+    if (channel >= 0 && channel <= 16) {
+        output[active_output].channel = channel;
     } else {
-        ofLogError("OutputRouter") << "WARNING: Bad attempt to unassign output " << address;
+        ofLogError("OutputRouter") << "WARNING: Bad channel " << channel;
+    }
+}
+
+int OutputRouter::getOutput() { return active_output; }
+
+void OutputRouter::setOutput(int active_output) {
+    if (active_output >= 0 && active_output < MAX_OUTPUTS) {
+        this->active_output = active_output;
+    } else {
+        ofLogError("OutputRouter") << "WARNING: Bad output " << active_output;
     }
 }
 
 string OutputRouter::getOutputString(int address) {
+    string active_marker = (address == active_output) ? ">" : " ";
     if (!(address >= 0 && address < MAX_OUTPUTS)) {
-        return ofToString(address) + ":OUT OF BOUNDS";
+        return " " + ofToString(address) + ":OUT OF BOUNDS";
     } else if (output[address].used == false) {
-        return ofToString(address) + ":-";
+        return active_marker + ofToString(address) + ":-";
     } else {
         if (output[address].type == OUTPUT_TYPE_DUMMY) {
-            return ofToString(address) + ":DUMMY " 
+            return active_marker + ofToString(address) + ":D" 
                                        + ofToString(output[address].device) + "/" 
                                        + ofToString(output[address].channel);
         } else if (output[address].type == OUTPUT_TYPE_MIDI) {
-            return ofToString(address) + ":MIDI "
+            return active_marker + ofToString(address) + ":M"
                                        + ofToString(output[address].device) + "/" 
                                        + ofToString(output[address].channel);
         }

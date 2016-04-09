@@ -26,11 +26,15 @@ class OutputRouter {
     public:
         OutputRouter();
         ~OutputRouter();
-        bool install(int address, OutputSettings settings);
-        void uninstall(int address);
+        bool install(OutputSettings settings);
+        void uninstall();
         void send(int address, OutputEvent event);
         string getOutputString(int address);
         int getPeak(int address);
+        void setOutput(int active_output);
+        int getOutput();
+        void setChannel(int channel);
+        int getChannel();
 
     private:
         void sendDummy(OutputSettings settings, OutputEvent event);
@@ -38,6 +42,7 @@ class OutputRouter {
         OutputSettings output[MAX_OUTPUTS];
         ofxMidiOut* midi_output[MAX_OUTPUT_DEVICES];
         int peak[MAX_OUTPUTS];
+        int active_output;
 };
 
 class OutputColors {

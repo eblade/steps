@@ -88,6 +88,12 @@
 #define OP_EDIT 13 // edit
 #define OP_NEW 14 // new
 #define OP_REDRAW_ALL 15 // redraw
+#define OP_OUTPUT_MIDI_INSTALL 16 // midi-install INT:device
+#define OP_OUTPUT_MIDI_UNINSTALL 17 // midi-install
+#define OP_OUTPUT_SELECT_SET 18 // set-output-select INT:output
+#define OP_OUTPUT_SELECT_DELTA 19 // delta-output-select INT:output-delta
+#define OP_CHANNEL_SET 20 // set-channel INT:channel
+#define OP_CHANNEL_DELTA 21 // set-channel INT:channel-delta
 
 // Page level
 #define OP_SEQ_ADD 100 // add-sequencer
