@@ -310,6 +310,18 @@ void CommandLine::execute(ChangeSet* changes) {
         changes->push(new Change(TARGET_LEVEL_STEP, OP_HOLD_SET,
                                  command.argumentAsBool()));
 
+    // set-output INT
+    } else if (command.is("set-output")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_SET";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_OUTPUT_SET,
+                                 command.argumentAsInt()));
+
+    // delta-output INT
+    } else if (command.is("delta-output")) {
+        ofLogNotice("CommandLine") << "Sending OP_OUTPUT_DELTA";
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_OUTPUT_DELTA,
+                                 command.argumentAsInt()));
+
     // set-numerator INT
     } else if (command.is("set-numerator")) {
         ofLogNotice("CommandLine") << "Sending OP_NUMERATOR_SET";
