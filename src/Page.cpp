@@ -192,7 +192,7 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
 }
 
 void Page::write(ofstream& f) {
-    f << "add-page\n";
+    f << "# Page\nadd-page\n";
     for (int i = 0; i < MAX_SEQUENCERS; i++) {
         if (sequencer[i] == NULL) {
             break;

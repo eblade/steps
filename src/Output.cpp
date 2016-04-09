@@ -131,6 +131,17 @@ void OutputRouter::sendMidi(OutputSettings settings, OutputEvent event) {
     midi_output[settings.device]->sendNoteOn(settings.channel, event.note, event.velocity);
 }
 
+void OutputRouter::write(ofstream& f) {
+    f << "# OutputRouter\n";
+    for (int i = 0; i < MAX_OUTPUTS; i++) {
+        if (output[i].used) {
+            f << "set-output-select " << i << "\n"
+              << "midi-install " << output[i].device << "\n"
+              << "set-channel " << output[i].channel << "\n";
+        }
+    }
+}
+
 const ofColor OutputColors::color[] = {
     ofColor(50, 50, 50),
     ofColor(100, 50, 50),

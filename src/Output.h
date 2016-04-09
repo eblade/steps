@@ -35,6 +35,7 @@ class OutputRouter {
         int getOutput();
         void setChannel(int channel);
         int getChannel();
+        void write(ofstream& f);
 
     private:
         void sendDummy(OutputSettings settings, OutputEvent event);

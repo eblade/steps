@@ -22,13 +22,6 @@ void ofApp::setup() {
 
     // Setup up the Output Router
     output_router = new OutputRouter();
-
-    // Set up the first non-through device as 0
-    OutputSettings output_settings;
-    output_settings.device = 1;
-    output_settings.type = OUTPUT_TYPE_MIDI;
-    output_settings.channel = 1;
-    output_router->install(output_settings);
     ofLogNotice("Main") << "OutputRouter setup ok.";
 
     // Setup up the Toolbar
@@ -237,6 +230,7 @@ void ofApp::write(string filename) {
     if (f.is_open()) {
         f << "# " << APPLICATION << " v." << VERSION << "\n";
         f << "set-bpm " << ofToString(buffer->getBPM()) << "\n";
+        output_router->write(f);
         for (int i = 0; i < MAX_PAGES; i++) {
             if (page[i] == NULL) {
                 break;
