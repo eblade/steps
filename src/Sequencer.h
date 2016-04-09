@@ -26,6 +26,8 @@ class Sequencer {
         void cursorDelete();
         void cursorInsert(Step* step);
         void cursorBlank();
+        void cursorHome();
+        void cursorEnd();
         int getCursor();
         void setCursor(int wanted);
         int getLength();

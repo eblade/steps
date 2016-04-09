@@ -11,7 +11,12 @@ Page::Page() {
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_ADD, 0));
     tool_seq_add->key_string = "RET";
 
-    tool_step_prev = new Tool("<<\nSTEP", 'h',
+    tool_step_home = new Tool("<<\nSTEP", '0',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET, 0));
+    tool_step_home->addKey(OF_KEY_HOME);
+    tool_step_home->addKey('^');
+
+    tool_step_prev = new Tool("<\nSTEP", 'h',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, -1));
     tool_step_prev->addKey(OF_KEY_LEFT);
 
@@ -23,9 +28,13 @@ Page::Page() {
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_DELTA, -1));
     tool_seq_prev->addKey(OF_KEY_UP);
 
-    tool_step_next = new Tool(">>\nSTEP", 'l',
+    tool_step_next = new Tool(">\nSTEP", 'l',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
     tool_step_next->addKey(OF_KEY_RIGHT);
+
+    tool_step_end = new Tool(">>\nSTEP", '$',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET, -1));
+    tool_step_end->addKey(OF_KEY_END);
 
     tool_add_note = new Tool("+\nNOTE", 'n',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE, 0));
@@ -62,8 +71,10 @@ Page::~Page() {
     delete tool_seq_add;
     delete tool_seq_next;
     delete tool_seq_prev;
+    delete tool_step_home;
     delete tool_step_prev;
     delete tool_step_next;
+    delete tool_step_end;
     delete tool_add_note;
     delete tool_add_div;
     delete tool_add_output;
@@ -116,10 +127,12 @@ void Page::mousePressed(int x, int y, int button){
 
 void Page::populate(Toolbar* toolbar) {
     toolbar->push(tool_seq_add);
+    toolbar->push(tool_step_home);
     toolbar->push(tool_step_prev);
     toolbar->push(tool_seq_prev);
     toolbar->push(tool_seq_next);
     toolbar->push(tool_step_next);
+    toolbar->push(tool_step_end);
     toolbar->push(tool_add_note);
     toolbar->push(tool_add_div);
     toolbar->push(tool_add_output);

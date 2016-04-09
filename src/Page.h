@@ -26,8 +26,10 @@ class Page {
         Tool* tool_seq_add;
         Tool* tool_seq_next;
         Tool* tool_seq_prev;
+        Tool* tool_step_home;
         Tool* tool_step_prev;
         Tool* tool_step_next;
+        Tool* tool_step_end;
         Tool* tool_add_note;
         Tool* tool_add_div;
         Tool* tool_add_output;

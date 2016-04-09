@@ -111,7 +111,13 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
             case OP_POSITION_SET: setPosition(change->value); break;
             case OP_POSITION_DELTA: setPosition(position + change->value); break;
             case OP_STEP_SET:
-                cursor = change->value;
+                if (change->value == 0) {
+                    cursorHome();
+                } else if (change->value == -1) {
+                    cursorEnd();
+                } else {
+                    setCursor(change->value);
+                }
                 break;
             case OP_STEP_DELTA:
                 if (change->value > 0) {
@@ -253,6 +259,22 @@ void Sequencer::cursorInsert(Step* step) {
 
 void Sequencer::cursorBlank() {
     cursor_blank = cursor;
+}
+
+void Sequencer::cursorHome() {
+    cursor_blank = cursor;
+    cursor = 0;
+}
+
+void Sequencer::cursorEnd() {
+    cursor_blank = cursor;
+    for (int i = 0; i < MAX_STEPS; i++) {
+        if (data[i] == NULL) {
+            cursor = i;
+            return;
+        }
+    }
+    cursor = MAX_STEPS - 1;
 }
 
 int Sequencer::getLength() {
