@@ -210,6 +210,7 @@ int ofApp::addPage() {
     for (int i = 0; i < MAX_PAGES; i++) {
         if (page[i] == NULL) {
             page[i] = new Page();
+            redraw_all = true;
             return i;
         }
     }
