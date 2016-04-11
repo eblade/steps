@@ -59,6 +59,7 @@ class Toolbar {
     private:
         Tool* tool[MAX_TOOLS];
         int head;
+        bool blank;
 };
 
 #endif /* TOOLBAR_H_ */

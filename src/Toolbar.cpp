@@ -132,6 +132,7 @@ Toolbar::Toolbar() {
         tool[i] = NULL;
     }
     head = 0;
+    blank = true;
 }
 
 Toolbar::~Toolbar() {
@@ -151,13 +152,20 @@ void Toolbar::draw(ofTrueTypeFont font, bool redraw_all) {
     x = 0;
     y = ofGetHeight() - STEP_OUTER - STEP_KEY_HEIGHT;
     for (int i = 0; i < MAX_TOOLS; i++) {
-        x = STEP_OUTER * i;
-
         if (tool[i] != NULL) {
             tool[i]->draw(x, y, font, redraw_all);
         } else {
             break;
         }
+        x += STEP_OUTER;
+    }
+    if (blank) {
+        ofSetColor(20);
+        ofDrawRectangle(
+            x, ofGetHeight() - STEP_OUTER - STEP_KEY_HEIGHT,
+            ofGetWidth() - x, STEP_OUTER + STEP_KEY_HEIGHT
+        );
+        blank = false;
     }
 }
 
