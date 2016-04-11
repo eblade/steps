@@ -11,10 +11,9 @@ Page::Page() {
         new Change(TARGET_LEVEL_PAGE, OP_SEQ_ADD, 0));
     tool_seq_add->key_string = "RET";
 
-    tool_step_home = new Tool("<<\nSTEP", '0',
+    tool_step_home = new Tool("<<\nSTEP", '^',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET, 0));
     tool_step_home->addKey(OF_KEY_HOME);
-    tool_step_home->addKey('^');
 
     tool_step_prev = new Tool("<\nSTEP", 'h',
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, -1));
