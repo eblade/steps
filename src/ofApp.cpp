@@ -14,8 +14,18 @@ void ofApp::setup() {
     ofSetWindowTitle(APPLICATION);
     ofSetEscapeQuitsApp(false);
     ofLogNotice("Main") << "OpenFrameworks setup ok.";
-    redraw_all = true;
+    redraw_all = false;
 
+    load();
+    ofLogNotice("Main") << "Done with setup.";
+
+    // Open file from arguments to application
+    if (arguments.size() > 1) {
+        edit(arguments.at(1));
+    }
+}
+
+void ofApp::load() {
     // Setup up the timed buffer
     buffer = new TickBuffer(60);
     ofLogNotice("Main") << "TickBuffer setup ok.";
@@ -54,11 +64,13 @@ void ofApp::setup() {
 
     // Hack for drawing things again after startup and resize
     init_counter = 10;
-
-    ofLogNotice("Main") << "Done with setup.";
 }
 
 void ofApp::exit() {
+    unload();
+}
+
+void ofApp::unload() {
     delete buffer;
     delete output_router;
     delete toolbar;
@@ -79,8 +91,8 @@ void ofApp::exit() {
 }
 
 void ofApp::reset() {
-    exit();
-    setup();
+    unload();
+    load();
 }
 
 void ofApp::update() {
@@ -326,7 +338,6 @@ void ofApp::setPlaying(bool playing) {
 string ofApp::getFilename() { return filename; }
 
 void ofApp::setFilename(string filename) {
-    ofLogNotice("Main") << "Setting filename to \"" << filename << "\"";
     this->filename.assign(filename);
     ofLogNotice("Main") << "Filename is now \"" << this->filename << "\"";
     ofSetWindowTitle(ofToString(APPLICATION) + " [" + this->filename + "]");

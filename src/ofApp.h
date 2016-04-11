@@ -12,6 +12,8 @@
 class ofApp : public ofBaseApp {
 	public:
 		void setup();
+        void load();
+        void unload();
         void exit();
         void reset();
 		void update();
@@ -49,6 +51,7 @@ class ofApp : public ofBaseApp {
         TickBuffer* buffer;
         OutputRouter* output_router;
         Toolbar* toolbar;
+        vector<string> arguments;
     
         Tool* tool_cmd;
         Tool* tool_play;
