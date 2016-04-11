@@ -74,7 +74,7 @@ ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
         if (sequencer.release != 0.) {
             changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, 0.));
         }
-    } else if (!hold || sequencer.release == 0) { // release == 0 means just synced
+    } else if (!hold || sequencer.synced) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
         changed = true;
     }

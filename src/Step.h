@@ -13,12 +13,14 @@ struct SequencerState {
         output(0),
         period(0),
         label(0),
-        release(0)
+        release(0),
+        synced(0)
         {}
     int output;
     double period;
     int label;
     double release;
+    bool synced;
     OutputRouter* output_router;
 };
 

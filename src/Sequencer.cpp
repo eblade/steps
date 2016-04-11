@@ -11,6 +11,7 @@ Sequencer::Sequencer() {
     label = 0;
     cursor_shade = 255;
     redraw = true;
+    synced = false;
 
     for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
@@ -93,10 +94,12 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         state.period = period;
         state.release = release;
         state.label = label;
+        state.synced = synced;
         change(step->execute(buffer, state), buffer);
         if (last_executed >= position) {
             break;
         }
+        synced = false;
     }
 }
 
@@ -299,6 +302,7 @@ void Sequencer::sync() {
         data[last_executed]->markForRedraw();
     }
     last_executed = 0;
+    synced = true;
 }
 
 void Sequencer::setPosition(int position) {

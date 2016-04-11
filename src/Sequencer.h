@@ -51,6 +51,7 @@ class Sequencer {
         int label;
         int cursor_shade;
         int cursor_blank;
+        bool synced;
         Step* data[MAX_STEPS];
 };
 
