@@ -58,13 +58,13 @@ void SectionStep::click(ChangeSet* changes) {
     changes->upstream->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET, section));
 }
 
-void SectionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void SectionStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     ofSetColor(200);
     ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 
     ofSetColor(0);
-    font.drawString("SEC", x + 3, y + 13);
-    font.drawString(ofToString(section), x + 3, y + 33);
+    font.drawString("SECT", x + 3, y + 13);
+    font_big.drawString(ofToString(section), x + 3, y + 33);
 }
 
 void SectionStep::populate(Toolbar* toolbar) {

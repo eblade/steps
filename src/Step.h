@@ -29,7 +29,7 @@ class Step {
         Step();
         virtual ~Step() {};
         virtual int getType();
-        virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
+        virtual void draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big);
         virtual void click(ChangeSet* changes);
         virtual void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
         virtual int getLength();

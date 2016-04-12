@@ -111,7 +111,7 @@ void NoteStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState se
     changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
 }
 
-void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     if (executing) {
         if (active) {
             ofSetColor(c_sel_active);
@@ -129,9 +129,9 @@ void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
 
     if (active) {
         ofSetColor(ofColor::white);
-        font.drawString(ofToString(note_name[note]) + ofToString(octave), x + 3, y + 13);
+        font_big.drawString(ofToString(note_name[note]) + ofToString(octave), x + 3, y + 18);
         ofSetColor(ofColor::lightGray);
-        font.drawString(ofToString(velocity), x + 3, y + 28);
+        font.drawString(ofToString(velocity), x + 3, y + 38);
     }
 }
 

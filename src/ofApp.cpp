@@ -122,7 +122,7 @@ void ofApp::draw() {
 
     // Draw the active page
     if (page[active_page] != NULL) {
-        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font, !command_mode, redraw_all);
+        page[active_page]->draw(0, 0, ofGetWidth(), ofGetHeight(), font, font_big, !command_mode, redraw_all);
 
     } else if (redraw_all && active_page == 0) {
         ofSetColor(200, 100, 80);

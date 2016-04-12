@@ -88,7 +88,7 @@ void ActivateStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerStat
     }
 }
 
-void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     if (active) {
         ofSetColor(c_on);
     } else {
@@ -97,11 +97,11 @@ void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
     ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
     
     ofSetColor(255);
-    font.drawString(ofToString("#") + ofToString(label), x + 3, y + 13);
+    font_big.drawString(ofToString("#") + ofToString(label), x + 3, y + 18);
     if (hold && executing) {
-        font.drawString(ofToString("HELD"), x + 3, y + 28);
+        font.drawString(ofToString("HELD"), x + 3, y + 38);
     } else if (hold) {
-        font.drawString(ofToString("HOLD"), x + 3, y + 28);
+        font.drawString(ofToString("HOLD"), x + 3, y + 38);
     }
 }
 

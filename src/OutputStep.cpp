@@ -54,13 +54,13 @@ void OutputStep::click(ChangeSet* changes) {
     changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
 }
 
-void OutputStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void OutputStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     ofSetColor(OutputColors::color[output % OUTPUT_COLORS]);
     ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
 
     ofSetColor(ofColor::white);
     font.drawString("OUT", x + 3, y + 13);
-    font.drawString(ofToString(output), x + 3, y + 33);
+    font_big.drawString(ofToString(output), x + 3, y + 38);
 }
 
 void OutputStep::populate(Toolbar* toolbar) {

@@ -20,7 +20,7 @@ class Sequencer {
         Sequencer();
         ~Sequencer();
 
-        void draw(int row, bool inThisRow, ofTrueTypeFont font, bool redraw_all=false);
+        void draw(int row, bool inThisRow, ofTrueTypeFont font, ofTrueTypeFont font_big, bool redraw_all=false);
 
         void cursorLeft();
         void cursorRight();

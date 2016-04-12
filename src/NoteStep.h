@@ -12,7 +12,7 @@ class NoteStep : public Step {
     public:
         NoteStep();
         ~NoteStep();
-        void draw(int x, int y, bool executing, ofTrueTypeFont font);
+        void draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big);
         void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);

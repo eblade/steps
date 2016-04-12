@@ -55,7 +55,7 @@ Page::Page() {
     tool_add_sync->changes->push(
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
-    tool_add_section = new Tool("+\nSEC", 'S',
+    tool_add_section = new Tool("+\nSECT", 'S',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SECTION, 0));
     tool_add_section->changes->push(
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
@@ -97,7 +97,7 @@ void Page::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* output_rou
     }
 }
 
-void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor, bool redraw_all) {
+void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, ofTrueTypeFont font_big, bool draw_cursor, bool redraw_all) {
     if (redraw_all) {
         ofSetColor(0);
         ofDrawRectangle(x, y, width, height);
@@ -107,7 +107,7 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool d
         if (sequencer[i] == NULL) {
             break;
         }
-        sequencer[i]->draw(i, draw_cursor && i==cursor, font, redraw_all);
+        sequencer[i]->draw(i, draw_cursor && i==cursor, font, font_big, redraw_all);
     }
 }
 

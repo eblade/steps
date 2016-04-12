@@ -12,7 +12,7 @@ class Page {
     public:
         Page();
         ~Page();
-        void draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor=true, bool redraw_all=false);
+        void draw(int x, int y, int width, int height, ofTrueTypeFont font, ofTrueTypeFont font_big, bool draw_cursor=true, bool redraw_all=false);
 		void mousePressed(int x, int y, int button, ChangeSet* changes);
         void cursorUp();
         void cursorDown();

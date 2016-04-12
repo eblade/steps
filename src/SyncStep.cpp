@@ -74,7 +74,7 @@ void SyncStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState se
     changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
 }
 
-void SyncStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void SyncStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     if (executing) {
         if (active) {
             ofSetColor(c_sel_active);
@@ -94,7 +94,7 @@ void SyncStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
         ofSetColor(ofColor::white);
         font.drawString(ofToString("SYNC"), x + 3, y + 13);
         ofSetColor(ofColor::lightGray);
-        font.drawString(ofToString("#") + ofToString(label), x + 3, y + 28);
+        font_big.drawString(ofToString("#") + ofToString(label), x + 3, y + 38);
     }
 }
 

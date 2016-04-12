@@ -30,7 +30,7 @@ Sequencer::~Sequencer() {
     }
 }
 
-void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_all) {
+void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, ofTrueTypeFont font_big, bool redraw_all) {
     redraw_all = redraw || redraw_all;
 
     int x, y;
@@ -47,7 +47,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_a
 
         if (data[col] != NULL) {
             if (redraw_all || data[col]->needsRedraw()) {
-                data[col]->draw(x, y, col==last_executed, font);
+                data[col]->draw(x, y, col==last_executed, font, font_big);
             }
         }
 

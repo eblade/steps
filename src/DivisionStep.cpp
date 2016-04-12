@@ -54,7 +54,7 @@ void DivisionStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerStat
         new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
 }
 
-void DivisionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void DivisionStep::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
     ofSetColor(20);
     ofDrawRectangle(x + STEP_SPACING, y + STEP_SPACING , STEP_INNER, STEP_INNER);
     ofSetColor(c_text);

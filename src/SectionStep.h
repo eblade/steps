@@ -11,7 +11,7 @@ class SectionStep : public Step {
         SectionStep(int section = 0);
         ~SectionStep();
 
-        void draw(int x, int y, bool executing, ofTrueTypeFont font);
+        void draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big);
         void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
         void click(ChangeSet* changes);
         void populate(Toolbar* toolbar);

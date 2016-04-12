@@ -13,7 +13,7 @@ int Step::getLength() {
 void Step::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
 }
 
-void Step::draw(int x, int y, bool executing, ofTrueTypeFont font) {
+void Step::draw(int x, int y, bool executing, ofTrueTypeFont font, ofTrueTypeFont font_big) {
 }
 
 void Step::click(ChangeSet* changes) {
