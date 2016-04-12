@@ -32,6 +32,9 @@
 // Max number of Labels to use on a Page
 #define MAX_LABELS 16
 
+// Max number of sections on a Page
+# define MAX_SECTIONS 16
+
 // Max TickBuffer size
 #define TICK_BUFFER_SIZE 256
 
@@ -48,6 +51,7 @@
 #define STEP_TYPE_ACTIVATE 3
 #define STEP_TYPE_OUTPUT 4
 #define STEP_TYPE_SYNC 5
+#define STEP_TYPE_SECTION 6
 
 // Output Types
 #define OUTPUT_TYPE_DUMMY 0
@@ -123,6 +127,7 @@
 #define OP_ADD_STEP_OUTPUT 252 // add-output-step
 #define OP_ADD_STEP_DIVISION 253 // add-division-step
 #define OP_ADD_STEP_SYNC 254 // add-sync-step
+#define OP_ADD_STEP_SECTION 255 // add-section-step
 
 // Step level
 #define OP_NOTE_SET 300 // set-note INT
@@ -134,6 +139,8 @@
 #define OP_LABEL_SET 306 // set-label INT
 #define OP_LABEL_DELTA 307
 #define OP_HOLD_SET 308 // set-hold BOOL
+#define OP_SECTION_SET 310 // set-section INT
+#define OP_SECTION_DELTA 311
 
 #define OP_NUMERATOR_SET 350 // set-numerator INT
 #define OP_NUMERATOR_DELTA 351 // delta-numerator INT

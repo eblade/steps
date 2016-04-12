@@ -204,6 +204,11 @@ void CommandLine::execute(ChangeSet* changes) {
     } else if (command.is("add-output-step")) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT));
 
+    // add-section-step INT=0
+    } else if (command.is("add-section-step")) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SECTION,
+                                 command.argumentAsInt(0)));
+
     // set-cursor INT
     } else if (command.is("set-cursor")) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET,
@@ -271,6 +276,16 @@ void CommandLine::execute(ChangeSet* changes) {
     // delta-output INT
     } else if (command.is("delta-output")) {
         changes->push(new Change(TARGET_LEVEL_STEP, OP_OUTPUT_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-section INT
+    } else if (command.is("set-section")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_SECTION_SET,
+                                 command.argumentAsInt()));
+
+    // set-active-section INT
+    } else if (command.is("set-active-section")) {
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET,
                                  command.argumentAsInt()));
 
     // set-numerator INT

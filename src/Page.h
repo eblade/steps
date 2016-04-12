@@ -13,7 +13,7 @@ class Page {
         Page();
         ~Page();
         void draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor=true, bool redraw_all=false);
-		void mousePressed(int x, int y, int button);
+		void mousePressed(int x, int y, int button, TickBuffer* buffer);
         void cursorUp();
         void cursorDown();
         void step(TickBuffer* buffer, OutputRouter* output_router);
@@ -34,6 +34,7 @@ class Page {
         Tool* tool_add_div;
         Tool* tool_add_output;
         Tool* tool_add_sync;
+        Tool* tool_add_section;
         Tool* tool_del_step;
 
     private:

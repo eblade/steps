@@ -18,6 +18,7 @@ void TickBuffer::reset() {
     xruns = 0;
     ticks = -1; // first tick is never of full length
     last_time = now();
+    active_section = 0;
     clear();
 }
 
@@ -147,4 +148,12 @@ double TickBuffer::getLastTime() { return last_time; }
 
 bool TickBuffer::isFresh() {
     return ticks == -1;
+}
+
+int TickBuffer::getActiveSection() { return active_section; }
+
+void TickBuffer::setActiveSection(int section) {
+    section = section < 0 ? 0 : section;
+    section = section < MAX_SECTIONS ? section : MAX_SECTIONS - 1;
+    active_section = section;
 }

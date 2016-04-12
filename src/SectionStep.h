@@ -1,16 +1,16 @@
-#ifndef OUTPUTSTEP_H_
-#define OUTPUTSTEP_H_
+#ifndef SECTIONSTEP_H_
+#define SECTIONSTEP_H_
 
 #include "ofMain.h"
 #include "Step.h"
 #include "Change.h"
-#include "Output.h"
 #include "Toolbar.h"
 
-class OutputStep : public Step {
+class SectionStep : public Step {
     public:
-        OutputStep();
-        ~OutputStep();
+        SectionStep(int section = 0);
+        ~SectionStep();
+
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
         ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
         ChangeSet* click();
@@ -18,8 +18,8 @@ class OutputStep : public Step {
         void change(ChangeSet* changes);
         void write(ofstream& f);
 
-        int getOutput();
-        void setOutput(int output);
+        int getSection();
+        void setSection(int section);
 
         Tool* tool_0;
         Tool* tool_1;
@@ -35,7 +35,7 @@ class OutputStep : public Step {
         Tool* tool_down;
 
     private:
-        int output;
+        int section;
 };
 
-#endif
+#endif /* SECTIONSTEP_H_ */

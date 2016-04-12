@@ -30,6 +30,21 @@ OutputStep::OutputStep() {
         new Change(TARGET_LEVEL_STEP, OP_OUTPUT_DELTA, -1));
 }
 
+OutputStep::~OutputStep() {
+    delete tool_0;
+    delete tool_1;
+    delete tool_2;
+    delete tool_3;
+    delete tool_4;
+    delete tool_5;
+    delete tool_6;
+    delete tool_7;
+    delete tool_8;
+    delete tool_9;
+    delete tool_up;
+    delete tool_down;
+}
+
 ChangeSet* OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
     ChangeSet* changes = new ChangeSet();
     changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));

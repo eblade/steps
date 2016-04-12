@@ -9,6 +9,7 @@
 #include "OutputStep.h"
 #include "DivisionStep.h"
 #include "SyncStep.h"
+#include "SectionStep.h"
 #include "Ticking.h"
 #include "Output.h"
 #include "Toolbar.h"
@@ -17,12 +18,13 @@
 class Sequencer {
     public:
         Sequencer();
+        ~Sequencer();
 
         void draw(int row, bool inThisRow, ofTrueTypeFont font, bool redraw_all=false);
 
         void cursorLeft();
         void cursorRight();
-        void cursorClick();
+        void cursorClick(TickBuffer* buffer);
         void cursorDelete();
         void cursorInsert(Step* step);
         void cursorBlank();
@@ -40,6 +42,7 @@ class Sequencer {
         int getLabel();
 
     private:
+        int peekType(int position);
         bool redraw;
         int cursor;
         int octave;

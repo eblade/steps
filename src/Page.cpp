@@ -55,6 +55,11 @@ Page::Page() {
     tool_add_sync->changes->push(
         new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
+    tool_add_section = new Tool("+\nSEC", 'S',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SECTION, 0));
+    tool_add_section->changes->push(
+        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+
     tool_del_step = new Tool("DEL", 'x',
         new Change(TARGET_LEVEL_PAGE, OP_STEP_DEL, -1));
     tool_del_step->addKey(OF_KEY_DEL);
@@ -78,6 +83,7 @@ Page::~Page() {
     delete tool_add_div;
     delete tool_add_output;
     delete tool_add_sync;
+    delete tool_add_section;
     delete tool_del_step;
 }
 
@@ -104,7 +110,7 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool d
     }
 }
 
-void Page::mousePressed(int x, int y, int button){
+void Page::mousePressed(int x, int y, int button, TickBuffer* buffer){
     int col = x / STEP_OUTER;
     int row = y / STEP_OUTER;
 
@@ -120,7 +126,7 @@ void Page::mousePressed(int x, int y, int button){
     cursor = row;
     sequencer[row]->setCursor(col);
     if (sequencer[row]->getCursor() == col) {
-        sequencer[row]->cursorClick();
+        sequencer[row]->cursorClick(buffer);
     }
 }
 
@@ -136,6 +142,7 @@ void Page::populate(Toolbar* toolbar) {
     toolbar->push(tool_add_div);
     toolbar->push(tool_add_output);
     toolbar->push(tool_add_sync);
+    toolbar->push(tool_add_section);
     toolbar->push(tool_del_step);
     if (sequencer[cursor] != NULL) {
         sequencer[cursor]->populate(toolbar);

@@ -57,3 +57,5 @@ void Step::setActive(bool active) {
     this->active = active;
     this->changed = true;
 }
+
+int Step::getType() { return type; }

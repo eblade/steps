@@ -140,9 +140,10 @@ void ofApp::draw() {
     ofSetColor(0);
     ofDrawRectangle(ofGetWidth() - 95, 0, 95, 140);
     ofSetColor(200);
-    font.drawString("page: " + ofToString(active_page), ofGetWidth() - 90, 15);
-    font.drawString("bpm: " + ofToString(buffer->getBPM()), ofGetWidth() - 90, 30);
-    font.drawString("fps: " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 45);
+    font.drawString("pg" + ofToString(active_page) + ", sec" + ofToString(buffer->getActiveSection()),
+                    ofGetWidth() - 90, 15);
+    font.drawString("bpm " + ofToString(buffer->getBPM()), ofGetWidth() - 90, 30);
+    font.drawString("fps " + ofToString((int)ofGetFrameRate()), ofGetWidth() - 90, 45);
 
     buffer->draw(ofGetWidth() - 90, 55);
 
@@ -217,7 +218,8 @@ void ofApp::change(ChangeSet* changes) {
             case OP_OUTPUT_SELECT_DELTA: output_router->setOutput(output_router->getOutput() + change->value); break;
             case OP_CHANNEL_SET: output_router->setChannel(change->value); break;
             case OP_CHANNEL_DELTA: output_router->setChannel(output_router->getChannel() + change->value); break;
-
+            case OP_SECTION_SET: buffer->setActiveSection(change->value); break;
+            case OP_SECTION_DELTA: buffer->setActiveSection(buffer->getActiveSection() + change->value); break;
         }
     }
     if (page[active_page] != NULL) {
@@ -300,7 +302,7 @@ void ofApp::mousePressed(int x, int y, int button){
             change(toolbar->mousePressed(x, y - toolbar_start_y, button));
         }
     } else if (page[active_page] != NULL) {
-        page[active_page]->mousePressed(x, y, button);
+        page[active_page]->mousePressed(x, y, button, buffer);
     }
 }
 

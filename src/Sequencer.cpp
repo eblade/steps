@@ -23,6 +23,14 @@ Sequencer::Sequencer() {
     ofLogNotice(APPLICATION) << "Seqeuncer setup ok.";
 }
 
+Sequencer::~Sequencer() {
+    for (int i = 1; i < MAX_STEPS; i++) {
+        if (data[i] != NULL) {
+            delete data[i];
+        }
+    }
+}
+
 void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_all) {
     redraw_all = redraw || redraw_all;
 
@@ -97,7 +105,13 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         state.synced = synced;
         change(step->execute(buffer, state), buffer);
         if (last_executed >= position) {
-            break;
+            if (last_executed == position 
+                    && step->getType() == STEP_TYPE_SECTION
+                    && peekType(position + 1) == STEP_TYPE_SECTION) {
+                position++;
+            } else {
+                break;
+            }
         }
         synced = false;
     }
@@ -180,6 +194,12 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
                 cursorInsert(new_sync);
                 break;
             }
+            case OP_ADD_STEP_SECTION: {
+                SectionStep* new_section =
+                    new SectionStep(change->value);
+                cursorInsert(new_section);
+                break;
+            }
         }
     }
     if (data[cursor] != NULL) {
@@ -187,6 +207,7 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
     }
     if (buffer != NULL) {
         buffer->hold(changes->upstream);
+        changes->upstream = NULL;
     }
 }
 
@@ -223,9 +244,9 @@ void Sequencer::cursorRight() {
     }
 }
 
-void Sequencer::cursorClick() {
+void Sequencer::cursorClick(TickBuffer* buffer) {
     if (data[cursor] != NULL) {
-        change(data[cursor]->click(), NULL);
+        change(data[cursor]->click(), buffer);
     }
 }
 
@@ -321,3 +342,13 @@ void Sequencer::setPosition(int position) {
 }
 
 int Sequencer::getLabel() { return label; }
+
+int Sequencer::peekType(int position) {
+    if (position < 0 || position >= MAX_STEPS) {
+        return STEP_TYPE_NONE;
+    } else if (data[position] == NULL) {
+        return STEP_TYPE_NONE;
+    } else {
+        return data[position]->getType();
+    }
+}

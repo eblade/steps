@@ -33,6 +33,8 @@ class TickBuffer {
         int getXRuns();
         double getLastTime();
         bool isFresh();
+        int getActiveSection();
+        void setActiveSection(int section);
 
     private:
         TickEvent* buffer[TICK_BUFFER_SIZE];
@@ -44,6 +46,7 @@ class TickBuffer {
         double last_time;
         double period;
         int xruns;
+        int active_section;
 };
 
 
