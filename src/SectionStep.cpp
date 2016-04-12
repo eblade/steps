@@ -48,6 +48,9 @@ SectionStep::~SectionStep() {
 void SectionStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
     if (section == buffer->getActiveSection()) {
         changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+    } else if (sequencer.release != 0.) {
+        // If inactive, make sure sequencer is not has no old idea of when to release
+        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, 0.));
     }
 }
 

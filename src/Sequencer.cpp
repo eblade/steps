@@ -20,7 +20,6 @@ Sequencer::Sequencer() {
     data[0] = new ActivateStep();
     cursor = 1;
     cursor_blank = -1;
-    ofLogNotice(APPLICATION) << "Seqeuncer setup ok.";
 }
 
 Sequencer::~Sequencer() {
@@ -103,19 +102,16 @@ void Sequencer::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* outpu
         state.release = release;
         state.label = label;
         state.synced = synced;
-        ofLogVerbose("Sequencer") << "Run step " << step->getType();
         delete changes->upstream;
         changes->upstream = new ChangeSet(false);
         step->execute(changes, buffer, state);
         performChanges(changes->upstream);
         if (last_executed >= position) {
-            ofLogVerbose("Sequencer") << "last_executed >= position";
             if (last_executed == position 
                     && step->getType() == STEP_TYPE_SECTION
                     && peekType(position + 1) == STEP_TYPE_SECTION) {
                 position++;
             } else {
-                ofLogVerbose("Sequencer") << "break";
                 break;
             }
         }
@@ -138,7 +134,6 @@ void Sequencer::performChanges(ChangeSet* changes) {
     changes->rewind();
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
-        ofLogVerbose("Sequencer") << "Change " << change->operation << "/" << change->value << "/" << change->float_value;
         switch (change->operation) {
             case OP_POSITION_SET: setPosition(change->value); break;
             case OP_POSITION_DELTA: setPosition(position + change->value); break;
@@ -167,7 +162,6 @@ void Sequencer::performChanges(ChangeSet* changes) {
                 break;
             case OP_PERIOD_SET:
                 period = change->float_value;
-                ofLogNotice("Sequencer") << "Period set to " << period;
                 break;
             case OP_PERIOD_DELTA:
                 period += change->float_value;
