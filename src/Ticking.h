@@ -25,8 +25,6 @@ class TickBuffer {
         void push(TickEvent* event);
         void draw(int x, int y);
         bool timeFor(double time);
-        void hold(ChangeSet* changes);
-        ChangeSet* release();
 
         float getBPM();
         void setBPM(float bpm);

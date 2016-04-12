@@ -92,6 +92,9 @@ void ChangeSet::push(Change* change) {
 }
 
 void ChangeSet::push(ChangeSet* changes) {
+    if (changes == NULL) {
+        return;
+    }
     for (int i = 0; i < MAX_CHANGES; i++) {
         if (changes->change[i] != NULL) {
             this->push(changes->change[i]->clone());

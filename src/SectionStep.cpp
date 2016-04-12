@@ -45,18 +45,14 @@ SectionStep::~SectionStep() {
     delete tool_down;
 }
 
-ChangeSet* SectionStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet* changes = new ChangeSet();
+void SectionStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
     if (section == buffer->getActiveSection()) {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
     }
-    return changes;
 }
 
-ChangeSet* SectionStep::click() {
-    ChangeSet* changes = new ChangeSet();
+void SectionStep::click(ChangeSet* changes) {
     changes->upstream->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET, section));
-    return changes;
 }
 
 void SectionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {

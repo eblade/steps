@@ -82,7 +82,7 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, bool redraw_a
     redraw = false;
 }
 
-void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
+void Sequencer::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* output_router) {
     SequencerState state;
     state.output_router = output_router;
     while (true) {
@@ -103,13 +103,19 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
         state.release = release;
         state.label = label;
         state.synced = synced;
-        change(step->execute(buffer, state), buffer);
+        ofLogVerbose("Sequencer") << "Run step " << step->getType();
+        delete changes->upstream;
+        changes->upstream = new ChangeSet(false);
+        step->execute(changes, buffer, state);
+        performChanges(changes->upstream);
         if (last_executed >= position) {
+            ofLogVerbose("Sequencer") << "last_executed >= position";
             if (last_executed == position 
                     && step->getType() == STEP_TYPE_SECTION
                     && peekType(position + 1) == STEP_TYPE_SECTION) {
                 position++;
             } else {
+                ofLogVerbose("Sequencer") << "break";
                 break;
             }
         }
@@ -117,13 +123,22 @@ void Sequencer::step(TickBuffer* buffer, OutputRouter* output_router) {
     }
 }
 
-void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
+void Sequencer::change(ChangeSet* changes) {
+    performChanges(changes);
+    if (data[cursor] != NULL) {
+        data[cursor]->change(changes);
+    }
+    performChanges(changes->upstream);
+}
+
+void Sequencer::performChanges(ChangeSet* changes) {
     if (changes == NULL) {
         return;
     }
     changes->rewind();
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_SEQUENCER)) != NULL) {
+        ofLogVerbose("Sequencer") << "Change " << change->operation << "/" << change->value << "/" << change->float_value;
         switch (change->operation) {
             case OP_POSITION_SET: setPosition(change->value); break;
             case OP_POSITION_DELTA: setPosition(position + change->value); break;
@@ -202,13 +217,6 @@ void Sequencer::change(ChangeSet* changes, TickBuffer* buffer) {
             }
         }
     }
-    if (data[cursor] != NULL) {
-        data[cursor]->change(changes);
-    }
-    if (buffer != NULL) {
-        buffer->hold(changes->upstream);
-        changes->upstream = NULL;
-    }
 }
 
 void Sequencer::populate(Toolbar* toolbar) {
@@ -244,9 +252,10 @@ void Sequencer::cursorRight() {
     }
 }
 
-void Sequencer::cursorClick(TickBuffer* buffer) {
+void Sequencer::cursorClick(ChangeSet* changes) {
     if (data[cursor] != NULL) {
-        change(data[cursor]->click(), buffer);
+        data[cursor]->click(changes);
+        performChanges(changes->upstream);
     }
 }
 

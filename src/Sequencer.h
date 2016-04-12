@@ -24,7 +24,7 @@ class Sequencer {
 
         void cursorLeft();
         void cursorRight();
-        void cursorClick(TickBuffer* buffer);
+        void cursorClick(ChangeSet* changes);
         void cursorDelete();
         void cursorInsert(Step* step);
         void cursorBlank();
@@ -33,8 +33,8 @@ class Sequencer {
         int getCursor();
         void setCursor(int wanted);
         int getLength();
-        void step(TickBuffer* buffer, OutputRouter* output_router);
-        void change(ChangeSet* changes, TickBuffer* buffer);
+        void step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* output_router);
+        void change(ChangeSet* changes);
         void populate(Toolbar* toolbar);
         void sync();
         void write(ofstream& f);
@@ -42,6 +42,8 @@ class Sequencer {
         int getLabel();
 
     private:
+        void performChanges(ChangeSet* changes);
+
         int peekType(int position);
         bool redraw;
         int cursor;

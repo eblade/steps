@@ -67,19 +67,18 @@ ActivateStep::~ActivateStep() {
     delete tool_label_down;
 }
 
-ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet* changes = new ChangeSet();
+void ActivateStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
     if (!active) {
         // If inactive, make sure sequencer is not has no old idea of when to release
         if (sequencer.release != 0.) {
-            changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, 0.));
+            changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, 0.));
         }
     } else if (!hold || sequencer.synced) {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
         changed = true;
     }
     if (changed_label) {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, label));
+        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, label));
         changed_label = false;
     } else {
         if (label != sequencer.label) {
@@ -87,7 +86,6 @@ ChangeSet* ActivateStep::execute(TickBuffer* buffer, SequencerState sequencer) {
         }
         label = sequencer.label;
     }
-    return changes;
 }
 
 void ActivateStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
@@ -150,15 +148,13 @@ void ActivateStep::change(ChangeSet* changes) {
     }
 }
 
-ChangeSet* ActivateStep::click() {
-    ChangeSet* changes = new ChangeSet();
+void ActivateStep::click(ChangeSet* changes) {
     if (hold) {
-        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
+        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     } else {
         active = !active;
         changed = true;
     }
-    return changes;
 }
 
 void ActivateStep::write(ofstream& f) {

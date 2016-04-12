@@ -45,17 +45,13 @@ OutputStep::~OutputStep() {
     delete tool_down;
 }
 
-ChangeSet* OutputStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet* changes = new ChangeSet();
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
-    return changes;
+void OutputStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
+    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
+    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
 }
 
-ChangeSet* OutputStep::click() {
-    ChangeSet* changes = new ChangeSet();
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
-    return changes;
+void OutputStep::click(ChangeSet* changes) {
+    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_OUTPUT_SET, output));
 }
 
 void OutputStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {

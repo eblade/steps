@@ -158,11 +158,12 @@ void ofApp::draw() {
 }
 
 void ofApp::step() {
-    ChangeSet* upstream = buffer->release();
     if (page[active_page] != NULL) {
         if (playing) {
-            page[active_page]->step(buffer, output_router);
-            page[active_page]->change(upstream, buffer);
+            ChangeSet* changes = new ChangeSet();
+            page[active_page]->step(changes, buffer, output_router);
+            performChanges(changes->upstream);
+            delete changes;
         }
     }
     Toolbar* new_toolbar = new Toolbar();
@@ -180,10 +181,18 @@ void ofApp::step() {
     new_toolbar->markForRedraw(old_toolbar);
     this->toolbar = new_toolbar;
     delete old_toolbar;
-    delete upstream;
 }
 
 void ofApp::change(ChangeSet* changes) {
+    performChanges(changes);
+    if (page[active_page] != NULL) {
+        page[active_page]->change(changes);
+    }
+    performChanges(changes->upstream);
+    delete changes;
+}
+
+void ofApp::performChanges(ChangeSet* changes) {
     if (changes == NULL) {
         return;
     }
@@ -222,10 +231,6 @@ void ofApp::change(ChangeSet* changes) {
             case OP_SECTION_DELTA: buffer->setActiveSection(buffer->getActiveSection() + change->value); break;
         }
     }
-    if (page[active_page] != NULL) {
-        page[active_page]->change(changes, buffer);
-    }
-    delete changes;
 }
 
 int ofApp::addPage() {
@@ -302,7 +307,10 @@ void ofApp::mousePressed(int x, int y, int button){
             change(toolbar->mousePressed(x, y - toolbar_start_y, button));
         }
     } else if (page[active_page] != NULL) {
-        page[active_page]->mousePressed(x, y, button, buffer);
+        ChangeSet* changes = new ChangeSet();
+        page[active_page]->mousePressed(x, y, button, changes);
+        performChanges(changes->upstream);
+        delete changes;
     }
 }
 

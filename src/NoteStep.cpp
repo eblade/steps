@@ -85,9 +85,8 @@ int NoteStep::getLength() {
     return length;
 }
 
-ChangeSet* NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
+void NoteStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
     double start, stop;
-    ChangeSet* changes = new ChangeSet();
     start = (buffer->isFresh() || sequencer.release == 0.) ? buffer->getLastTime() : sequencer.release;
     stop = start + sequencer.period;
     if (active) {
@@ -108,9 +107,8 @@ ChangeSet* NoteStep::execute(TickBuffer* buffer, SequencerState sequencer) {
         );
         buffer->push(stop_event);
     }
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
-    changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
-    return changes;
+    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
+    changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_RELEASE_SET, stop));
 }
 
 void NoteStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {
@@ -194,11 +192,6 @@ void NoteStep::change(ChangeSet* changes) {
                 break;
         }
     }
-}
-
-ChangeSet* NoteStep::click() {
-    ChangeSet* changes = new ChangeSet();
-    return changes;
 }
 
 void NoteStep::write(ofstream& f) {

@@ -63,6 +63,8 @@ class ofApp : public ofBaseApp {
         Tool* tool_add_page;
 
     private:
+        void performChanges(ChangeSet* changes);
+
         Page* page[MAX_PAGES];
         CommandLine* command_line;
 

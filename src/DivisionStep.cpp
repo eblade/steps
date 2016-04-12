@@ -47,13 +47,11 @@ DivisionStep::~DivisionStep() {
     delete tool_tuplet_down;
 }
 
-ChangeSet* DivisionStep::execute(TickBuffer* buffer, SequencerState sequencer) {
-    ChangeSet* changes = new ChangeSet();
-    changes->push(
+void DivisionStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer) {
+    changes->upstream->push(
         new Change(TARGET_LEVEL_SEQUENCER, OP_PERIOD_SET, division->getPeriod(buffer->getBPM())));
-    changes->push(
+    changes->upstream->push(
         new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
-    return changes;
 }
 
 void DivisionStep::draw(int x, int y, bool executing, ofTrueTypeFont font) {

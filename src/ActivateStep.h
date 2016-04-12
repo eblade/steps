@@ -10,10 +10,10 @@ class ActivateStep : public Step {
         ActivateStep();
         ~ActivateStep();
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
+        void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
-        ChangeSet* click();
+        void click(ChangeSet* changes);
         void write(ofstream& f);
 
         int getLabel();

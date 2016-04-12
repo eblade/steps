@@ -13,14 +13,14 @@ class Page {
         Page();
         ~Page();
         void draw(int x, int y, int width, int height, ofTrueTypeFont font, bool draw_cursor=true, bool redraw_all=false);
-		void mousePressed(int x, int y, int button, TickBuffer* buffer);
+		void mousePressed(int x, int y, int button, ChangeSet* changes);
         void cursorUp();
         void cursorDown();
-        void step(TickBuffer* buffer, OutputRouter* output_router);
+        void step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* output_router);
         void addNewLine(int afterLine);
         void deleteLine(int line);
         void populate(Toolbar* toolbar);
-        void change(ChangeSet* changes, TickBuffer* buffer);
+        void change(ChangeSet* changes);
         void write(ofstream& f);
 
         Tool* tool_seq_add;
@@ -38,6 +38,8 @@ class Page {
         Tool* tool_del_step;
 
     private:
+        void performChanges(ChangeSet* changes);
+
         int cursor;
         Sequencer* sequencer[MAX_SEQUENCERS];
 };

@@ -30,8 +30,8 @@ class Step {
         virtual ~Step() {};
         virtual int getType();
         virtual void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        virtual ChangeSet* click();
-        virtual ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
+        virtual void click(ChangeSet* changes);
+        virtual void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
         virtual int getLength();
         virtual void change(ChangeSet* changes);
         virtual void populate(Toolbar* toolbar);

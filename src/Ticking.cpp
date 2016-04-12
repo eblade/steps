@@ -91,18 +91,6 @@ bool TickBuffer::timeFor(double time) {
     return time < (now() - period / 2.);
 }
 
-void TickBuffer::hold(ChangeSet* changes) {
-    if (changes != NULL) {
-        this->changes->push(changes);
-    }
-}
-
-ChangeSet* TickBuffer::release() {
-    ChangeSet* changes_to_release = this->changes;
-    this->changes = new ChangeSet(true);
-    return changes_to_release;
-}
-
 void TickBuffer::draw(int x, int y) {
     int px, py, size, delta;
     double now = this->now();

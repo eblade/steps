@@ -87,12 +87,13 @@ Page::~Page() {
     delete tool_del_step;
 }
 
-void Page::step(TickBuffer* buffer, OutputRouter* output_router) {
+void Page::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* output_router) {
     for (int i = 0; i < MAX_SEQUENCERS; i++) {
         if (sequencer[i] == NULL) {
             break;
         }
-        sequencer[i]->step(buffer, output_router);
+        sequencer[i]->step(changes, buffer, output_router);
+        performChanges(changes->upstream);
     }
 }
 
@@ -110,7 +111,7 @@ void Page::draw(int x, int y, int width, int height, ofTrueTypeFont font, bool d
     }
 }
 
-void Page::mousePressed(int x, int y, int button, TickBuffer* buffer){
+void Page::mousePressed(int x, int y, int button, ChangeSet* changes){
     int col = x / STEP_OUTER;
     int row = y / STEP_OUTER;
 
@@ -126,7 +127,8 @@ void Page::mousePressed(int x, int y, int button, TickBuffer* buffer){
     cursor = row;
     sequencer[row]->setCursor(col);
     if (sequencer[row]->getCursor() == col) {
-        sequencer[row]->cursorClick(buffer);
+        sequencer[row]->cursorClick(changes);
+        performChanges(changes->upstream);
     }
 }
 
@@ -149,7 +151,15 @@ void Page::populate(Toolbar* toolbar) {
     }
 }
 
-void Page::change(ChangeSet* changes, TickBuffer* buffer) {
+void Page::change(ChangeSet* changes) {
+    performChanges(changes);
+    if (sequencer[cursor] != NULL) {
+        sequencer[cursor]->change(changes);
+    }
+    performChanges(changes->upstream);
+}
+
+void Page::performChanges(ChangeSet* changes) {
     if (changes == NULL) {
         return;
     }
@@ -191,9 +201,6 @@ void Page::change(ChangeSet* changes, TickBuffer* buffer) {
                 }
                 break;
         }
-    }
-    if (sequencer[cursor] != NULL) {
-        sequencer[cursor]->change(changes, buffer);
     }
 }
 

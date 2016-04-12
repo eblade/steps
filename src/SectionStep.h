@@ -12,8 +12,8 @@ class SectionStep : public Step {
         ~SectionStep();
 
         void draw(int x, int y, bool executing, ofTrueTypeFont font);
-        ChangeSet* execute(TickBuffer* buffer, SequencerState sequencer);
-        ChangeSet* click();
+        void execute(ChangeSet* changes, TickBuffer* buffer, SequencerState sequencer);
+        void click(ChangeSet* changes);
         void populate(Toolbar* toolbar);
         void change(ChangeSet* changes);
         void write(ofstream& f);
