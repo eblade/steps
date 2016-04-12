@@ -107,13 +107,7 @@ void Sequencer::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* outpu
         step->execute(changes, buffer, state);
         performChanges(changes->upstream);
         if (last_executed >= position) {
-            if (last_executed == position 
-                    && step->getType() == STEP_TYPE_SECTION
-                    && peekType(position + 1) == STEP_TYPE_SECTION) {
-                position++;
-            } else {
-                break;
-            }
+            break;
         }
         synced = false;
     }
