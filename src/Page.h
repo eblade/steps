@@ -35,6 +35,8 @@ class Page {
         Tool* tool_add_output;
         Tool* tool_add_sync;
         Tool* tool_add_section;
+        Tool* tool_add_loop;
+        Tool* tool_add_command;
         Tool* tool_del_step;
 
     private:

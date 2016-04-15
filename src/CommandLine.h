@@ -15,6 +15,7 @@ class Command {
         bool hasArgument();
         int argumentAsInt(int default_value = 0);
         bool argumentAsBool(bool default_value = true);
+        string argumentAsString();
 
         char command[MAX_COMMAND];
         char argument[MAX_COMMAND];

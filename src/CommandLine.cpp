@@ -209,6 +209,16 @@ void CommandLine::execute(ChangeSet* changes) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SECTION,
                                  command.argumentAsInt(0)));
 
+    // add-loop-step INT=4
+    } else if (command.is("add-loop-step")) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_LOOP,
+                                 command.argumentAsInt(4)));
+
+    // add-command-step STRING
+    } else if (command.is("add-command-step")) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_COMMAND,
+                                 command.argumentAsString()));
+
     // set-cursor INT
     } else if (command.is("set-cursor")) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_SET,
@@ -217,6 +227,14 @@ void CommandLine::execute(ChangeSet* changes) {
     } else if (command.is("delta-cursor")) {
         changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA,
                                  command.argumentAsInt(1)));
+
+    // sync
+    } else if (command.is("sync")) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
+
+    // sync-all
+    } else if (command.is("sync-all")) {
+        changes->push(new Change(TARGET_LEVEL_PAGE, OP_SYNC));
 
     // set-active BOOL
     } else if (command.is("set-active")) {
@@ -280,13 +298,55 @@ void CommandLine::execute(ChangeSet* changes) {
 
     // set-section INT
     } else if (command.is("set-section")) {
-        changes->push(new Change(TARGET_LEVEL_STEP, OP_SECTION_SET,
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET,
+                                 command.argumentAsInt()));
+
+    // delta-section INT
+    } else if (command.is("delta-section")) {
+        changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_DELTA,
                                  command.argumentAsInt()));
 
     // set-active-section INT
     } else if (command.is("set-active-section")) {
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET,
                                  command.argumentAsInt()));
+
+    // set-loop INT
+    } else if (command.is("set-loop")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_LOOP_SET,
+                                 command.argumentAsInt()));
+
+    // delta-loop INT
+    } else if (command.is("delta-loop")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_LOOP_DELTA,
+                                 command.argumentAsInt()));
+
+    // set-vamp BOOL=true
+    } else if (command.is("set-vamp")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_VAMP_SET,
+                                 command.argumentAsBool(true)));
+
+    // reset-loop
+    } else if (command.is("reset-loop")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_LOOP_RESET));
+
+    // reset-seqeuncer
+    } else if (command.is("reset-sequencer")) {
+        changes->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
+
+    // set-command STRING 
+    } else if (command.is("set-command")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_COMMAND_SET,
+                                 command.argumentAsString()));
+
+    // run-command
+    } else if (command.is("run-command")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_COMMAND_RUN));
+
+    // set-text STRING 
+    } else if (command.is("set-text")) {
+        changes->push(new Change(TARGET_LEVEL_STEP, OP_TEXT_SET,
+                                 command.argumentAsString()));
 
     // set-numerator INT
     } else if (command.is("set-numerator")) {
@@ -421,4 +481,8 @@ int Command::argumentAsInt(int default_value) {
 
 bool Command::argumentAsBool(bool default_value) {
     return argumentAsInt(default_value ? 1 : 0);
+}
+
+string Command::argumentAsString() {
+    return ofToString(argument);
 }

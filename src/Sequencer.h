@@ -10,6 +10,8 @@
 #include "DivisionStep.h"
 #include "SyncStep.h"
 #include "SectionStep.h"
+#include "LoopStep.h"
+#include "CommandStep.h"
 #include "Ticking.h"
 #include "Output.h"
 #include "Toolbar.h"
@@ -57,6 +59,7 @@ class Sequencer {
         int cursor_shade;
         int cursor_blank;
         bool synced;
+        bool at_end;
         Step* data[MAX_STEPS];
 };
 

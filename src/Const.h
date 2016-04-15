@@ -52,6 +52,8 @@
 #define STEP_TYPE_OUTPUT 4
 #define STEP_TYPE_SYNC 5
 #define STEP_TYPE_SECTION 6
+#define STEP_TYPE_LOOP 7
+#define STEP_TYPE_COMMAND 8
 
 // Output Types
 #define OUTPUT_TYPE_DUMMY 0
@@ -98,6 +100,7 @@
 #define OP_OUTPUT_SELECT_DELTA 19 // delta-output-select INT:output-delta
 #define OP_CHANNEL_SET 20 // set-channel INT:channel
 #define OP_CHANNEL_DELTA 21 // set-channel INT:channel-delta
+#define OP_COMMAND 22
 
 // Page level
 #define OP_SEQ_ADD 100 // add-sequencer
@@ -128,6 +131,8 @@
 #define OP_ADD_STEP_DIVISION 253 // add-division-step
 #define OP_ADD_STEP_SYNC 254 // add-sync-step
 #define OP_ADD_STEP_SECTION 255 // add-section-step
+#define OP_ADD_STEP_LOOP 256 // add-loop-step INT
+#define OP_ADD_STEP_COMMAND 257 // add-command-step STRING
 
 // Step level
 #define OP_NOTE_SET 300 // set-note INT
@@ -141,6 +146,14 @@
 #define OP_HOLD_SET 308 // set-hold BOOL
 #define OP_SECTION_SET 310 // set-section INT
 #define OP_SECTION_DELTA 311
+#define OP_LOOP_SET 312 // set-loop INT
+#define OP_LOOP_DELTA 313 // delta-loop INT
+#define OP_VAMP_SET 314 // set-vamp BOOL
+#define OP_LOOP_RESET 316 // reset-loop
+#define OP_LAST 318 // last
+#define OP_COMMAND_SET 320 // set-command STRING
+#define OP_COMMAND_RUN 321 // run-command
+#define OP_TEXT_SET 322 // set-text STRING
 
 #define OP_NUMERATOR_SET 350 // set-numerator INT
 #define OP_NUMERATOR_DELTA 351 // delta-numerator INT

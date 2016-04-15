@@ -12,6 +12,7 @@ Sequencer::Sequencer() {
     cursor_shade = 255;
     redraw = true;
     synced = false;
+    at_end = false;
 
     for (int i = 1; i < MAX_STEPS; i++) {
         data[i] = NULL;
@@ -73,6 +74,11 @@ void Sequencer::draw(int row, bool onThisRow, ofTrueTypeFont font, ofTrueTypeFon
         }
     }
 
+    if (at_end && redraw_all && last_executed == 0) {
+        ofSetColor(200, 50, 50);
+        font.drawString("DONE.", x + 3, y + 45);
+    }
+
     cursor_shade -= 3;
     if (cursor_shade < 100) {
         cursor_shade = 255;
@@ -85,17 +91,25 @@ void Sequencer::step(ChangeSet* changes, TickBuffer* buffer, OutputRouter* outpu
     SequencerState state;
     state.output_router = output_router;
     while (true) {
-        if (data[position] == NULL) {
-            position = 0;
-            break;
-        }
         if (!buffer->timeFor(release)) {
             break;
         }
-        Step* step = data[position];
         if (data[last_executed] != NULL) {
             data[last_executed]->markForRedraw();
         }
+        if (at_end) {
+            release = 0.;
+            last_executed = 0;
+            redraw = true;
+            break;
+        }
+        if (data[position] == NULL) {
+            ofLogWarning("Sequencer") << "position at broken data.";
+            release = 0.;
+            position = 0;
+            break;
+        }
+        Step* step = data[position];
         last_executed = position;
         state.output = output;
         state.period = period;
@@ -201,6 +215,18 @@ void Sequencer::performChanges(ChangeSet* changes) {
                 SectionStep* new_section =
                     new SectionStep(change->value);
                 cursorInsert(new_section);
+                break;
+            }
+            case OP_ADD_STEP_LOOP: {
+                LoopStep* new_loop =
+                    new LoopStep(change->value);
+                cursorInsert(new_loop);
+                break;
+            }
+            case OP_ADD_STEP_COMMAND: {
+                CommandStep* new_command =
+                    new CommandStep();
+                cursorInsert(new_command);
                 break;
             }
         }
@@ -321,13 +347,18 @@ void Sequencer::sync() {
     }
     last_executed = 0;
     synced = true;
+    at_end = false;
+    redraw = true;
 }
 
 void Sequencer::setPosition(int position) {
-    position = position < MAX_STEPS ? position : 0;
+    position = position <= MAX_STEPS ? position : 0;
     position = position >= 0 ? position : 0;
+    at_end = false;
     if (data[position] == NULL) {
         position = 0;
+        at_end = true;
+        redraw = true;
     }
     if (data[position] != NULL) {
         data[position]->markForRedraw();

@@ -37,28 +37,24 @@ Page::Page() {
 
     tool_add_note = new Tool("+\nNOTE", 'n',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_NOTE, 0));
-    tool_add_note->changes->push(
-        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_div = new Tool("+\nDIV", 'd',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_DIVISION, 8));
-    tool_add_div->changes->push(
-        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_output = new Tool("+\nOUT", 'O',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_OUTPUT, 0));
-    tool_add_output->changes->push(
-        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_sync = new Tool("+\nSYNC", 's',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SYNC, 0));
-    tool_add_sync->changes->push(
-        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
 
     tool_add_section = new Tool("+\nSECT", 'S',
         new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_SECTION, 0));
-    tool_add_section->changes->push(
-        new Change(TARGET_LEVEL_SEQUENCER, OP_STEP_DELTA, 1));
+
+    tool_add_loop = new Tool("+\nLOOP", 'L',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_LOOP, 4));
+
+    tool_add_command = new Tool("+\nCMD", 'C',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_ADD_STEP_COMMAND));
 
     tool_del_step = new Tool("DEL", 'x',
         new Change(TARGET_LEVEL_PAGE, OP_STEP_DEL, -1));
@@ -84,6 +80,8 @@ Page::~Page() {
     delete tool_add_output;
     delete tool_add_sync;
     delete tool_add_section;
+    delete tool_add_loop;
+    delete tool_add_command;
     delete tool_del_step;
 }
 
@@ -145,6 +143,8 @@ void Page::populate(Toolbar* toolbar) {
     toolbar->push(tool_add_output);
     toolbar->push(tool_add_sync);
     toolbar->push(tool_add_section);
+    toolbar->push(tool_add_loop);
+    toolbar->push(tool_add_command);
     toolbar->push(tool_del_step);
     if (sequencer[cursor] != NULL) {
         sequencer[cursor]->populate(toolbar);

@@ -7,7 +7,7 @@ const ofColor ActivateStep::c_off(100, 0, 0);
 
 ActivateStep::ActivateStep() : Step() {
     type = STEP_TYPE_ACTIVATE;
-    label = 0;
+    label = 1;
     changed_label = true;
     hold = false;
 
@@ -21,6 +21,8 @@ ActivateStep::ActivateStep() : Step() {
         new Change(TARGET_LEVEL_STEP, OP_HOLD_SET, 0));
     tool_kill = new Tool("KILL", 'K',
         new Change(TARGET_LEVEL_STEP, OP_KILL, 0));
+    tool_sync = new Tool("SYNC", ',',
+        new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     tool_label_0 = new Tool("LABEL\n#0", '0',
         new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 0));
     tool_label_1 = new Tool("LABEL\n#1", '1',
@@ -53,6 +55,7 @@ ActivateStep::~ActivateStep() {
     delete tool_hold;
     delete tool_dont_hold;
     delete tool_kill;
+    delete tool_sync;
     delete tool_label_0;
     delete tool_label_1;
     delete tool_label_2;
@@ -117,6 +120,7 @@ void ActivateStep::populate(Toolbar* toolbar) {
     } else {
         toolbar->push(tool_hold);
     }
+    toolbar->push(tool_sync);
     toolbar->push(tool_label_down);
     toolbar->push(tool_label_up);
     toolbar->push(tool_label_0); 

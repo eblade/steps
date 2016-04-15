@@ -172,7 +172,7 @@ void Toolbar::draw(ofTrueTypeFont font, bool redraw_all) {
 ChangeSet* Toolbar::keyPressed(int key) {
     ChangeSet* changes = new ChangeSet();
     for (int i = 0; i < head; i++) {
-        if (tool[i]->hasKey(key)) {
+        if (tool[i] != NULL && tool[i]->hasKey(key)) {
             tool[i]->flash();
             changes->push(tool[i]->changes);
         }
