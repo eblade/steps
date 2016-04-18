@@ -8,7 +8,7 @@ Sequencer::Sequencer() {
     release = 0.;
     output = 0;
     period = 1.;
-    label = 0;
+    label = 1;
     cursor_shade = 255;
     redraw = true;
     synced = false;
