@@ -311,8 +311,8 @@ void CommandLine::execute(ChangeSet* changes) {
         changes->push(new Change(TARGET_LEVEL_APPLICATION, OP_SECTION_SET,
                                  command.argumentAsInt()));
 
-    // set-loop INT
-    } else if (command.is("set-loop")) {
+    // set-loops INT
+    } else if (command.is("set-loops")) {
         changes->push(new Change(TARGET_LEVEL_STEP, OP_LOOP_SET,
                                  command.argumentAsInt()));
 
