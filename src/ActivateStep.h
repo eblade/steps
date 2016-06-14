@@ -16,8 +16,6 @@ class ActivateStep : public Step {
         void click(ChangeSet* changes);
         void write(ofstream& f);
 
-        int getLabel();
-        void setLabel(int label);
         bool getHold();
         void setHold(bool hold);
 
@@ -47,7 +45,6 @@ class ActivateStep : public Step {
     private:
         int label;
         bool hold;
-        bool changed_label;
 };
 
 

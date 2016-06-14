@@ -8,7 +8,6 @@ const ofColor ActivateStep::c_off(100, 0, 0);
 ActivateStep::ActivateStep() : Step() {
     type = STEP_TYPE_ACTIVATE;
     label = 1;
-    changed_label = true;
     hold = false;
 
     tool_activate = new Tool("TURN\nON", ' ',
@@ -24,29 +23,29 @@ ActivateStep::ActivateStep() : Step() {
     tool_sync = new Tool("SYNC", ',',
         new Change(TARGET_LEVEL_SEQUENCER, OP_SYNC));
     tool_label_0 = new Tool("LABEL\n#0", '0',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 0));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 0));
     tool_label_1 = new Tool("LABEL\n#1", '1',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 1));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 1));
     tool_label_2 = new Tool("LABEL\n#2", '2',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 2));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 2));
     tool_label_3 = new Tool("LABEL\n#3", '3',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 3));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 3));
     tool_label_4 = new Tool("LABEL\n#4", '4',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 4));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 4));
     tool_label_5 = new Tool("LABEL\n#5", '5',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 5));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 5));
     tool_label_6 = new Tool("LABEL\n#6", '6',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 6));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 6));
     tool_label_7 = new Tool("LABEL\n#7", '7',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 7));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 7));
     tool_label_8 = new Tool("LABEL\n#8", '8',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 8));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 8));
     tool_label_9 = new Tool("LABEL\n#9", '9',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_SET, 9));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, 9));
     tool_label_up = new Tool("LABEL\n+1", '+',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA, 1));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_DELTA, 1));
     tool_label_down = new Tool("LABEL\n-1", '-',
-        new Change(TARGET_LEVEL_STEP, OP_LABEL_DELTA, -1));
+        new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_DELTA, -1));
 }
 
 ActivateStep::~ActivateStep() {
@@ -80,13 +79,8 @@ void ActivateStep::execute(ChangeSet* changes, TickBuffer* buffer, SequencerStat
         changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_DELTA, 1));
         changed = true;
     }
-    if (changed_label) {
-        changes->upstream->push(new Change(TARGET_LEVEL_SEQUENCER, OP_LABEL_SET, label));
-        changed_label = false;
-    } else {
-        if (label != sequencer.label) {
-            changed = true;
-        }
+    if (label != sequencer.label) {
+        changed = true;
         label = sequencer.label;
     }
 }
@@ -140,8 +134,6 @@ void ActivateStep::change(ChangeSet* changes) {
     Change* change;
     while ((change = changes->next(TARGET_LEVEL_STEP)) != NULL) {
         switch (change->operation) {
-            case OP_LABEL_SET: setLabel(change->value); break;
-            case OP_LABEL_DELTA: setLabel(label + change->value); break;
             case OP_KILL:
                 setActive(0);
                 changes->upstream->push( new Change(TARGET_LEVEL_SEQUENCER, OP_POSITION_SET, 0));
@@ -165,21 +157,6 @@ void ActivateStep::write(ofstream& f) {
     f << "set-active " << (active ? "1" : "0") << "\n"
       << "set-label " << ofToString(label) << "\n"
       << "set-hold " << (hold ? "1" : "0") << "\n";
-}
-
-int ActivateStep::getLabel() { return label; }
-
-void ActivateStep::setLabel(int label) {
-    int what_it_was = this->label;
-    if (label < 0) {
-        this->label = 0;
-    } else if (label >= MAX_LABELS - 1) {
-        this->label = MAX_LABELS - 1;
-    } else {
-        this->label = label;
-    }
-    changed_label = this->label != what_it_was;
-    changed = true;
 }
 
 bool ActivateStep::getHold() { return hold; };
